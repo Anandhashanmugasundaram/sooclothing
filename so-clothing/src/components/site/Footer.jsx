@@ -9,7 +9,7 @@ export function Footer() {
           <div className="col-span-2">
             <Link to="/" className="flex items-center gap-3 mb-6">
               <img src={logo} alt="" className="h-10 w-10" />
-              <span className="font-display text-lg">SO.CLOTHING</span>
+              <span className="font-display text-lg">$O.CLOTHING</span>
             </Link>
             <p className="text-foreground/60 max-w-xs text-sm leading-relaxed">
               Premium streetwear born from the wild. Crafted in small batches for those who run alone.
@@ -39,7 +39,7 @@ export function Footer() {
 
         <div className="overflow-hidden border-t border-border pt-12">
           <p className="font-display text-[18vw] md:text-[14vw] leading-none uppercase text-foreground/10 select-none whitespace-nowrap">
-            SO.CLOTHING®
+            $O.CLOTHING®
           </p>
         </div>
 

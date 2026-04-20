@@ -31,7 +31,7 @@ export default function About() {
   return (
     <>
       <PageHeader eyebrow="The Story" title="Born From The Wild">
-        SO.CLOTHING is a refusal of the ordinary. A second skin for those who refuse to blend in.
+        $O.CLOTHING is a refusal of the ordinary. A second skin for those who refuse to blend in.
       </PageHeader>
 
       <div ref={sectionRef}>
@@ -44,7 +44,7 @@ export default function About() {
               <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">— Manifesto</p>
               <h2 className="font-display text-4xl md:text-5xl uppercase leading-none">We Don't Follow Trends. We Hunt Them.</h2>
               <p className="text-foreground/80 leading-relaxed">
-                Founded in 2022 in a converted warehouse, SO.CLOTHING was built around a single belief —
+                Founded in 2022 in a converted warehouse, $O.CLOTHING was built around a single belief —
                 that the clothes you wear should outlast the moment they were made for.
               </p>
               <p className="text-foreground/80 leading-relaxed">
@@ -80,7 +80,7 @@ export default function About() {
               If It Breaks,<br />We'll <span className="italic text-accent">Fix It</span>.
             </h2>
             <p className="text-foreground/70 max-w-xl mx-auto">
-              Every SO.CLOTHING piece comes with a lifetime repair guarantee. Stitch popped? Lining torn?
+              Every $O.CLOTHING piece comes with a lifetime repair guarantee. Stitch popped? Lining torn?
               Send it in. We'll fix it. Forever.
             </p>
           </div>

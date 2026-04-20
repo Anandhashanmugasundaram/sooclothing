@@ -33,7 +33,7 @@ export function Nav() {
       <nav className="max-w-[1600px] mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3">
           <img src={logo} alt="SO.CLOTHING" className="h-10 w-10 object-contain" />
-          <span className="font-display text-lg tracking-tight">SO.CLOTHING</span>
+          <span className="font-display text-lg tracking-tight">$O.CLOTHING</span>
         </Link>
 
         <ul className="hidden lg:flex items-center gap-10">

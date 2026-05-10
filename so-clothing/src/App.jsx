@@ -15,6 +15,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Lookbook from "./pages/Lookbook";
 import NotFound from "./pages/NotFound";
+import Admin from "./pages/Admin";
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/lookbook" element={<Lookbook />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/admin" element={<Admin />} />
             </Routes>
           </Layout>
         </BrowserRouter>

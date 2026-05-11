@@ -1,13 +1,21 @@
-// Login.jsx
-
 import { useState } from "react";
 import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
+
+
+import logo from "../assets/logo.png";
+import z from "zod";
+
+const schema = z.object({
+  email: z.string().trim().email("Valid email required").max(255),
+  password: z.string().min(6, "Password must be 6+ characters").max(100),
+});
 
 export default function Login() {
 
   const navigate = useNavigate();
-
+  
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -18,11 +26,9 @@ export default function Login() {
 
   // SUBMIT
   const submitHandler = async (e) => {
-
+  console.log("EMAIL:", form.email);
+  console.log("PASSWORD:", form.password);
     e.preventDefault();
-
-    console.log("EMAIL:", form.email);
-    console.log("PASSWORD:", form.password);
 
     try {
 
@@ -121,7 +127,8 @@ export default function Login() {
             onChange={(e) =>
               setForm({
                 ...form,
-                password: e.target.value,
+                password:
+                  e.target.value,
               })
             }
             required

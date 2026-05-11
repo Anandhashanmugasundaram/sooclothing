@@ -50,7 +50,11 @@ export function CartDrawer() {
               {items.map((it) => (
                 <div key={`${it.product.id}-${it.size}`} className="flex gap-4 border-b border-border pb-6">
                   <Link to={`/product/${it.product.slug}`} onClick={() => setOpen(false)} className="block w-20 h-24 bg-secondary shrink-0 overflow-hidden">
-                    <img src={it.product.img} alt={it.product.name} className="w-full h-full object-cover" />
+                    <img
+  src={`http://localhost:5000/uploads/${it.product.image}`}
+  alt={it.product.name}
+  className="w-full h-full object-cover"
+/>
                   </Link>
                   <div className="flex-1 flex flex-col">
                     <div className="flex justify-between gap-2">
@@ -72,7 +76,9 @@ export function CartDrawer() {
                           <Plus className="w-3 h-3" />
                         </button>
                       </div>
-                      <p className="font-mono text-sm">{formatPrice(it.product.price * it.qty)}</p>
+                      <p className="font-mono text-sm">
+  ₹{it.product.price * it.qty}
+</p>
                     </div>
                   </div>
                 </div>
@@ -81,7 +87,7 @@ export function CartDrawer() {
             <div className="border-t border-border p-6 space-y-4">
               <div className="flex justify-between font-mono text-sm">
                 <span className="text-muted-foreground uppercase tracking-widest text-xs">Subtotal</span>
-                <span>{formatPrice(subtotal)}</span>
+                <span>₹{(subtotal)}</span>
               </div>
               <p className="text-[11px] text-muted-foreground">Shipping and taxes calculated at checkout.</p>
               <Link
@@ -89,7 +95,7 @@ export function CartDrawer() {
                 onClick={() => setOpen(false)}
                 className="block w-full bg-accent text-accent-foreground py-4 text-center font-mono text-xs uppercase tracking-[0.25em] hover:bg-accent/90 transition-colors"
               >
-                Checkout — {formatPrice(subtotal)}
+                Checkout — ₹{(subtotal)}
               </Link>
               <Link
                 to="/cart"

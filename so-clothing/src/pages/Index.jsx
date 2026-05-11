@@ -9,8 +9,8 @@ export default function Index() {
   return (
     <>
       <h1 className="sr-only">SO.CLOTHING — Premium streetwear, limited drops</h1>
-      <Hero />
       <Marquee />
+      <Hero />
       <Products />
       <Campaign />
       <Drops />

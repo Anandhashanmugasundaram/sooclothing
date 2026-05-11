@@ -92,16 +92,20 @@ export function ProductCard({ product }) {
 
   return (
 
-    <Link to={`/product/${product.slug}`}>
+    <div className="product-card cursor-pointer">
 
-      <div className="product-card cursor-pointer">
+      <Link to={`/product/${product.slug}`}>
 
         {/* PRODUCT IMAGE */}
-<img
-  src={product.img || `http://localhost:5000/uploads/${product.image}`}
-  alt={product.name}
-  className="w-full h-[400px] object-cover rounded-xl"
-/>
+        <img
+          src={
+            product.img ||
+            `http://localhost:5000/uploads/${product.image}`
+          }
+          alt={product.name}
+          className="w-full h-[400px] object-cover rounded-xl"
+        />
+
         {/* PRODUCT NAME */}
         <h2 className="text-xl mt-3">
           {product.name}
@@ -117,8 +121,15 @@ export function ProductCard({ product }) {
           {product.category}
         </p>
 
-      </div>
+      </Link>
 
-    </Link>
+      {/* ADD TO CART BUTTON */}
+      <button
+        className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg transition-all duration-300"
+      >
+        Add To Cart
+      </button>
+
+    </div>
   );
 }

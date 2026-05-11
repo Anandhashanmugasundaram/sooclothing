@@ -1,5 +1,5 @@
 export function Marquee() {
-  const items = ["Free Shipping Over $150", "★", "Limited Drops Weekly", "★", "Crafted In Small Batches", "★", "Worldwide Delivery", "★"];
+  const items = ["SPECIAL OFFER", "★", "DISCOUNT", "%", "SPECIAL OFFER", "★", "DISCOUNT", "%"];
   const repeated = [...items, ...items, ...items, ...items];
   return (
     <div className="bg-primary text-primary-foreground py-5 overflow-hidden border-y border-border">

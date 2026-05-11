@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
-import { ProductCard } from "@/components/site/Products";
 import { PageHeader } from "@/components/site/PageHeader";
 
 const cats = [
@@ -21,6 +21,7 @@ export default function Shop() {
   const [sort, setSort] =
     useState("featured");
 
+  // FETCH PRODUCTS
   useEffect(() => {
 
     fetchProducts();
@@ -44,6 +45,7 @@ export default function Shop() {
     }
   };
 
+  // FILTER + SORT
   const list = useMemo(() => {
 
     let l =
@@ -51,7 +53,8 @@ export default function Shop() {
         ? products
         : products.filter(
             (p) =>
-              p.category === cat
+              p.category.toLowerCase() ===
+              cat.toLowerCase()
           );
 
     if (sort === "low") {
@@ -74,6 +77,7 @@ export default function Shop() {
 
   return (
     <>
+      {/* PAGE HEADER */}
       <PageHeader
         eyebrow="Collection 01"
         title="Shop"
@@ -81,19 +85,21 @@ export default function Shop() {
         Every piece in the SS26 drop.
       </PageHeader>
 
+      {/* FILTER SECTION */}
       <section className="py-12 border-b">
 
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-12 flex flex-wrap items-center justify-between gap-6">
+        <div className="w-full px-6 lg:px-12 flex flex-wrap items-center justify-between gap-6">
 
-          {/* CATEGORY */}
-          <div className="flex flex-wrap gap-2">
+          {/* CATEGORY BUTTONS */}
+          <div className="flex flex-wrap gap-3">
 
             {cats.map((c) => (
 
               <button
                 key={c}
                 onClick={() => setCat(c)}
-                className={`px-4 py-2 border ${
+                className={`px-6 py-3 border transition-all duration-300 capitalize
+                ${
                   cat === c
                     ? "bg-black text-white"
                     : ""
@@ -112,7 +118,7 @@ export default function Shop() {
             onChange={(e) =>
               setSort(e.target.value)
             }
-            className="border px-3 py-2"
+            className="border px-5 py-3"
           >
 
             <option value="featured">
@@ -130,14 +136,21 @@ export default function Shop() {
           </select>
 
         </div>
+
       </section>
 
       {/* PRODUCTS */}
       <section className="py-16">
 
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
+        <div className="w-full px-6 lg:px-12">
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* PRODUCT COUNT */}
+          <p className="mb-10 text-lg">
+            {list.length} Products Found
+          </p>
+
+          {/* PRODUCTS GRID */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
 
             {list.map((p) => (
 
@@ -151,7 +164,80 @@ export default function Shop() {
           </div>
 
         </div>
+
       </section>
     </>
+  );
+}
+
+// PRODUCT CARD
+export function ProductCard({ product }) {
+
+  return (
+
+    <div className="product-card cursor-pointer w-full">
+
+      <Link to={`/product/${product.slug}`}>
+
+        {/* PRODUCT IMAGE */}
+        <div className="w-full overflow-hidden rounded-xl">
+
+          <img
+            src={
+              product.img ||
+              `http://localhost:5000/uploads/${product.image}`
+            }
+            alt={product.name}
+            className="w-full h-[400px] object-cover rounded-xl hover:scale-105 transition-all duration-500"
+          />
+
+        </div>
+
+        {/* PRODUCT NAME */}
+        <h2 className="text-2xl mt-4">
+          {product.name}
+        </h2>
+
+        {/* PRICE */}
+        <p className="mt-2 text-xl">
+          ₹ {product.price}
+        </p>
+
+        {/* CATEGORY */}
+        <p className="text-sm text-gray-500 mt-1 capitalize">
+          {product.category}
+        </p>
+
+        {/* SIZE */}
+        <p className="text-sm text-gray-500 mt-1">
+
+          Size : {
+
+            product.sizes?.map((size, index) => (
+
+              <span key={index}>
+
+                {size.toUpperCase()}
+
+                {index !== product.sizes.length - 1 && ", "}
+
+              </span>
+
+            ))
+
+          }
+
+        </p>
+
+      </Link>
+
+      {/* ADD TO CART */}
+      <button
+        className="w-full mt-5 bg-red-600 hover:bg-red-700 text-white py-4 rounded-lg transition-all duration-300"
+      >
+        Add To Cart
+      </button>
+
+    </div>
   );
 }

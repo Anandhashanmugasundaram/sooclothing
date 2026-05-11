@@ -4,7 +4,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import axios from "axios";
 
-import logo from "@/assets/logo.jpg";
+import logo from "../assets/logo.png";
 
 const schema = z.object({
   email: z.string().trim().email("Valid email required").max(255),

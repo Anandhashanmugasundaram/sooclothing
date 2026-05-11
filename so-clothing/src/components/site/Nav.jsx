@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { ShoppingBag, Search, Menu, X, User } from "lucide-react";
-import logo from "@/assets/logo.jpg";
+import logo from "../../assets/logo.png";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 

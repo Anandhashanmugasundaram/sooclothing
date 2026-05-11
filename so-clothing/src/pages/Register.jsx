@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import logo from "@/assets/logo.jpg";
+import logo from "../assets/logo.png";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Name required").max(100),

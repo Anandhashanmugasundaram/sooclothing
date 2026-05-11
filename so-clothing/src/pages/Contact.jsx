@@ -1,6 +1,9 @@
+// Contact.jsx
+
 import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
+import emailjs from "@emailjs/browser";
 import {
   Mail,
   MapPin,
@@ -27,49 +30,52 @@ const schema = z.object({
 });
 
 export default function Contact() {
-
   const [form, setForm] = useState({
     name: "",
     email: "",
     message: "",
   });
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (e) => {
-
     e.preventDefault();
 
-    const parsed =
-      schema.safeParse(form);
+    const parsed = schema.safeParse(form);
 
     if (!parsed.success) {
-
-      toast.error(
-        parsed.error.errors[0].message
-      );
-
+      toast.error(parsed.error.errors[0].message);
       return;
     }
 
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    await new Promise((r) =>
-      setTimeout(r, 700)
-    );
+      await emailjs.send(
+        "YOUR_SERVICE_ID",
+        "YOUR_TEMPLATE_ID",
+        {
+          from_name: form.name,
+          from_email: form.email,
+          message: form.message,
+          to_email: "soclothingoff@gmail.com",
+        },
+        "YOUR_PUBLIC_KEY"
+      );
 
-    setLoading(false);
+      toast.success("Message sent successfully!");
 
-    setForm({
-      name: "",
-      email: "",
-      message: "",
-    });
-
-    toast.success(
-      "Message sent — we'll be in touch."
-    );
+      setForm({
+        name: "",
+        email: "",
+        message: "",
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to send message");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -84,32 +90,27 @@ export default function Contact() {
       </PageHeader>
 
       <section className="py-20 lg:py-32">
-
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 grid lg:grid-cols-2 gap-16">
 
           {/* LEFT SIDE */}
           <div className="space-y-10">
 
             {/* SHOP IMAGE */}
-            {/* SHOP IMAGE */}
-<a
-  href="https://maps.google.com/?q=Deenadayalu+Street+T+Nagar+Chennai"
-  target="_blank"
-  rel="noreferrer"
-  className="block overflow-hidden rounded-2xl shadow-lg border border-border bg-secondary group"
->
-
-  <img
-    src="/store-image.jpeg"
-    alt="SO Clothing Store"
-    className="w-full h-[600px] object-contain bg-black transition-transform duration-500 group-hover:scale-105"
-  />
-
-</a>
+            <a
+              href="https://maps.google.com/?q=Deenadayalu+Street+T+Nagar+Chennai"
+              target="_blank"
+              rel="noreferrer"
+              className="block overflow-hidden rounded-2xl shadow-lg border border-border bg-secondary group"
+            >
+              <img
+                src="/store-image.jpeg"
+                alt="SO Clothing Store"
+                className="w-full h-[600px] object-contain bg-black transition-transform duration-500 group-hover:scale-105"
+              />
+            </a>
 
             {/* CONTACT DETAILS */}
             <div>
-
               <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-3">
                 — Store Details
               </p>
@@ -122,9 +123,7 @@ export default function Contact() {
 
                 {/* ADDRESS */}
                 <ContactItem
-                  icon={
-                    <MapPin className="w-4 h-4" />
-                  }
+                  icon={<MapPin className="w-4 h-4" />}
                   title="Address"
                 >
                   Deenadayalu Street,
@@ -136,9 +135,7 @@ export default function Contact() {
 
                 {/* EMAIL */}
                 <ContactItem
-                  icon={
-                    <Mail className="w-4 h-4" />
-                  }
+                  icon={<Mail className="w-4 h-4" />}
                   title="Email"
                 >
                   soclothingoff@gmail.com
@@ -146,9 +143,7 @@ export default function Contact() {
 
                 {/* PHONE */}
                 <ContactItem
-                  icon={
-                    <Phone className="w-4 h-4" />
-                  }
+                  icon={<Phone className="w-4 h-4" />}
                   title="Phone"
                 >
                   +91 94445 45351
@@ -156,9 +151,7 @@ export default function Contact() {
 
                 {/* INSTAGRAM */}
                 <ContactItem
-                  icon={
-                    <Instagram className="w-4 h-4" />
-                  }
+                  icon={<Instagram className="w-4 h-4" />}
                   title="Instagram"
                 >
                   <a
@@ -220,8 +213,7 @@ export default function Contact() {
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    message:
-                      e.target.value,
+                    message: e.target.value,
                   })
                 }
                 rows={6}
@@ -235,13 +227,7 @@ export default function Contact() {
               disabled={loading}
               className="w-full bg-accent text-accent-foreground py-4 font-mono text-xs uppercase tracking-[0.25em] hover:bg-accent/90 disabled:opacity-60"
             >
-
-              {
-                loading
-                  ? "Sending..."
-                  : "Send Message"
-              }
-
+              {loading ? "Sending..." : "Send Message"}
             </button>
 
           </form>
@@ -259,9 +245,7 @@ function ContactItem({
   title,
   children,
 }) {
-
   return (
-
     <div className="flex gap-4">
 
       <span className="text-accent mt-1">
@@ -269,7 +253,6 @@ function ContactItem({
       </span>
 
       <div>
-
         <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
           {title}
         </p>
@@ -277,7 +260,6 @@ function ContactItem({
         <p className="text-sm">
           {children}
         </p>
-
       </div>
 
     </div>
@@ -292,9 +274,7 @@ function Field({
   onChange,
   ...props
 }) {
-
   return (
-
     <label className="block">
 
       <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground block mb-2">

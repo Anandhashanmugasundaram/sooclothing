@@ -16,6 +16,7 @@ import Contact from "./pages/Contact";
 import Lookbook from "./pages/Lookbook";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
+import AdminProducts from "./pages/AdminProducts";
 
 export default function App() {
   return (
@@ -38,6 +39,10 @@ export default function App() {
               <Route path="/lookbook" element={<Lookbook />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/admin" element={<Admin />} />
+              <Route
+  path="/admin-products"
+  element={<AdminProducts />}
+/>
             </Routes>
           </Layout>
         </BrowserRouter>

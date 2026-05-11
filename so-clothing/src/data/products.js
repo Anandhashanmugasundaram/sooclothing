@@ -1,11 +1,11 @@
-import p1 from "@/assets/product-1.jpg";
-import p2 from "@/assets/product-2.jpg";
-import p3 from "@/assets/product-3.jpg";
-import p4 from "@/assets/product-4.jpg";
-import p5 from "@/assets/product-5.jpg";
-import p6 from "@/assets/product-6.jpg";
-import p7 from "@/assets/product-7.jpg";
-import p8 from "@/assets/product-8.jpg";
+import p1 from "../assets/dress-image1.jpeg";
+import p2 from "../assets/dress-image2.jpeg";
+import p3 from "../assets/dress-image3.jpeg";
+import p4 from "../assets/dress-image4.jpeg";
+import p5 from "../assets/dress-image5.jpeg";
+import p6 from "../assets/dress-image6.jpeg";
+import p7 from "../assets/dress-image7.jpeg";
+import p8 from "../assets/dress-image8.jpeg";
 
 export const products = [
   { id: "001", slug: "sigil-tee", name: "Sigil Tee", price: 68, category: "tops", tag: "Essential", img: p1,

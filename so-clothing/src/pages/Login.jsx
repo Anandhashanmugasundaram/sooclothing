@@ -1,39 +1,30 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { z } from "zod";
-import { toast } from "sonner";
 import axios from "axios";
-
-import logo from "@/assets/logo.jpg";
-
-const schema = z.object({
-  email: z.string().trim().email("Valid email required").max(255),
-  password: z.string().min(6, "Password must be 6+ characters").max(100),
-});
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const nav = useNavigate();
+
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
-  const onSubmit = async (e) => {
+  // SUBMIT
+  const submitHandler = async (e) => {
+  console.log("EMAIL:", form.email);
+  console.log("PASSWORD:", form.password);
     e.preventDefault();
 
-    const parsed = schema.safeParse(form);
-
-    if (!parsed.success) {
-      toast.error(parsed.error.errors[0].message);
-      return;
-    }
-
-    setLoading(true);
-
     try {
+
+      setLoading(true);
+
+      // API CALL
       const res = await axios.post(
         "http://localhost:5000/api/auth/login",
         {
@@ -42,132 +33,113 @@ export default function Login() {
         }
       );
 
-      // Store token
-      localStorage.setItem("token", res.data.token);
+      // CHECK RESPONSE
+      console.log(res.data);
 
-      // Store user data
+      // SAVE TOKEN
+      localStorage.setItem(
+        "token",
+        res.data.token
+      );
+
+      // SAVE USER
       localStorage.setItem(
         "user",
-        JSON.stringify(res.data.user)
+        JSON.stringify(
+          res.data.user
+        )
       );
 
-      toast.success(res.data.message);
+      alert("Login Successful");
 
-      nav("/account");
+      // ADMIN REDIRECT
+      if (res.data.user.isAdmin) {
+
+        navigate("/admin");
+
+      } else {
+
+        navigate("/");
+
+      }
 
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Login failed"
+
+      console.log(error);
+
+      alert(
+        error.response?.data?.message ||
+        "Login failed"
       );
+
     } finally {
+
       setLoading(false);
+
     }
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-6 py-32">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
 
-        <Link
-          to="/"
-          className="flex items-center justify-center gap-3 mb-12"
-        >
-          <img src={logo} className="h-10 w-10" alt="" />
+      <div className="bg-white p-10 rounded-xl shadow-md w-full max-w-md">
 
-          <span className="font-display text-lg">
-            SO.CLOTHING
-          </span>
-        </Link>
-
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-3 text-center">
-          — Welcome Back
-        </p>
-
-        <h1 className="font-display text-4xl md:text-5xl uppercase text-center mb-12">
-          Sign In
+        <h1 className="text-3xl font-bold mb-8 text-center">
+          Login
         </h1>
 
-        <form onSubmit={onSubmit} className="space-y-5">
+        <form
+          onSubmit={submitHandler}
+          className="space-y-5"
+        >
 
-          <Field
-            label="Email"
+          {/* EMAIL */}
+          <input
             type="email"
+            placeholder="Enter Email"
+            className="border p-4 w-full rounded"
             value={form.email}
-            onChange={(v) =>
-              setForm({ ...form, email: v })
+            onChange={(e) =>
+              setForm({
+                ...form,
+                email: e.target.value,
+              })
             }
-            autoComplete="email"
+            required
           />
 
-          <Field
-            label="Password"
+          {/* PASSWORD */}
+          <input
             type="password"
+            placeholder="Enter Password"
+            className="border p-4 w-full rounded"
             value={form.password}
-            onChange={(v) =>
-              setForm({ ...form, password: v })
+            onChange={(e) =>
+              setForm({
+                ...form,
+                password:
+                  e.target.value,
+              })
             }
-            autoComplete="current-password"
+            required
           />
 
-          <div className="flex justify-end">
-            <button
-              type="button"
-              className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-accent"
-            >
-              Forgot password?
-            </button>
-          </div>
-
+          {/* BUTTON */}
           <button
+            type="submit"
             disabled={loading}
-            className="w-full bg-accent text-accent-foreground py-4 font-mono text-xs uppercase tracking-[0.25em] hover:bg-accent/90 disabled:opacity-60"
+            className="bg-black text-white w-full py-4 rounded"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {
+              loading
+                ? "Logging in..."
+                : "Login"
+            }
           </button>
 
         </form>
 
-        <div className="my-10 flex items-center gap-4">
-          <div className="flex-1 h-px bg-border" />
-
-          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            Or
-          </span>
-
-          <div className="flex-1 h-px bg-border" />
-        </div>
-
-        <p className="text-center text-sm text-muted-foreground">
-          New to SO.CLOTHING?{" "}
-
-          <Link
-            to="/register"
-            className="text-accent hover:underline font-mono text-xs uppercase tracking-widest ml-1"
-          >
-            Create account →
-          </Link>
-        </p>
-
       </div>
-    </section>
-  );
-}
-
-function Field({ label, value, onChange, ...props }) {
-  return (
-    <label className="block">
-
-      <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground block mb-2">
-        {label}
-      </span>
-
-      <input
-        {...props}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-transparent border border-border focus:border-accent outline-none px-4 py-3 font-mono text-sm"
-      />
-
-    </label>
+    </div>
   );
 }

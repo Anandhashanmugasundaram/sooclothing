@@ -75,9 +75,9 @@ export default function ProductDetail() {
 
     } catch (error) {
 
-      console.log(error);
+  console.log(error.response?.data);
 
-    }
+}
   };
 
   const onAdd = () => {

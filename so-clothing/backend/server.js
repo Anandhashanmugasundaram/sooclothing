@@ -1,27 +1,25 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
-
 require("dotenv").config();
 
-const dbConnect = require("./config/db_con");
-
+// ROUTES
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
+
+// ADMIN CREATION
+const createAdmin = require("./config/createAdmin");
 
 const app = express();
 
 
-// DATABASE CONNECTION
-dbConnect();
-
-
-// MIDDLEWARE
+// MIDDLEWARES
 app.use(cors());
 app.use(express.json());
 
 
-// STATIC FOLDER
+// STATIC FILES (UPLOADS)
 app.use(
   "/uploads",
   express.static(path.join(__dirname, "uploads"))
@@ -33,7 +31,30 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 
 
-// SERVER
-app.listen(5000, () => {
-  console.log("🚀 Server running on port 5000");
+// TEST ROUTE
+app.get("/", (req, res) => {
+  res.send("API Running");
 });
+
+
+// DATABASE CONNECTION + SERVER START
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(async () => {
+
+    console.log("MongoDB Connected");
+
+    // ✅ CREATE DEFAULT ADMIN
+    await createAdmin();
+
+    // START SERVER
+    app.listen(process.env.PORT || 5000, () => {
+      console.log(
+        `Server running on port ${process.env.PORT || 5000}`
+      );
+    });
+
+  })
+  .catch((error) => {
+    console.log("DB Connection Error:", error);
+  });

@@ -96,20 +96,23 @@ export function ProductCard({ product }) {
 
       <div className="product-card cursor-pointer">
 
-        <img
-          src={`http://localhost:5000/uploads/${product.image}`}
-          alt={product.name}
-          className="w-full h-[400px] object-cover"
-        />
-
+        {/* PRODUCT IMAGE */}
+<img
+  src={product.img || `http://localhost:5000/uploads/${product.image}`}
+  alt={product.name}
+  className="w-full h-[400px] object-cover rounded-xl"
+/>
+        {/* PRODUCT NAME */}
         <h2 className="text-xl mt-3">
           {product.name}
         </h2>
 
+        {/* PRICE */}
         <p className="mt-1">
           ₹ {product.price}
         </p>
 
+        {/* CATEGORY */}
         <p className="text-sm text-gray-500 mt-1 capitalize">
           {product.category}
         </p>

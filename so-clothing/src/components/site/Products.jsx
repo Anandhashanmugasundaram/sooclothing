@@ -525,130 +525,124 @@ const filteredProducts = products
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
 
           {/* FILTER SIDEBAR */}
-          {/* STORE CTA SIDEBAR */}
-<div className="sticky top-24 h-fit">
+          <div className="border rounded-2xl p-6 h-fit">
 
-  <div
-    className="
-      bg-black
-      text-white
-      rounded-3xl
-      p-8
-      overflow-hidden
-      relative
-    "
-  >
+            {/* PRICE FILTER */}
+            <div>
 
-    {/* BACKGROUND CIRCLE */}
-    <div
-      className="
-        absolute
-        -top-10
-        -right-10
-        w-40
-        h-40
-        rounded-full
-        bg-white/10
-      "
-    />
+              <div className="flex justify-between items-center mb-5">
 
-    <div
-      className="
-        absolute
-        -bottom-16
-        -left-16
-        w-52
-        h-52
-        rounded-full
-        bg-white/5
-      "
-    />
+                <h2 className="text-xl font-semibold">
+                  Price Range
+                </h2>
 
-    {/* CONTENT */}
-    <div className="relative z-10">
+                <button
+                  onClick={() => setSelectedPrice("")}
+                  className="text-sm"
+                >
+                  Reset
+                </button>
 
-      <p className="uppercase tracking-[0.3em] text-sm text-gray-300">
-        SO.CLOTHING
-      </p>
+              </div>
 
-      <h2 className="text-4xl font-bold mt-4 leading-tight">
-        Explore
-        <br />
-        The Full Store
-      </h2>
+              <div className="flex flex-wrap gap-3">
 
-      <p className="text-gray-300 mt-5 leading-7">
-        Discover premium streetwear,
-        oversized fits, latest drops,
-        and exclusive collections.
-      </p>
+                {[
+                  {
+                    label: "Below ₹200",
+                    value: "0-200",
+                  },
+                  {
+                    label: "₹201 - ₹400",
+                    value: "201-400",
+                  },
+                  {
+                    label: "₹401 - ₹600",
+                    value: "401-600",
+                  },
+                  {
+                    label: "₹601 - ₹800",
+                    value: "601-800",
+                  },
+                  {
+                    label: "₹801 - ₹1000",
+                    value: "801-1000",
+                  },
+                  {
+                    label: "Above ₹1000",
+                    value: "1000+",
+                  },
+                ].map((item) => (
 
-      {/* BUTTON */}
-      <Link
-  to="/shop"
-  className="
-    group
-    relative
-    inline-flex
-    items-center
-    justify-center
-    overflow-hidden
-    mt-8
-    px-8
-    py-4
-    rounded-xl
-    font-semibold
-    text-white
-    bg-gradient-to-r
-    from-red-500
-    via-pink-500
-    to-orange-400
-    shadow-lg
-    transition-all
-    duration-500
-    hover:scale-105
-    hover:shadow-red-500/40
-  "
->
+                  <button
+                    key={item.value}
+                    onClick={() =>
+                      setSelectedPrice(item.value)
+                    }
+                    className={`px-4 py-2 border rounded-full transition-all duration-300
+                    ${
+                      selectedPrice === item.value
+                        ? "border-black"
+                        : ""
+                    }`}
+                  >
+                    {item.label}
+                  </button>
 
-  {/* GLOW EFFECT */}
-  <span
-    className="
-      absolute
-      inset-0
-      bg-white/20
-      translate-x-[-120%]
-      group-hover:translate-x-[120%]
-      transition-transform
-      duration-1000
-      skew-x-12
-    "
-  />
+                ))}
 
-  {/* TEXT */}
-  <span className="relative z-10 flex items-center gap-2">
+              </div>
 
-    Visit Store
+            </div>
 
-    <span
-      className="
-        transition-transform
-        duration-300
-        group-hover:translate-x-1
-      "
-    >
-      →
-    </span>
+            {/* SIZE FILTER */}
+            <div className="mt-10">
 
-  </span>
+              <div className="flex justify-between items-center mb-5">
 
-</Link>
+                <h2 className="text-xl font-semibold">
+                  Size
+                </h2>
 
-    </div>
+                <button
+                  onClick={() => setSelectedSizes([])}
+                  className="text-sm"
+                >
+                  Reset
+                </button>
 
-  </div>
+              </div>
 
-</div>
+              <div className="space-y-4">
+
+                {["S", "M", "L", "XL"].map((size) => (
+
+                  <label
+                    key={size}
+                    className="flex items-center gap-3 cursor-pointer"
+                  >
+
+                    <input
+                      type="checkbox"
+                      checked={selectedSizes.includes(size)}
+                      onChange={() =>
+                        handleSizeChange(size)
+                      }
+                    />
+
+                    <span>
+                      {size}
+                    </span>
+
+                  </label>
+
+                ))}
+
+              </div>
+
+            </div>
+
+          </div>
 
           {/* PRODUCTS SECTION */}
           <div>
@@ -658,7 +652,7 @@ const filteredProducts = products
             </p>
 
             {/* PRODUCTS GRID */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
               {filteredProducts.map((product) => (
 
@@ -716,7 +710,7 @@ export function ProductCard({ product }) {
                 h-[180px]
                 rounded-full
                 border
-                border-red-200
+                border-red-400
               "
             ></div>
 
@@ -730,7 +724,7 @@ export function ProductCard({ product }) {
                 h-[220px]
                 rounded-full
                 border-[10px]
-                border-red-100
+                border-red-300
                 opacity-60
               "
             ></div>
@@ -826,7 +820,7 @@ export function ProductCard({ product }) {
           {/* PRICE */}
           <div className="flex items-center gap-3 mt-3">
 
-            <p className="text-[28px] leading-none font-medium text-[#0f1d4d]">
+            <p className="text-[18px] leading-none font-medium text-[#0f1d4d]">
               ₹{product.price}
             </p>
 
@@ -836,7 +830,7 @@ export function ProductCard({ product }) {
 
           </div>
 
-          {/* SIZES */}
+          {/* SIZES
           <div className="flex gap-2 mt-5 flex-wrap">
 
             {product.sizes?.map((size, index) => (
@@ -867,7 +861,7 @@ export function ProductCard({ product }) {
               </span>
             ))}
 
-          </div>
+          </div> */}
 
         </div>
 

@@ -12,9 +12,8 @@ export default function Index() {
       <Marquee />
       <Hero />
       <Products />
-      <Campaign />
       <Drops />
-      <Newsletter />
+      
     </>
   );
 }

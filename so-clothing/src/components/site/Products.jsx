@@ -525,124 +525,144 @@ const filteredProducts = products
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
 
           {/* FILTER SIDEBAR */}
-          <div className="border rounded-2xl p-6 h-fit">
+          {/* STORE CTA SIDEBAR */}
+<div className="sticky top-24 h-fit">
 
-            {/* PRICE FILTER */}
-            <div>
+  <div
+    className="
+      bg-black
+      text-white
+      rounded-3xl
+      p-8
+      overflow-hidden
+      relative
+    "
+  >
 
-              <div className="flex justify-between items-center mb-5">
+    {/* BACKGROUND CIRCLE */}
+    <div
+      className="
+        absolute
+        -top-10
+        -right-10
+        w-40
+        h-40
+        rounded-full
+        bg-white/10
+      "
+    />
 
-                <h2 className="text-xl font-semibold">
-                  Price Range
-                </h2>
+    <div
+      className="
+        absolute
+        -bottom-16
+        -left-16
+        w-52
+        h-52
+        rounded-full
+        bg-white/5
+      "
+    />
 
-                <button
-                  onClick={() => setSelectedPrice("")}
-                  className="text-sm"
-                >
-                  Reset
-                </button>
+    {/* CONTENT */}
+    <div className="relative z-10">
 
-              </div>
+      <p className="uppercase tracking-[0.3em] text-sm text-gray-300">
+        $O.CLOTHING
+      </p>
 
-              <div className="flex flex-wrap gap-3">
+      <h2 className="text-4xl font-bold mt-4 leading-tight">
+        Explore
+        <br />
+        The Full Store
+      </h2>
 
-                {[
-                  {
-                    label: "Below ₹200",
-                    value: "0-200",
-                  },
-                  {
-                    label: "₹201 - ₹400",
-                    value: "201-400",
-                  },
-                  {
-                    label: "₹401 - ₹600",
-                    value: "401-600",
-                  },
-                  {
-                    label: "₹601 - ₹800",
-                    value: "601-800",
-                  },
-                  {
-                    label: "₹801 - ₹1000",
-                    value: "801-1000",
-                  },
-                  {
-                    label: "Above ₹1000",
-                    value: "1000+",
-                  },
-                ].map((item) => (
+      <p className="text-gray-300 mt-5 leading-7">
+        Discover premium streetwear,
+        oversized fits, latest drops,
+        and exclusive collections.
+      </p>
 
-                  <button
-                    key={item.value}
-                    onClick={() =>
-                      setSelectedPrice(item.value)
-                    }
-                    className={`px-4 py-2 border rounded-full transition-all duration-300
-                    ${
-                      selectedPrice === item.value
-                        ? "border-black"
-                        : ""
-                    }`}
-                  >
-                    {item.label}
-                  </button>
+      {/* BUTTON */}
+ <Link
+  to="/shop"
+  className="
+    group
+    relative
+    inline-flex
+    items-center
+    justify-center
+    overflow-hidden
+    mt-8
+    px-8
+    py-4
+    rounded-xl
+    font-semibold
+    text-white
 
-                ))}
+    bg-gradient-to-r
+    from-black
+    via-zinc-900
+    to-neutral-800
 
-              </div>
+    border
+    border-white/10
 
-            </div>
+    shadow-[0_10px_40px_rgba(0,0,0,0.35)]
 
-            {/* SIZE FILTER */}
-            <div className="mt-10">
+    transition-all
+    duration-500
 
-              <div className="flex justify-between items-center mb-5">
+    hover:scale-105
+    hover:shadow-[0_15px_50px_rgba(255,255,255,0.08)]
+    hover:border-white/20
+  "
+>
 
-                <h2 className="text-xl font-semibold">
-                  Size
-                </h2>
+  {/* SHINE EFFECT */}
+  <span
+    className="
+      absolute
+      inset-0
+      bg-gradient-to-r
+      from-transparent
+      via-white/20
+      to-transparent
 
-                <button
-                  onClick={() => setSelectedSizes([])}
-                  className="text-sm"
-                >
-                  Reset
-                </button>
+      translate-x-[-120%]
+      group-hover:translate-x-[120%]
 
-              </div>
+      transition-transform
+      duration-1000
+      skew-x-12
+    "
+  />
 
-              <div className="space-y-4">
+  {/* TEXT */}
+  <span className="relative z-10 flex items-center gap-3 tracking-wide">
 
-                {["S", "M", "L", "XL"].map((size) => (
+    Visit Store
 
-                  <label
-                    key={size}
-                    className="flex items-center gap-3 cursor-pointer"
-                  >
+    <span
+      className="
+        text-lg
+        transition-transform
+        duration-300
+        group-hover:translate-x-1
+      "
+    >
+      →
+    </span>
 
-                    <input
-                      type="checkbox"
-                      checked={selectedSizes.includes(size)}
-                      onChange={() =>
-                        handleSizeChange(size)
-                      }
-                    />
+  </span>
 
-                    <span>
-                      {size}
-                    </span>
+</Link>
 
-                  </label>
+    </div>
 
-                ))}
+  </div>
 
-              </div>
-
-            </div>
-
-          </div>
+</div>
 
           {/* PRODUCTS SECTION */}
           <div>
@@ -652,7 +672,7 @@ const filteredProducts = products
             </p>
 
             {/* PRODUCTS GRID */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
 
               {filteredProducts.map((product) => (
 
@@ -710,7 +730,7 @@ export function ProductCard({ product }) {
                 h-[180px]
                 rounded-full
                 border
-                border-red-400
+                border-red-200
               "
             ></div>
 
@@ -724,7 +744,7 @@ export function ProductCard({ product }) {
                 h-[220px]
                 rounded-full
                 border-[10px]
-                border-red-300
+                border-red-100
                 opacity-60
               "
             ></div>
@@ -820,7 +840,7 @@ export function ProductCard({ product }) {
           {/* PRICE */}
           <div className="flex items-center gap-3 mt-3">
 
-            <p className="text-[18px] leading-none font-medium text-[#0f1d4d]">
+            <p className="text-[28px] leading-none font-medium text-[#0f1d4d]">
               ₹{product.price}
             </p>
 

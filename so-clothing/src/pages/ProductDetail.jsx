@@ -266,10 +266,7 @@ export default function ProductDetail() {
                   label="Free Shipping"
                 />
 
-                <Perk
-                  icon={<RotateCcw className="w-5 h-5" />}
-                  label="30-Day Return"
-                />
+                
 
                 <Perk
                   icon={<Shield className="w-5 h-5" />}

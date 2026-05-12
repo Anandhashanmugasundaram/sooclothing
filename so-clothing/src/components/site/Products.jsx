@@ -372,6 +372,12 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  Heart,
+  ShoppingBag,
+  Star,
+  Eye,
+} from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -428,7 +434,8 @@ export function Products() {
   };
 
   // FILTER PRODUCTS
-  const filteredProducts = products.filter((product) => {
+const filteredProducts = products
+  .filter((product) => {
 
     // SIZE FILTER
     const sizeMatch =
@@ -474,7 +481,8 @@ export function Products() {
 
     return sizeMatch && priceMatch;
 
-  });
+  })
+  .slice(0, 8);
 
   // GSAP ANIMATION
   useEffect(() => {
@@ -668,209 +676,196 @@ export function Products() {
 }
 
 export function ProductCard({ product }) {
-
   return (
-
-    <div className="product-card cursor-pointer group">
+    <div className="group relative">
 
       <Link to={`/product/${product.slug}`}>
 
         {/* CARD */}
         <div
           className="
-            bg-[#f5f5f5]
-            rounded-[32px]
-            p-4
-            overflow-hidden
             relative
-            aspect-square
+            overflow-hidden
+            rounded-[30px]
+            bg-[#f7f7f7]
+            border
+            border-[#eeeeee]
             transition-all
             duration-500
-            hover:shadow-xl
+            hover:-translate-y-2
+            hover:shadow-[0_18px_45px_rgba(0,0,0,0.08)]
           "
         >
 
-          {/* OFFER TAG */}
-          <div
-            className="
-              absolute
-              top-4
-              right-4
-              z-30
-              bg-white
-              px-4
-              py-1
-              rounded-full
-              shadow-md
-              text-sm
-              text-pink-500
-            "
-          >
-            20% Offer
-          </div>
-
-          {/* BACKGROUND DESIGN */}
+          {/* ABSTRACT BACKGROUND */}
           <div className="absolute inset-0 overflow-hidden">
 
-            {/* CURVE 1 */}
+            {/* CURVE LINE */}
             <div
               className="
                 absolute
-                -top-16
-                -left-16
-                w-56
-                h-56
+                -top-20
+                -left-10
+                w-[180px]
+                h-[180px]
                 rounded-full
                 border
                 border-red-200
               "
             ></div>
 
-            {/* CURVE 2 */}
+            {/* SIDE SHAPE */}
             <div
               className="
                 absolute
-                -top-10
-                -left-10
-                w-44
-                h-44
+                right-[-35px]
+                top-[130px]
+                w-[110px]
+                h-[220px]
                 rounded-full
-                border
+                border-[10px]
                 border-red-100
-              "
-            ></div>
-
-            {/* PINK BLOB */}
-            <div
-              className="
-                absolute
-                bottom-0
-                right-0
-                w-44
-                h-44
-                bg-pink-100
-                rounded-full
                 opacity-60
               "
             ></div>
 
-            {/* SMALL RING */}
-            <div
-              className="
-                absolute
-                bottom-10
-                right-10
-                w-20
-                h-20
-                border-[10px]
-                border-pink-200
-                rounded-full
-              "
-            ></div>
-
           </div>
 
-          {/* IMAGE */}
-          <div
-            className="
-              relative
-              z-20
-              w-full
-              h-full
-              flex
-              items-center
-              justify-center
-            "
-          >
+          {/* OFFER TAG */}
+          <div className="absolute top-5 right-5 z-30">
 
             <div
               className="
-                w-[220px]
-                h-[220px]
-                rounded-2xl
-                overflow-hidden
+                px-4
+                py-2
+                rounded-xl
+                bg-white
+                shadow-md
+                text-[13px]
+                font-medium
+                text-pink-500
               "
             >
-
-              <img
-                src={
-                  product.img ||
-                  `http://localhost:5000/uploads/${product.image}`
-                }
-                alt={product.name}
-                className="
-                  w-full
-                  h-full
-                  object-cover
-                  rounded-2xl
-                  transition-all
-                  duration-500
-                  group-hover:scale-105
-                  group-hover:-translate-y-2
-                "
-              />
-
+              20% offer
             </div>
 
           </div>
 
+          {/* IMAGE SECTION */}
+          <div
+            className="
+              relative
+              h-[350px]
+              flex
+              items-center
+              justify-center
+              p-6
+              z-10
+            "
+          >
+
+            {/* PRODUCT IMAGE */}
+            <img
+              src={
+                product.img ||
+                `http://localhost:5000/uploads/${product.image}`
+              }
+              alt={product.name}
+              className="
+                w-full
+                h-full
+                object-contain
+                rounded-[24px]
+                transition-all
+                duration-700
+                group-hover:scale-[1.04]
+              "
+            />
+
+          </div>
+
         </div>
 
-        {/* PRODUCT NAME */}
-        <h2 className="text-xl mt-3">
-          {product.name}
-        </h2>
+        {/* CONTENT */}
+        <div className="pt-5 px-2 pb-3">
 
-        {/* PRICE */}
-        <p className="mt-1 text-lg">
-          ₹ {product.price}
-        </p>
+          {/* PRODUCT NAME */}
+          <h2
+            className="
+              text-[20px]
+              leading-snug
+              font-semibold
+              text-[#13204a]
+              line-clamp-2
+              transition-all
+              duration-300
+              group-hover:text-red-500
+            "
+          >
+            {product.name}
+          </h2>
 
-        {/* CATEGORY */}
-        <p className="text-sm text-gray-500 mt-1 capitalize">
-          {product.category}
-        </p>
+          {/* CATEGORY */}
+          <p
+            className="
+              mt-1
+              text-[17px]
+              text-gray-500
+              font-normal
+            "
+          >
+            {product.category}
+          </p>
 
-        {/* SIZES */}
-        <div className="flex gap-2 mt-3 flex-wrap">
+          {/* PRICE */}
+          <div className="flex items-center gap-3 mt-3">
 
-          {product.sizes?.map((size, index) => (
+            <p className="text-[28px] leading-none font-medium text-[#0f1d4d]">
+              ₹{product.price}
+            </p>
 
-            <span
-              key={index}
-              className="
-                px-3
-                py-1
-                border
-                rounded-full
-                text-sm
-              "
-            >
-              {size.toUpperCase()}
+            <span className="text-gray-400 line-through text-lg mt-2">
+              ₹{Math.floor(product.price * 1.2)}
             </span>
 
-          ))}
+          </div>
+
+          {/* SIZES */}
+          <div className="flex gap-2 mt-5 flex-wrap">
+
+            {product.sizes?.map((size, index) => (
+              <span
+                key={index}
+                className="
+                  min-w-[42px]
+                  h-10
+                  px-3
+                  flex
+                  items-center
+                  justify-center
+                  rounded-full
+                  border
+                  border-gray-200
+                  bg-white
+                  text-sm
+                  font-medium
+                  text-gray-700
+                  hover:border-black
+                  hover:bg-black
+                  hover:text-white
+                  transition-all
+                  duration-300
+                "
+              >
+                {size.toUpperCase()}
+              </span>
+            ))}
+
+          </div>
 
         </div>
 
       </Link>
-
-      {/* ADD TO CART BUTTON */}
-      <button
-        className="
-          w-full
-          mt-4
-          bg-red-600
-          hover:bg-red-700
-          text-white
-          py-3
-          rounded-lg
-          transition-all
-          duration-300
-        "
-      >
-        Add To Cart
-      </button>
 
     </div>
   );

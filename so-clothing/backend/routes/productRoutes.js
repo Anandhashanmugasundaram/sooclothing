@@ -13,7 +13,6 @@ router.post(
   "/add",
 
   upload.single("image"),
-  
 
   async (req, res) => {
     try {
@@ -111,6 +110,65 @@ router.get(
       }
 
       res.status(200).json(product);
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        message: error.message || "Server Error",
+      });
+    }
+  },
+);
+
+// =====================================
+// UPDATE PRODUCT
+// =====================================
+router.put(
+  "/:id",
+
+  upload.single("image"),
+
+  async (req, res) => {
+    try {
+      const product = await Product.findById(req.params.id);
+
+      // CHECK PRODUCT
+      if (!product) {
+        return res.status(404).json({
+          message: "Product not found",
+        });
+      }
+
+      const { name, price, category, description, sizes } = req.body;
+
+      // UPDATE VALUES
+      product.name = name || product.name;
+
+      product.slug = name
+        ? name.toLowerCase().trim().replace(/\s+/g, "-")
+        : product.slug;
+
+      product.price = price || product.price;
+
+      product.category = category || product.category;
+
+      product.description = description || product.description;
+
+      product.sizes = sizes ? sizes.split(",") : product.sizes;
+
+      // UPDATE IMAGE ONLY IF NEW IMAGE EXISTS
+      if (req.file) {
+        product.image = req.file.filename;
+      }
+
+      // SAVE UPDATED PRODUCT
+      await product.save();
+
+      res.status(200).json({
+        message: "Product updated successfully",
+
+        product,
+      });
     } catch (error) {
       console.log(error);
 

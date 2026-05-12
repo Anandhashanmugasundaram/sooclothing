@@ -1,266 +1,4 @@
-
-
-// // // import {
-// // //   createContext,
-// // //   useContext,
-// // //   useEffect,
-// // //   useState,
-// // // } from "react";
-
-// // // import axios from "axios";
-
-// // // const AuthContext =
-// // //   createContext(null);
-
-// // // const KEY = "so_user_v1";
-
-// // // export function AuthProvider({
-// // //   children,
-// // // }) {
-
-// // //   const [user, setUser] =
-// // //     useState(() => {
-
-// // //       try {
-
-// // //         const saved =
-// // //           localStorage.getItem(KEY);
-
-// // //         return saved
-// // //           ? JSON.parse(saved)
-// // //           : null;
-
-// // //       } catch {
-
-// // //         return null;
-
-// // //       }
-
-// // //     });
-
-// // //   // SAVE USER
-// // //   useEffect(() => {
-
-// // //     if (user) {
-
-// // //       localStorage.setItem(
-// // //         KEY,
-// // //         JSON.stringify(user)
-// // //       );
-
-// // //     } else {
-
-// // //       localStorage.removeItem(KEY);
-
-// // //     }
-
-// // //   }, [user]);
-
-// // //   // REGISTER
-// // //   const register = async (
-// // //     name,
-// // //     email,
-// // //     password
-// // //   ) => {
-
-// // //     const res = await axios.post(
-// // //       "http://localhost:5000/api/auth/register",
-// // //       {
-// // //         name,
-// // //         email,
-// // //         password,
-// // //       }
-// // //     );
-
-// // //     return res.data;
-// // //   };
-
-// // //   // LOGIN
-// // //   const login = (
-// // //     userData,
-// // //     token
-// // //   ) => {
-
-// // //     // SAVE TOKEN
-// // //     localStorage.setItem(
-// // //       "token",
-// // //       token
-// // //     );
-
-// // //     // SAVE USER
-// // //     localStorage.setItem(
-// // //       KEY,
-// // //       JSON.stringify(userData)
-// // //     );
-
-// // //     // UPDATE STATE
-// // //     setUser(userData);
-// // //   };
-
-// // //   // LOGOUT
-// // //   const logout = () => {
-
-// // //     localStorage.removeItem(
-// // //       "token"
-// // //     );
-
-// // //     localStorage.removeItem(KEY);
-
-// // //     setUser(null);
-// // //   };
-
-// // //   return (
-
-// // //     <AuthContext.Provider
-// // //       value={{
-// // //         user,
-// // //         setUser,
-// // //         register,
-// // //         login,
-// // //         logout,
-// // //       }}
-// // //     >
-
-// // //       {children}
-
-// // //     </AuthContext.Provider>
-
-// // //   );
-// // // }
-
-// // // export const useAuth = () => {
-
-// // //   const ctx =
-// // //     useContext(AuthContext);
-
-// // //   if (!ctx) {
-
-// // //     throw new Error(
-// // //       "useAuth must be inside AuthProvider"
-// // //     );
-
-// // //   }
-
-// // //   return ctx;
-// // // };
-
-
-// // import {
-// //   createContext,
-// //   useContext,
-// //   useEffect,
-// //   useState,
-// // } from "react";
-
-// // import {
-// //   signInWithPopup,
-// //   signOut,
-// //   onAuthStateChanged,
-// // } from "firebase/auth";
-
-// // import {
-// //   auth,
-// //   googleProvider,
-// // } from "@/firebase";
-
-// // const AuthContext =
-// //   createContext(null);
-
-// // export function AuthProvider({
-// //   children,
-// // }) {
-
-// //   const [user, setUser] =
-// //     useState(null);
-
-// //   const [loading, setLoading] =
-// //     useState(true);
-
-// //   useEffect(() => {
-
-// //     const unsubscribe =
-// //       onAuthStateChanged(
-// //         auth,
-// //         (currentUser) => {
-
-// //           if (currentUser) {
-
-// //             setUser({
-// //               name:
-// //                 currentUser.displayName,
-
-// //               email:
-// //                 currentUser.email,
-
-// //               photo:
-// //                 currentUser.photoURL,
-// //             });
-
-// //           } else {
-
-// //             setUser(null);
-
-// //           }
-
-// //           setLoading(false);
-
-// //         }
-// //       );
-
-// //     return unsubscribe;
-
-// //   }, []);
-
-// //   // GOOGLE LOGIN
-// //   const googleLogin =
-// //     async () => {
-
-// //       await signInWithPopup(
-// //         auth,
-// //         googleProvider
-// //       );
-
-// //     };
-
-// //   // LOGOUT
-// //   const logout = async () => {
-
-// //     await signOut(auth);
-
-// //   };
-
-// //   return (
-
-// //     <AuthContext.Provider
-// //       value={{
-// //         user,
-// //         googleLogin,
-// //         logout,
-// //       }}
-// //     >
-
-// //       {!loading && children}
-
-// //     </AuthContext.Provider>
-
-// //   );
-// // }
-
-// // export const useAuth = () => {
-
-// //   const ctx =
-// //     useContext(AuthContext);
-
-// //   if (!ctx) {
-
-// //     throw new Error(
-// //       "useAuth must be inside AuthProvider"
-// //     );
-
-// //   }
-
-// //   return ctx;
-// // };
+// // src/contexts/AuthContext.jsx
 
 // import {
 //   createContext,
@@ -275,6 +13,8 @@
 //   onAuthStateChanged,
 // } from "firebase/auth";
 
+// import { toast } from "sonner";
+
 // import {
 //   auth,
 //   googleProvider,
@@ -283,7 +23,7 @@
 // const AuthContext =
 //   createContext(null);
 
-// // YOUR ADMIN EMAIL
+// // ADMIN EMAIL
 // const ADMIN_EMAIL =
 //   "mranonymous100m@gmail.com";
 
@@ -297,6 +37,7 @@
 //   const [loading, setLoading] =
 //     useState(true);
 
+//   // AUTH LISTENER
 //   useEffect(() => {
 
 //     const unsubscribe =
@@ -346,7 +87,8 @@
 //         }
 //       );
 
-//     return unsubscribe;
+//     return () =>
+//       unsubscribe();
 
 //   }, []);
 
@@ -354,19 +96,107 @@
 //   const googleLogin =
 //     async () => {
 
-//       await signInWithPopup(
-//         auth,
-//         googleProvider
-//       );
+//       try {
+
+//         const result =
+//           await signInWithPopup(
+//             auth,
+//             googleProvider
+//           );
+
+//         const currentUser =
+//           result.user;
+
+//         const userData = {
+//           name:
+//             currentUser.displayName,
+
+//           email:
+//             currentUser.email,
+
+//           photo:
+//             currentUser.photoURL,
+
+//           uid:
+//             currentUser.uid,
+
+//           isAdmin:
+//             currentUser.email ===
+//             ADMIN_EMAIL,
+//         };
+
+//         // SAVE USER
+//         setUser(userData);
+
+//         localStorage.setItem(
+//           "user",
+//           JSON.stringify(userData)
+//         );
+
+//         toast.success(
+//           "Login successful"
+//         );
+
+//         // REDIRECT
+//         if (
+//           currentUser.email ===
+//           ADMIN_EMAIL
+//         ) {
+
+//           window.location.href =
+//             "/admin";
+
+//         } else {
+
+//           window.location.href =
+//             "/";
+
+//         }
+
+//       } catch (error) {
+
+//         console.log(error);
+
+//         toast.error(
+//           "Google login failed"
+//         );
+
+//       }
 
 //     };
 
 //   // LOGOUT
-//   const logout = async () => {
+//   const logout =
+//     async () => {
 
-//     await signOut(auth);
+//       try {
 
-//   };
+//         await signOut(auth);
+
+//         setUser(null);
+
+//         localStorage.removeItem(
+//           "user"
+//         );
+
+//         toast.success(
+//           "Logged out successfully"
+//         );
+
+//         window.location.href =
+//           "/";
+
+//       } catch (error) {
+
+//         console.log(error);
+
+//         toast.error(
+//           "Logout failed"
+//         );
+
+//       }
+
+//     };
 
 //   return (
 
@@ -378,33 +208,33 @@
 //       }}
 //     >
 
-//       {!loading && children}
+//       {!loading &&
+//         children}
 
 //     </AuthContext.Provider>
 
 //   );
+
 // }
 
-// export const useAuth = () => {
+// export const useAuth =
+//   () => {
 
-//   const ctx =
-//     useContext(AuthContext);
+//     const ctx =
+//       useContext(AuthContext);
 
-//   if (!ctx) {
+//     if (!ctx) {
 
-//     throw new Error(
-//       "useAuth must be inside AuthProvider"
-//     );
+//       throw new Error(
+//         "useAuth must be inside AuthProvider"
+//       );
 
-//   }
+//     }
 
-//   return ctx;
-// };
+//     return ctx;
 
+//   };
 
-
-
-// src/contexts/AuthContext.jsx
 
 import {
   createContext,
@@ -420,6 +250,12 @@ import {
 } from "firebase/auth";
 
 import {
+  useNavigate,
+} from "react-router-dom";
+
+import { toast } from "sonner";
+
+import {
   auth,
   googleProvider,
 } from "@/firebase";
@@ -427,7 +263,6 @@ import {
 const AuthContext =
   createContext(null);
 
-// ADMIN EMAIL
 const ADMIN_EMAIL =
   "mranonymous100m@gmail.com";
 
@@ -435,13 +270,16 @@ export function AuthProvider({
   children,
 }) {
 
+  const navigate =
+    useNavigate();
+
   const [user, setUser] =
     useState(null);
 
   const [loading, setLoading] =
     useState(true);
 
-  // FIREBASE AUTH LISTENER
+  // FIREBASE LISTENER
   useEffect(() => {
 
     const unsubscribe =
@@ -471,7 +309,6 @@ export function AuthProvider({
 
             setUser(userData);
 
-            // SAVE USER
             localStorage.setItem(
               "user",
               JSON.stringify(userData)
@@ -492,7 +329,8 @@ export function AuthProvider({
         }
       );
 
-    return unsubscribe;
+    return () =>
+      unsubscribe();
 
   }, []);
 
@@ -508,28 +346,59 @@ export function AuthProvider({
             googleProvider
           );
 
-        const email =
-          result.user.email;
+        const currentUser =
+          result.user;
 
-        // ADMIN REDIRECT
+        const userData = {
+          name:
+            currentUser.displayName,
+
+          email:
+            currentUser.email,
+
+          photo:
+            currentUser.photoURL,
+
+          uid:
+            currentUser.uid,
+
+          isAdmin:
+            currentUser.email ===
+            ADMIN_EMAIL,
+        };
+
+        setUser(userData);
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(userData)
+        );
+
+        toast.success(
+          "Login successful"
+        );
+
+        // NO PAGE RELOAD
         if (
-          email ===
+          currentUser.email ===
           ADMIN_EMAIL
         ) {
 
-          window.location.href =
-            "/admin";
+          navigate("/admin");
 
         } else {
 
-          window.location.href =
-            "/";
+          navigate("/");
 
         }
 
       } catch (error) {
 
         console.log(error);
+
+        toast.error(
+          "Google login failed"
+        );
 
       }
 
@@ -539,14 +408,31 @@ export function AuthProvider({
   const logout =
     async () => {
 
-      await signOut(auth);
+      try {
 
-      localStorage.removeItem(
-        "user"
-      );
+        await signOut(auth);
 
-      window.location.href =
-        "/";
+        setUser(null);
+
+        localStorage.removeItem(
+          "user"
+        );
+
+        toast.success(
+          "Logged out successfully"
+        );
+
+        navigate("/");
+
+      } catch (error) {
+
+        console.log(error);
+
+        toast.error(
+          "Logout failed"
+        );
+
+      }
 
     };
 

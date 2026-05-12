@@ -1,13 +1,36 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Trash2 } from "lucide-react";
+import {
+  Trash2,
+  Pencil,
+  X,
+} from "lucide-react";
 
 export default function AdminProducts() {
 
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] =
+    useState([]);
 
   const [loading, setLoading] =
     useState(true);
+
+  const [editOpen, setEditOpen] =
+    useState(false);
+
+  const [selectedId, setSelectedId] =
+    useState(null);
+
+  const [form, setForm] =
+    useState({
+      name: "",
+      price: "",
+      category: "",
+      description: "",
+      sizes: "",
+    });
+
+  const [image, setImage] =
+    useState(null);
 
   useEffect(() => {
 
@@ -16,71 +39,189 @@ export default function AdminProducts() {
   }, []);
 
   // FETCH PRODUCTS
-  const fetchProducts = async () => {
+  const fetchProducts =
+    async () => {
 
-    try {
+      try {
 
-      const res = await axios.get(
-        "http://localhost:5000/api/products"
-      );
+        const res =
+          await axios.get(
+            "http://localhost:5000/api/products"
+          );
 
-      setProducts(res.data);
+        setProducts(res.data);
 
-    } catch (error) {
+      } catch (error) {
 
-      console.log(error);
+        console.log(error);
 
-    } finally {
+      } finally {
 
-      setLoading(false);
+        setLoading(false);
 
-    }
-  };
+      }
+
+    };
 
   // DELETE PRODUCT
-  const deleteProduct = async (id) => {
+  const deleteProduct =
+    async (id) => {
 
-    const confirmDelete =
-      window.confirm(
-        "Are you sure you want to delete this product?"
+      const confirmDelete =
+        window.confirm(
+          "Are you sure you want to delete this product?"
+        );
+
+      if (!confirmDelete)
+        return;
+
+      try {
+
+        await axios.delete(
+          `http://localhost:5000/api/products/${id}`
+        );
+
+        setProducts(
+          products.filter(
+            (p) =>
+              p._id !== id
+          )
+        );
+
+        alert(
+          "Product deleted"
+        );
+
+      } catch (error) {
+
+        console.log(error);
+
+        alert(
+          error.response?.data
+            ?.message ||
+            "Delete failed"
+        );
+
+      }
+
+    };
+
+  // OPEN EDIT
+  const openEdit =
+    (product) => {
+
+      setSelectedId(
+        product._id
       );
 
-    if (!confirmDelete) return;
+      setForm({
+        name:
+          product.name,
+        price:
+          product.price,
+        category:
+          product.category,
+        description:
+          product.description,
+        sizes:
+          product.sizes?.join(
+            ","
+          ),
+      });
 
-    try {
+      setImage(null);
 
-      const token =
-        localStorage.getItem("token");
+      setEditOpen(true);
 
-      await axios.delete(
-        `http://localhost:5000/api/products/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+    };
+
+  // UPDATE PRODUCT
+  const updateProduct =
+    async (e) => {
+
+      e.preventDefault();
+
+      try {
+
+        const data =
+          new FormData();
+
+        data.append(
+          "name",
+          form.name
+        );
+
+        data.append(
+          "price",
+          form.price
+        );
+
+        data.append(
+          "category",
+          form.category
+        );
+
+        data.append(
+          "description",
+          form.description
+        );
+
+        data.append(
+          "sizes",
+          form.sizes
+        );
+
+        if (image) {
+
+          data.append(
+            "image",
+            image
+          );
+
         }
-      );
 
-      // REMOVE FROM UI
-      setProducts(
-        products.filter(
-          (p) => p._id !== id
-        )
-      );
+        const res =
+          await axios.put(
+            `http://localhost:5000/api/products/${selectedId}`,
+            data,
+            {
+              headers: {
+                "Content-Type":
+                  "multipart/form-data",
+              },
+            }
+          );
 
-      alert("Product deleted");
+        setProducts(
+          products.map(
+            (p) =>
+              p._id ===
+              selectedId
+                ? res.data
+                    .product
+                : p
+          )
+        );
 
-    } catch (error) {
+        alert(
+          "Product updated"
+        );
 
-      console.log(error);
+        setEditOpen(false);
 
-      alert(
-        error.response?.data?.message ||
-        "Delete failed"
-      );
+      } catch (error) {
 
-    }
-  };
+        console.log(error);
+
+        alert(
+          error.response?.data
+            ?.message ||
+            "Update failed"
+        );
+
+      }
+
+    };
 
   if (loading) {
 
@@ -89,9 +230,11 @@ export default function AdminProducts() {
         Loading...
       </div>
     );
+
   }
 
   return (
+
     <div className="min-h-screen bg-white p-10 mt-12">
 
       <div className="max-w-[1400px] mx-auto">
@@ -101,60 +244,97 @@ export default function AdminProducts() {
         </h1>
 
         {
-          products.length === 0 ? (
-            <p>No products found</p>
+          products.length ===
+          0 ? (
+            <p>
+              No products found
+            </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-              {products.map((product) => (
+              {products.map(
+                (product) => (
 
-                <div
-                  key={product._id}
-                  className="border rounded-xl overflow-hidden shadow-sm"
-                >
+                  <div
+                    key={
+                      product._id
+                    }
+                    className="border rounded-xl overflow-hidden shadow-sm"
+                  >
 
-                  {/* IMAGE */}
-                  <img
-                    src={`http://localhost:5000/uploads/${product.image}`}
-                    alt={product.name}
-                    className="w-full h-[300px] object-cover"
-                  />
-
-                  {/* DETAILS */}
-                  <div className="p-4">
-
-                    <h2 className="text-xl font-semibold">
-                      {product.name}
-                    </h2>
-
-                    <p className="mt-1 text-gray-600">
-                      ₹ {product.price}
-                    </p>
-
-                    <p className="text-sm capitalize text-gray-500 mt-1">
-                      {product.category}
-                    </p>
-
-                    <button
-                      onClick={() =>
-                        deleteProduct(
-                          product._id
-                        )
+                    {/* IMAGE */}
+                    <img
+                      src={`http://localhost:5000/uploads/${product.image}`}
+                      alt={
+                        product.name
                       }
-                      className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2"
-                    >
+                      className="w-full h-[300px] object-cover"
+                    />
 
-                      <Trash2 className="w-4 h-4" />
+                    {/* DETAILS */}
+                    <div className="p-4">
 
-                      Delete
+                      <h2 className="text-xl font-semibold">
+                        {
+                          product.name
+                        }
+                      </h2>
 
-                    </button>
+                      <p className="mt-1 text-gray-600">
+                        ₹{" "}
+                        {
+                          product.price
+                        }
+                      </p>
+
+                      <p className="text-sm capitalize text-gray-500 mt-1">
+                        {
+                          product.category
+                        }
+                      </p>
+
+                      <div className="flex gap-3 mt-4">
+
+                        {/* UPDATE */}
+                        <button
+                          onClick={() =>
+                            openEdit(
+                              product
+                            )
+                          }
+                          className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg flex items-center justify-center gap-2"
+                        >
+
+                          <Pencil className="w-4 h-4" />
+
+                          Update
+
+                        </button>
+
+                        {/* DELETE */}
+                        <button
+                          onClick={() =>
+                            deleteProduct(
+                              product._id
+                            )
+                          }
+                          className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2"
+                        >
+
+                          <Trash2 className="w-4 h-4" />
+
+                          Delete
+
+                        </button>
+
+                      </div>
+
+                    </div>
 
                   </div>
 
-                </div>
-
-              ))}
+                )
+              )}
 
             </div>
           )
@@ -162,6 +342,176 @@ export default function AdminProducts() {
 
       </div>
 
+      {/* EDIT MODAL */}
+      {editOpen && (
+
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-5">
+
+          <div className="bg-white w-full max-w-xl rounded-2xl p-8 relative max-h-[90vh] overflow-y-auto">
+
+            {/* CLOSE */}
+            <button
+              onClick={() =>
+                setEditOpen(
+                  false
+                )
+              }
+              className="absolute top-4 right-4"
+            >
+
+              <X />
+
+            </button>
+
+            <h2 className="text-3xl font-bold mb-8">
+              Update Product
+            </h2>
+
+            <form
+              onSubmit={
+                updateProduct
+              }
+              className="space-y-5"
+            >
+
+              {/* NAME */}
+              <input
+                type="text"
+                placeholder="Product Name"
+                className="border p-4 w-full"
+                value={
+                  form.name
+                }
+                onChange={(
+                  e
+                ) =>
+                  setForm({
+                    ...form,
+                    name:
+                      e.target
+                        .value,
+                  })
+                }
+                required
+              />
+
+              {/* PRICE */}
+              <input
+                type="number"
+                placeholder="Price"
+                className="border p-4 w-full"
+                value={
+                  form.price
+                }
+                onChange={(
+                  e
+                ) =>
+                  setForm({
+                    ...form,
+                    price:
+                      e.target
+                        .value,
+                  })
+                }
+                required
+              />
+
+              {/* CATEGORY */}
+              <input
+                type="text"
+                placeholder="Category"
+                className="border p-4 w-full"
+                value={
+                  form.category
+                }
+                onChange={(
+                  e
+                ) =>
+                  setForm({
+                    ...form,
+                    category:
+                      e.target
+                        .value,
+                  })
+                }
+                required
+              />
+
+              {/* SIZES */}
+              <input
+                type="text"
+                placeholder="Sizes (S,M,L)"
+                className="border p-4 w-full"
+                value={
+                  form.sizes
+                }
+                onChange={(
+                  e
+                ) =>
+                  setForm({
+                    ...form,
+                    sizes:
+                      e.target
+                        .value,
+                  })
+                }
+              />
+
+              {/* DESCRIPTION */}
+              <textarea
+                rows="5"
+                placeholder="Description"
+                className="border p-4 w-full"
+                value={
+                  form.description
+                }
+                onChange={(
+                  e
+                ) =>
+                  setForm({
+                    ...form,
+                    description:
+                      e.target
+                        .value,
+                  })
+                }
+                required
+              />
+
+              {/* IMAGE */}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(
+                  e
+                ) =>
+                  setImage(
+                    e.target
+                      .files[0]
+                  )
+                }
+              />
+
+              {/* BUTTON */}
+              <button
+                type="submit"
+                className="bg-black text-white py-4 w-full rounded-lg"
+              >
+
+                Update Product
+
+              </button>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      )}
+
     </div>
+
   );
+
 }

@@ -1,10 +1,9 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {
+  Route,
+  Routes,
+} from "react-router-dom";
 
 import { Toaster } from "sonner";
-
-import { CartProvider } from "@/contexts/CartContext";
-
-import { AuthProvider } from "@/contexts/AuthContext";
 
 import { Layout } from "@/components/site/Layout";
 
@@ -25,94 +24,87 @@ export default function App() {
 
   return (
 
-    <AuthProvider>
+    <>
 
-      <CartProvider>
+      <Toaster
+        position="top-center"
+        theme="light"
+      />
 
-        <Toaster
-          position="top-center"
-          theme="light"
-        />
+      <Layout>
 
-        <BrowserRouter>
+        <Routes>
 
-          <Layout>
+          <Route
+            path="/"
+            element={<Index />}
+          />
 
-            <Routes>
+          <Route
+            path="/shop"
+            element={<Shop />}
+          />
 
-              <Route
-                path="/"
-                element={<Index />}
-              />
+          <Route
+            path="/product/:slug"
+            element={
+              <ProductDetail />
+            }
+          />
 
-              <Route
-                path="/shop"
-                element={<Shop />}
-              />
+          <Route
+            path="/cart"
+            element={<Cart />}
+          />
 
-              <Route
-                path="/product/:slug"
-                element={
-                  <ProductDetail />
-                }
-              />
+          <Route
+            path="/checkout"
+            element={<Checkout />}
+          />
 
-              <Route
-                path="/cart"
-                element={<Cart />}
-              />
+          <Route
+            path="/account"
+            element={<Account />}
+          />
 
-              <Route
-                path="/checkout"
-                element={<Checkout />}
-              />
+          <Route
+            path="/about"
+            element={<About />}
+          />
 
-              <Route
-                path="/account"
-                element={<Account />}
-              />
+          <Route
+            path="/contact"
+            element={<Contact />}
+          />
 
-              <Route
-                path="/about"
-                element={<About />}
-              />
+          <Route
+            path="/lookbook"
+            element={<Lookbook />}
+          />
 
-              <Route
-                path="/contact"
-                element={<Contact />}
-              />
+          <Route
+            path="/admin"
+            element={<Admin />}
+          />
 
-              <Route
-                path="/lookbook"
-                element={<Lookbook />}
-              />
+          <Route
+            path="/admin-products"
+            element={
+              <AdminProducts />
+            }
+          />
 
-              <Route
-                path="/admin"
-                element={<Admin />}
-              />
+          <Route
+            path="*"
+            element={<NotFound />}
+          />
 
-              <Route
-                path="/admin-products"
-                element={
-                  <AdminProducts />
-                }
-              />
+        </Routes>
 
-              <Route
-                path="*"
-                element={<NotFound />}
-              />
+      </Layout>
 
-            </Routes>
-
-          </Layout>
-
-        </BrowserRouter>
-
-      </CartProvider>
-
-    </AuthProvider>
+    </>
 
   );
+
 }

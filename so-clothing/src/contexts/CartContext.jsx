@@ -1,43 +1,102 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+import { useAuth } from "@/contexts/AuthContext";
 
 const CartContext = createContext(null);
-const KEY = "so_cart_v1";
 
 export function CartProvider({ children }) {
-  const [items, setItems] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; }
-  });
+  const { user } = useAuth();
+
+  const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => { localStorage.setItem(KEY, JSON.stringify(items)); }, [items]);
+  const cartKey = user?.email ? `cart_${user.email}` : null;
 
+  // LOAD CART
+  useEffect(() => {
+    if (!user?.email) return;
+
+    try {
+      const saved = localStorage.getItem(cartKey);
+      setItems(saved ? JSON.parse(saved) : []);
+    } catch {
+      setItems([]);
+    }
+  }, [cartKey, user?.email]);
+
+  // SAVE CART
+  useEffect(() => {
+    if (!user?.email) return;
+
+    localStorage.setItem(cartKey, JSON.stringify(items));
+  }, [items, cartKey, user?.email]);
+
+  // ADD ITEM (NO MERGE = ALWAYS SEPARATE)
   const add = (product, size, qty = 1) => {
-    setItems((prev) => {
-      const idx = prev.findIndex((i) => i.product.id === product.id && i.size === size);
-      if (idx >= 0) {
-        const next = [...prev];
-        next[idx] = { ...next[idx], qty: next[idx].qty + qty };
-        return next;
-      }
-      return [...prev, { product, size, qty }];
-    });
+    setItems((prev) => [
+      ...prev,
+      {
+        product,
+        size,
+        qty,
+        id: Date.now(),
+      },
+    ]);
+
     setOpen(true);
   };
 
-  const remove = (id, size) =>
-    setItems((prev) => prev.filter((i) => !(i.product.id === id && i.size === size)));
-
-  const setQty = (id, size, qty) => {
-    if (qty <= 0) return remove(id, size);
-    setItems((prev) => prev.map((i) => (i.product.id === id && i.size === size ? { ...i, qty } : i)));
+  // REMOVE
+  const remove = (id) => {
+    setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
-  const clear = () => setItems([]);
+  // QTY UPDATE
+  const setQty = (id, qty) => {
+    if (qty <= 0) {
+      remove(id);
+      return;
+    }
+
+    setItems((prev) =>
+      prev.map((i) =>
+        i.id === id ? { ...i, qty } : i
+      )
+    );
+  };
+
+  // CLEAR
+  const clear = () => {
+    setItems([]);
+    if (cartKey) localStorage.removeItem(cartKey);
+  };
+
   const count = items.reduce((s, i) => s + i.qty, 0);
-  const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
+
+  const subtotal = items.reduce(
+    (s, i) => s + i.product.price * i.qty,
+    0
+  );
 
   return (
-    <CartContext.Provider value={{ items, add, remove, setQty, clear, count, subtotal, open, setOpen }}>
+    <CartContext.Provider
+      value={{
+        items,
+        add,
+        remove,
+        setQty,
+        clear,
+        count,
+        subtotal,
+        open,
+        setOpen,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

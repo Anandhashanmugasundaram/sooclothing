@@ -13,8 +13,6 @@ import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import Account from "./pages/Account";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -24,45 +22,97 @@ import Admin from "./pages/Admin";
 import AdminProducts from "./pages/AdminProducts";
 
 export default function App() {
+
   return (
+
     <AuthProvider>
+
       <CartProvider>
-        <Toaster position="top-center" theme="light" />
+
+        <Toaster
+          position="top-center"
+          theme="light"
+        />
 
         <BrowserRouter>
+
           <Layout>
+
             <Routes>
-              <Route path="/" element={<Index />} />
 
-              <Route path="/shop" element={<Shop />} />
+              <Route
+                path="/"
+                element={<Index />}
+              />
 
-              <Route path="/product/:slug" element={<ProductDetail />} />
+              <Route
+                path="/shop"
+                element={<Shop />}
+              />
 
-              <Route path="/cart" element={<Cart />} />
+              <Route
+                path="/product/:slug"
+                element={
+                  <ProductDetail />
+                }
+              />
 
-              <Route path="/checkout" element={<Checkout />} />
+              <Route
+                path="/cart"
+                element={<Cart />}
+              />
 
-              <Route path="/login" element={<Login />} />
+              <Route
+                path="/checkout"
+                element={<Checkout />}
+              />
 
-              <Route path="/register" element={<Register />} />
+              <Route
+                path="/account"
+                element={<Account />}
+              />
 
-              <Route path="/account" element={<Account />} />
+              <Route
+                path="/about"
+                element={<About />}
+              />
 
-              <Route path="/about" element={<About />} />
+              <Route
+                path="/contact"
+                element={<Contact />}
+              />
 
-              <Route path="/contact" element={<Contact />} />
+              <Route
+                path="/lookbook"
+                element={<Lookbook />}
+              />
 
-              <Route path="/lookbook" element={<Lookbook />} />
+              <Route
+                path="/admin"
+                element={<Admin />}
+              />
 
-              <Route path="/admin" element={<Admin />} />
+              <Route
+                path="/admin-products"
+                element={
+                  <AdminProducts />
+                }
+              />
 
-              <Route path="/admin-products" element={<AdminProducts />} />
+              <Route
+                path="*"
+                element={<NotFound />}
+              />
 
-              <Route path="*" element={<NotFound />} />
             </Routes>
+
           </Layout>
+
         </BrowserRouter>
+
       </CartProvider>
+
     </AuthProvider>
+
   );
 }

@@ -150,7 +150,7 @@ export default function Shop() {
           </p>
 
           {/* PRODUCTS GRID */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
             {list.map((p) => (
 
@@ -188,7 +188,7 @@ export function ProductCard({ product }) {
               `http://localhost:5000/uploads/${product.image}`
             }
             alt={product.name}
-            className="w-full h-[400px] object-cover rounded-xl hover:scale-105 transition-all duration-500"
+            className="w-full h-[350px] object-cover rounded-xl hover:scale-105 transition-all duration-500"
           />
 
         </div>

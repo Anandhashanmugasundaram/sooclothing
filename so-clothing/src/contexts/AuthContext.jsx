@@ -59,17 +59,20 @@ export function AuthProvider({
 
       try {
 
-        return JSON.parse(
-          localStorage.getItem(KEY)
-        );
+        const saved =
+          localStorage.getItem(KEY);
+
+        return saved
+          ? JSON.parse(saved)
+          : null;
 
       } catch {
 
         return null;
 
       }
-    });
 
+    });
 
   // SAVE USER
   useEffect(() => {
@@ -88,7 +91,6 @@ export function AuthProvider({
     }
 
   }, [user]);
-
 
   // REGISTER
   const register = async (
@@ -109,40 +111,27 @@ export function AuthProvider({
     return res.data;
   };
 
-
   // LOGIN
-  const login = async (
-    email,
-    password
+  const login = (
+    userData,
+    token
   ) => {
-
-    const res = await axios.post(
-      "http://localhost:5000/api/auth/login",
-      {
-        email,
-        password,
-      }
-    );
 
     // SAVE TOKEN
     localStorage.setItem(
       "token",
-      res.data.token
+      token
     );
 
     // SAVE USER
     localStorage.setItem(
       KEY,
-      JSON.stringify(
-        res.data.user
-      )
+      JSON.stringify(userData)
     );
 
-    setUser(res.data.user);
-
-    return res.data;
+    // UPDATE STATE
+    setUser(userData);
   };
-
 
   // LOGOUT
   const logout = () => {
@@ -156,21 +145,24 @@ export function AuthProvider({
     setUser(null);
   };
 
-
   return (
+
     <AuthContext.Provider
       value={{
         user,
-        login,
+        setUser,
         register,
+        login,
         logout,
       }}
     >
+
       {children}
+
     </AuthContext.Provider>
+
   );
 }
-
 
 export const useAuth = () => {
 

@@ -12,7 +12,8 @@ const productRoutes = require("./routes/productRoutes");
 const createAdmin = require("./config/createAdmin");
 
 const app = express();
-
+const userRoutes =
+  require("./routes/userRoutes");
 
 // MIDDLEWARES
 app.use(cors());
@@ -29,6 +30,7 @@ app.use(
 // ROUTES
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
 
 
 // TEST ROUTE

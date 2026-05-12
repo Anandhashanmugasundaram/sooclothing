@@ -1,8 +1,13 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import { Toaster } from "sonner";
+
 import { CartProvider } from "@/contexts/CartContext";
+
 import { AuthProvider } from "@/contexts/AuthContext";
+
 import { Layout } from "@/components/site/Layout";
+
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
@@ -23,26 +28,37 @@ export default function App() {
     <AuthProvider>
       <CartProvider>
         <Toaster position="top-center" theme="light" />
+
         <BrowserRouter>
           <Layout>
             <Routes>
               <Route path="/" element={<Index />} />
+
               <Route path="/shop" element={<Shop />} />
+
               <Route path="/product/:slug" element={<ProductDetail />} />
+
               <Route path="/cart" element={<Cart />} />
+
               <Route path="/checkout" element={<Checkout />} />
+
               <Route path="/login" element={<Login />} />
+
               <Route path="/register" element={<Register />} />
+
               <Route path="/account" element={<Account />} />
+
               <Route path="/about" element={<About />} />
+
               <Route path="/contact" element={<Contact />} />
+
               <Route path="/lookbook" element={<Lookbook />} />
-              <Route path="*" element={<NotFound />} />
+
               <Route path="/admin" element={<Admin />} />
-              <Route
-  path="/admin-products"
-  element={<AdminProducts />}
-/>
+
+              <Route path="/admin-products" element={<AdminProducts />} />
+
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
         </BrowserRouter>

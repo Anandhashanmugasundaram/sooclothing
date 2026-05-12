@@ -43,14 +43,35 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 pt-8 border-t border-border">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            © 2026 SO.CLOTHING — All Rights Reserved
-          </p>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            Demo Site / React + GSAP
-          </p>
-        </div>
+<div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 pt-8 border-t border-border">
+
+  <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+    © 2026 SO.CLOTHING — All Rights Reserved
+  </p>
+
+  <a
+    href="https://www.instagram.com/_s0.clothing_/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="
+      w-11
+      h-11
+      rounded-full
+      border
+      border-border
+      flex
+      items-center
+      justify-center
+      hover:bg-black
+      hover:text-white
+      transition-all
+      duration-300
+    "
+  >
+    <i className="fa-brands fa-instagram text-lg"></i>
+  </a>
+
+</div>
       </div>
     </footer>
   );

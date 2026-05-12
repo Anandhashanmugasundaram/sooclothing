@@ -7,7 +7,6 @@ import {
 
 import {
   ShoppingBag,
-  Search,
   Menu,
   X,
   User,
@@ -148,16 +147,6 @@ export function Nav() {
         {/* RIGHT SIDE */}
         <div className="flex items-center gap-5">
 
-          {/* SEARCH */}
-          <button
-            aria-label="Search"
-            className="hover:text-accent transition-colors hidden sm:block"
-          >
-
-            <Search className="w-5 h-5" />
-
-          </button>
-
           {/* USER */}
           <div className="relative">
 
@@ -176,7 +165,7 @@ export function Nav() {
 
                   {user.photo ? (
 
-                   <img
+                    <img
                       src={user?.photo}
                       alt={user?.name}
                       className="w-10 h-10 rounded-full"

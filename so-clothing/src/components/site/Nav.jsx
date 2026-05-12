@@ -3,7 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 
 import {
   ShoppingBag,
-  Search,
+  
   Menu,
   X,
   User,
@@ -121,12 +121,7 @@ export function Nav() {
         <div className="flex items-center gap-5">
 
           {/* SEARCH ICON */}
-          <button
-            aria-label="Search"
-            className="hover:text-accent transition-colors hidden sm:block"
-          >
-            <Search className="w-5 h-5" />
-          </button>
+         
 
           {/* USER */}
           <div className="relative">

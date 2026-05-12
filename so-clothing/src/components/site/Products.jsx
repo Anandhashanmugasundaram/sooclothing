@@ -568,7 +568,7 @@ const filteredProducts = products
     <div className="relative z-10">
 
       <p className="uppercase tracking-[0.3em] text-sm text-gray-300">
-        SO.CLOTHING
+        $O.CLOTHING
       </p>
 
       <h2 className="text-4xl font-bold mt-4 leading-tight">
@@ -584,7 +584,7 @@ const filteredProducts = products
       </p>
 
       {/* BUTTON */}
-      <Link
+ <Link
   to="/shop"
   className="
     group
@@ -599,26 +599,39 @@ const filteredProducts = products
     rounded-xl
     font-semibold
     text-white
+
     bg-gradient-to-r
-    from-red-500
-    via-pink-500
-    to-orange-400
-    shadow-lg
+    from-black
+    via-zinc-900
+    to-neutral-800
+
+    border
+    border-white/10
+
+    shadow-[0_10px_40px_rgba(0,0,0,0.35)]
+
     transition-all
     duration-500
+
     hover:scale-105
-    hover:shadow-red-500/40
+    hover:shadow-[0_15px_50px_rgba(255,255,255,0.08)]
+    hover:border-white/20
   "
 >
 
-  {/* GLOW EFFECT */}
+  {/* SHINE EFFECT */}
   <span
     className="
       absolute
       inset-0
-      bg-white/20
+      bg-gradient-to-r
+      from-transparent
+      via-white/20
+      to-transparent
+
       translate-x-[-120%]
       group-hover:translate-x-[120%]
+
       transition-transform
       duration-1000
       skew-x-12
@@ -626,12 +639,13 @@ const filteredProducts = products
   />
 
   {/* TEXT */}
-  <span className="relative z-10 flex items-center gap-2">
+  <span className="relative z-10 flex items-center gap-3 tracking-wide">
 
     Visit Store
 
     <span
       className="
+        text-lg
         transition-transform
         duration-300
         group-hover:translate-x-1

@@ -177,10 +177,10 @@ export function Nav() {
                   {user.photo ? (
 
                    <img
-  src={user?.photo}
-  alt={user?.name}
-  className="w-10 h-10 rounded-full"
-/>
+                      src={user?.photo}
+                      alt={user?.name}
+                      className="w-10 h-10 rounded-full"
+                    />
 
                   ) : (
 
@@ -236,9 +236,7 @@ export function Nav() {
                       <Link
                         to="/account"
                         onClick={() =>
-                          setProfileOpen(
-                            false
-                          )
+                          setProfileOpen(false)
                         }
                         className="text-sm hover:text-accent transition-colors"
                       >
@@ -256,9 +254,7 @@ export function Nav() {
                             "Logged out successfully"
                           );
 
-                          setProfileOpen(
-                            false
-                          );
+                          setProfileOpen(false);
 
                         }}
                         className="flex items-center gap-2 text-sm hover:text-red-500 transition-colors"
@@ -441,6 +437,7 @@ export function Nav() {
                 </button>
 
               </>
+
             ) : (
 
               <button

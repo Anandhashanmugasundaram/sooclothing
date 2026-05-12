@@ -1,6 +1,8 @@
+
+
 // import { useState } from "react";
 // import axios from "axios";
-// import { Navigate } from "react-router-dom";
+// import { Link, Navigate } from "react-router-dom";
 
 // export default function Admin() {
 
@@ -9,10 +11,12 @@
 //     localStorage.getItem("user")
 //   );
 
-//   // PROTECT ADMIN PAGE
-// //   if (!user?.isAdmin) {
-// //     return <Navigate to="/" />;
-// //   }
+//   // PROTECT PAGE
+//   if (!user?.isAdmin) {
+
+//     return <Navigate to="/" />;
+
+//   }
 
 //   const [form, setForm] = useState({
 //     name: "",
@@ -37,23 +41,33 @@
 
 //       setLoading(true);
 
-//       // FORM DATA
 //       const data = new FormData();
 
-//       data.append("name", form.name);
-//       data.append("price", form.price);
+//       data.append(
+//         "name",
+//         form.name
+//       );
+
+//       data.append(
+//         "price",
+//         form.price
+//       );
+
 //       data.append(
 //         "category",
 //         form.category
 //       );
+
 //       data.append(
 //         "description",
 //         form.description
 //       );
+
 //       data.append(
 //         "sizes",
 //         form.sizes
 //       );
+
 //       data.append(
 //         "image",
 //         image
@@ -82,7 +96,7 @@
 
 //       console.log(res.data);
 
-//       // RESET FORM
+//       // RESET
 //       setForm({
 //         name: "",
 //         price: "",
@@ -95,7 +109,7 @@
 
 //     } catch (error) {
 
-//       console.log("TOKEN",error);
+//       console.log(error);
 
 //       alert(
 //         error.response?.data?.message ||
@@ -110,20 +124,29 @@
 //   };
 
 //   return (
-//     <div className="min-h-screen p-10 bg-white">
+//     <div className="min-h-screen bg-white p-10 mt-12">
 
 //       <div className="max-w-xl mx-auto">
 
 //         <h1 className="text-4xl font-bold mb-10">
 //           Admin Upload Panel
 //         </h1>
+// <div className="mb-6">
 
+//   <Link
+//     to="/admin-products"
+//     className="bg-black text-white px-6 py-3 inline-block"
+//   >
+//     View All Products
+//   </Link>
+
+// </div>
 //         <form
 //           onSubmit={submitHandler}
 //           className="space-y-5"
 //         >
 
-//           {/* PRODUCT NAME */}
+//           {/* NAME */}
 //           <input
 //             type="text"
 //             placeholder="Product Name"
@@ -191,7 +214,8 @@
 //             onChange={(e) =>
 //               setForm({
 //                 ...form,
-//                 description: e.target.value,
+//                 description:
+//                   e.target.value,
 //               })
 //             }
 //             required
@@ -213,7 +237,7 @@
 //           <button
 //             type="submit"
 //             disabled={loading}
-//             className="bg-black text-white px-8 py-4 w-full disabled:opacity-50"
+//             className="bg-black text-white px-8 py-4 w-full"
 //           >
 //             {
 //               loading
@@ -228,6 +252,7 @@
 //     </div>
 //   );
 // }
+
 
 
 import { useState } from "react";
@@ -248,13 +273,14 @@ export default function Admin() {
 
   }
 
-  const [form, setForm] = useState({
-    name: "",
-    price: "",
-    category: "",
-    description: "",
-    sizes: "",
-  });
+  const [form, setForm] =
+    useState({
+      name: "",
+      price: "",
+      category: "",
+      description: "",
+      sizes: "",
+    });
 
   const [image, setImage] =
     useState(null);
@@ -263,95 +289,97 @@ export default function Admin() {
     useState(false);
 
   // SUBMIT
-  const submitHandler = async (e) => {
+  const submitHandler =
+    async (e) => {
 
-    e.preventDefault();
+      e.preventDefault();
 
-    try {
+      try {
 
-      setLoading(true);
+        setLoading(true);
 
-      const data = new FormData();
+        const data =
+          new FormData();
 
-      data.append(
-        "name",
-        form.name
-      );
+        data.append(
+          "name",
+          form.name
+        );
 
-      data.append(
-        "price",
-        form.price
-      );
+        data.append(
+          "price",
+          form.price
+        );
 
-      data.append(
-        "category",
-        form.category
-      );
+        data.append(
+          "category",
+          form.category
+        );
 
-      data.append(
-        "description",
-        form.description
-      );
+        data.append(
+          "description",
+          form.description
+        );
 
-      data.append(
-        "sizes",
-        form.sizes
-      );
+        data.append(
+          "sizes",
+          form.sizes
+        );
 
-      data.append(
-        "image",
-        image
-      );
+        data.append(
+          "image",
+          image
+        );
 
-      // GET TOKEN
-      const token =
-        localStorage.getItem("token");
+        // API CALL
+        const res =
+          await axios.post(
+            "http://localhost:5000/api/products/add",
+            data,
+            {
+              headers: {
+                "Content-Type":
+                  "multipart/form-data",
+              },
+            }
+          );
 
-      console.log("TOKEN:", token);
+        alert(
+          "Product Uploaded"
+        );
 
-      // API CALL
-      const res = await axios.post(
-        "http://localhost:5000/api/products/add",
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type":
-              "multipart/form-data",
-          },
-        }
-      );
+        console.log(
+          res.data
+        );
 
-      alert("Product Uploaded");
+        // RESET
+        setForm({
+          name: "",
+          price: "",
+          category: "",
+          description: "",
+          sizes: "",
+        });
 
-      console.log(res.data);
+        setImage(null);
 
-      // RESET
-      setForm({
-        name: "",
-        price: "",
-        category: "",
-        description: "",
-        sizes: "",
-      });
+      } catch (error) {
 
-      setImage(null);
+        console.log(error);
 
-    } catch (error) {
+        alert(
+          error.response?.data
+            ?.message ||
+          "Upload failed"
+        );
 
-      console.log(error);
+      } finally {
 
-      alert(
-        error.response?.data?.message ||
-        "Upload failed"
-      );
+        setLoading(false);
 
-    } finally {
+      }
 
-      setLoading(false);
-
-    }
-  };
+    };
 
   return (
     <div className="min-h-screen bg-white p-10 mt-12">
@@ -361,18 +389,22 @@ export default function Admin() {
         <h1 className="text-4xl font-bold mb-10">
           Admin Upload Panel
         </h1>
-<div className="mb-6">
 
-  <Link
-    to="/admin-products"
-    className="bg-black text-white px-6 py-3 inline-block"
-  >
-    View All Products
-  </Link>
+        <div className="mb-6">
 
-</div>
+          <Link
+            to="/admin-products"
+            className="bg-black text-white px-6 py-3 inline-block"
+          >
+            View All Products
+          </Link>
+
+        </div>
+
         <form
-          onSubmit={submitHandler}
+          onSubmit={
+            submitHandler
+          }
           className="space-y-5"
         >
 
@@ -385,7 +417,8 @@ export default function Admin() {
             onChange={(e) =>
               setForm({
                 ...form,
-                name: e.target.value,
+                name:
+                  e.target.value,
               })
             }
             required
@@ -400,7 +433,8 @@ export default function Admin() {
             onChange={(e) =>
               setForm({
                 ...form,
-                price: e.target.value,
+                price:
+                  e.target.value,
               })
             }
             required
@@ -415,7 +449,8 @@ export default function Admin() {
             onChange={(e) =>
               setForm({
                 ...form,
-                category: e.target.value,
+                category:
+                  e.target.value,
               })
             }
             required
@@ -430,7 +465,8 @@ export default function Admin() {
             onChange={(e) =>
               setForm({
                 ...form,
-                sizes: e.target.value,
+                sizes:
+                  e.target.value,
               })
             }
           />
@@ -440,7 +476,9 @@ export default function Admin() {
             rows="5"
             placeholder="Description"
             className="border p-4 w-full"
-            value={form.description}
+            value={
+              form.description
+            }
             onChange={(e) =>
               setForm({
                 ...form,
@@ -457,7 +495,8 @@ export default function Admin() {
             accept="image/*"
             onChange={(e) =>
               setImage(
-                e.target.files[0]
+                e.target
+                  .files[0]
               )
             }
             required
@@ -469,16 +508,15 @@ export default function Admin() {
             disabled={loading}
             className="bg-black text-white px-8 py-4 w-full"
           >
-            {
-              loading
-                ? "Uploading..."
-                : "Upload Product"
-            }
+            {loading
+              ? "Uploading..."
+              : "Upload Product"}
           </button>
 
         </form>
 
       </div>
+
     </div>
   );
 }

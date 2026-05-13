@@ -7,7 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 export function Products() {
-  
   const sectionRef = useRef(null);
 
   const [products, setProducts] = useState([]);
@@ -24,6 +23,7 @@ export function Products() {
       const res = await axios.get(
         "http://localhost:5000/api/products"
       );
+
       setProducts(res.data);
     } catch (error) {
       console.log(error);
@@ -186,8 +186,8 @@ export function Products() {
 
                     {/* IMAGE BACKGROUND */}
                     <div className="absolute inset-0">
-                      <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full border border-red-500" />
-                      <div className="absolute right-[-35px] top-[130px] w-[110px] h-[220px] rounded-full border-[10px] border-red-300 opacity-60" />
+                      <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full border border-red-200" />
+                      <div className="absolute right-[-35px] top-[130px] w-[110px] h-[220px] rounded-full border-[10px] border-red-100 opacity-60" />
                     </div>
 
                     <div className="h-[260px] flex items-center justify-center p-4 relative z-10">
@@ -259,43 +259,30 @@ export function Products() {
   );
 }
 
-// export function ProductCard({ product }) {
-//   return (
-//     <div className="group relative">
+export function ProductCard({ product }) {
+  return (
+    <div className="group relative">
 
-//       <Link to={`/product/${product.slug}`}>
+      <Link to={`/product/${product.slug}`}>
 
-//         {/* CARD */}
-//         <div
-//           className="
-//             relative
-//             overflow-hidden
-//             rounded-[30px]
-//             bg-[#f7f7f7]
-//             border
-//             border-[#eeeeee]
-//             transition-all
-//             duration-500
-//             hover:-translate-y-2
-//             hover:shadow-[0_18px_45px_rgba(0,0,0,0.08)]
-//           "
-//         >
+        {/* CARD */}
+        <div
+          className="
+            relative
+            overflow-hidden
+            rounded-[30px]
+            bg-[#f7f7f7]
+            border
+            border-[#eeeeee]
+            transition-all
+            duration-500
+            hover:-translate-y-2
+            hover:shadow-[0_18px_45px_rgba(0,0,0,0.08)]
+          "
+        >
 
-//           {/* ABSTRACT BACKGROUND */}
-//           <div className="absolute inset-0 overflow-hidden">
-
-//             <div
-//               className="
-//                 absolute
-//                 -top-20
-//                 -left-10
-//                 w-[180px]
-//                 h-[180px]
-//                 rounded-full
-//                 border
-//                 border-red-400
-//               "
-//             ></div>
+          {/* ABSTRACT BACKGROUND */}
+          <div className="absolute inset-0 overflow-hidden">
 
             <div
               className="
@@ -306,158 +293,158 @@ export function Products() {
                 h-[180px]
                 rounded-full
                 border
-                border-red-900
+                border-red-500
               "
             ></div>
 
-//             <div
-//               className="
-//                 absolute
-//                 right-[-35px]
-//                 top-[130px]
-//                 w-[110px]
-//                 h-[220px]
-//                 rounded-full
-//                 border-[10px]
-//                 border-red-300
-//                 opacity-60
-//               "
-//             ></div>
+            <div
+              className="
+                absolute
+                right-[-35px]
+                top-[130px]
+                w-[110px]
+                h-[220px]
+                rounded-full
+                border-[10px]
+                border-red-300
+                opacity-60
+              "
+            ></div>
 
-//           </div>
+          </div>
 
-//           {/* OFFER TAG */}
-//           <div className="absolute top-5 right-5 z-30">
+          {/* OFFER TAG */}
+          <div className="absolute top-5 right-5 z-30">
 
-//             <div
-//               className="
-//                 px-4
-//                 py-2
-//                 rounded-xl
-//                 bg-white
-//                 shadow-md
-//                 text-[13px]
-//                 font-medium
-//                 text-pink-500
-//               "
-//             >
-//               20% offer
-//             </div>
+            <div
+              className="
+                px-4
+                py-2
+                rounded-xl
+                bg-white
+                shadow-md
+                text-[13px]
+                font-medium
+                text-pink-500
+              "
+            >
+              20% offer
+            </div>
 
-//           </div>
+          </div>
 
-//           {/* IMAGE SECTION */}
-//           <div
-//             className="
-//               relative
-//               h-[350px]
-//               flex
-//               items-center
-//               justify-center
-//               p-6
-//               z-10
-//             "
-//           >
+          {/* IMAGE SECTION */}
+          <div
+            className="
+              relative
+              h-[350px]
+              flex
+              items-center
+              justify-center
+              p-6
+              z-10
+            "
+          >
 
-//             <img
-//               src={
-//                 product.img ||
-//                 `http://localhost:5000/uploads/${product.image}`
-//               }
-//               alt={product.name}
-//               className="
-//                 w-full
-//                 h-full
-//                 object-contain
-//                 rounded-[24px]
-//                 transition-all
-//                 duration-700
-//                 group-hover:scale-[1.04]
-//               "
-//             />
+            <img
+              src={
+                product.img ||
+                `http://localhost:5000/uploads/${product.image}`
+              }
+              alt={product.name}
+              className="
+                w-full
+                h-full
+                object-contain
+                rounded-[24px]
+                transition-all
+                duration-700
+                group-hover:scale-[1.04]
+              "
+            />
 
-//           </div>
+          </div>
 
-//         </div>
+        </div>
 
-//         {/* CONTENT */}
-//         <div className="pt-5 px-2 pb-3">
+        {/* CONTENT */}
+        <div className="pt-5 px-2 pb-3">
 
-//           <h2
-//             className="
-//               text-[20px]
-//               leading-snug
-//               font-semibold
-//               text-[#13204a]
-//               line-clamp-2
-//               transition-all
-//               duration-300
-//               group-hover:text-red-500
-//             "
-//           >
-//             {product.name}
-//           </h2>
+          <h2
+            className="
+              text-[20px]
+              leading-snug
+              font-semibold
+              text-[#13204a]
+              line-clamp-2
+              transition-all
+              duration-300
+              group-hover:text-red-500
+            "
+          >
+            {product.name}
+          </h2>
 
-//           <p
-//             className="
-//               mt-1
-//               text-[17px]
-//               text-gray-500
-//               font-normal
-//             "
-//           >
-//             {product.category}
-//           </p>
+          <p
+            className="
+              mt-1
+              text-[17px]
+              text-gray-500
+              font-normal
+            "
+          >
+            {product.category}
+          </p>
 
-//           <div className="flex items-center gap-3 mt-3">
+          <div className="flex items-center gap-3 mt-3">
 
-//             <p className="text-[28px] leading-none font-medium text-[#0f1d4d]">
-//               ₹{product.price}
-//             </p>
+            <p className="text-[28px] leading-none font-medium text-[#0f1d4d]">
+              ₹{product.price}
+            </p>
 
-//             <span className="text-gray-400 line-through text-lg mt-2">
-//               ₹{Math.floor(product.price * 1.2)}
-//             </span>
+            <span className="text-gray-400 line-through text-lg mt-2">
+              ₹{Math.floor(product.price * 1.2)}
+            </span>
 
-//           </div>
+          </div>
 
-//           {/* SIZES */}
-//           <div className="flex gap-2 mt-5 flex-wrap">
+          {/* SIZES */}
+          <div className="flex gap-2 mt-5 flex-wrap">
 
-//             {product.sizes?.map((size, index) => (
-//               <span
-//                 key={index}
-//                 className="
-//                   min-w-[42px]
-//                   h-10
-//                   px-3
-//                   flex
-//                   items-center
-//                   justify-center
-//                   rounded-full
-//                   border
-//                   border-gray-200
-//                   bg-white
-//                   text-sm
-//                   font-medium
-//                   text-gray-700
-//                   hover:border-black
-//                   hover:bg-black
-//                   hover:text-white
-//                   transition-all
-//                   duration-300
-//                 "
-//               >
-//                 {size.toUpperCase()}
-//               </span>
-//             ))}
+            {product.sizes?.map((size, index) => (
+              <span
+                key={index}
+                className="
+                  min-w-[42px]
+                  h-10
+                  px-3
+                  flex
+                  items-center
+                  justify-center
+                  rounded-full
+                  border
+                  border-gray-200
+                  bg-white
+                  text-sm
+                  font-medium
+                  text-gray-700
+                  hover:border-black
+                  hover:bg-black
+                  hover:text-white
+                  transition-all
+                  duration-300
+                "
+              >
+                {size.toUpperCase()}
+              </span>
+            ))}
 
-//           </div>
+          </div>
 
-//         </div>
+        </div>
 
-//       </Link>
+      </Link>
 
-//     </div>
-//   );
-// }
+    </div>
+  );
+}

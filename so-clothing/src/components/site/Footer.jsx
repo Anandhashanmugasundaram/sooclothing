@@ -45,29 +45,6 @@ export function Footer() {
             </p>
 
           </div>
-<<<<<<< HEAD
-          <FooterCol title="Shop" links={[
-            { label: "All", to: "/shop" },
-            { label: "Tops", to: "/shop" },
-            { label: "Bottoms", to: "/shop" },
-            { label: "Outerwear", to: "/shop" },
-            { label: "Accessories", to: "/shop" },
-          ]} />
-          <FooterCol title="Help" links={[
-            { label: "Contact", to: "/contact" },
-            { label: "Shipping", to: "/contact" },
-            { label: "Returns", to: "/contact" },
-            { label: "Size Guide", to: "/contact" },
-            { label: "Account", to: "/account" },
-          ]} />
-          <FooterCol title="Brand" links={[
-            { label: "Home", to: "/" },
-            { label: "About", to: "/about" },
-            { label: "Contact", to: "/contact" },
-            // { label: "Instagram", href: "https://www.instagram.com/_s0.clothing_/" },
-            { label: "Shop", to: "/shop" },
-          ]} />
-=======
 
           {/* SHOP */}
           <FooterCol
@@ -104,33 +81,28 @@ export function Footer() {
             ]}
           />
 
->>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba
         </div>
 
         {/* BIG TEXT */}
-        <div className="overflow-hidden border-t border-border pt-12">
-<<<<<<< HEAD
-          <p className="font-display text-[15vw] md:text-[11vw] leading-none uppercase text-foreground/10 select-none whitespace-nowrap">
-            $O.CLOTHINGS
-=======
+       {/* BIG TEXT */}
+<div className="overflow-hidden border-t border-border pt-12">
 
-          <p
-            className="
-              font-display
-              text-[18vw]
-              md:text-[14vw]
-              leading-none
-              uppercase
-              text-foreground/10
-              select-none
-              whitespace-nowrap
-            "
-          >
-            $O.CLOTHING®
->>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba
-          </p>
+  <p
+    className="
+      font-display
+      text-[18vw]
+      md:text-[14vw]
+      leading-none
+      uppercase
+      text-foreground/10
+      select-none
+      whitespace-nowrap
+    "
+  >
+    $O.CLOTHING®
+  </p>
 
-        </div>
+</div>
 
         {/* BOTTOM */}
         <div

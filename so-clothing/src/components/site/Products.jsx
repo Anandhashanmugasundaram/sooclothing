@@ -297,6 +297,19 @@ export function Products() {
 //               "
 //             ></div>
 
+            <div
+              className="
+                absolute
+                -top-20
+                -left-10
+                w-[180px]
+                h-[180px]
+                rounded-full
+                border
+                border-red-900
+              "
+            ></div>
+
 //             <div
 //               className="
 //                 absolute

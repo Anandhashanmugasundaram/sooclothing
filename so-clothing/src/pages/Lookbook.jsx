@@ -1,37 +1,56 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 
 export default function Lookbook() {
+  const [offers, setOffers] = useState([]);
+
+  useEffect(() => {
+    fetchOffers();
+  }, []);
+
+  const fetchOffers = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/products");
+
+      const special = res.data.filter((p) => p.isSpecialOffer);
+
+      setOffers(special);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
-      <PageHeader
-        eyebrow="Special Offers"
-        title="Coming Soon"
-      >
-        Exciting deals and exclusive collections are on the way.
-      </PageHeader>
+      <PageHeader eyebrow="Special Offers" title="Exclusive Deal" />
 
-      <section className="min-h-[70vh] flex items-center justify-center bg-background">
+      <section className="py-12 px-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
-        <div className="text-center px-6">
+          {offers.map((product) => (
+            <Link
+              key={product._id}
+              to={`/product/${product.slug}`}
+              className="border p-3 rounded-lg block"
+            >
+              <img
+                src={`http://localhost:5000/uploads/${product.image}`}
+                className="h-40 w-full object-contain"
+              />
 
-          <h1 className="text-5xl lg:text-7xl font-bold mb-6">
-            We Will Be Updated Soon
-          </h1>
+              <h2 className="mt-2 font-semibold">
+                {product.name}
+              </h2>
 
-          <p className="text-muted-foreground text-lg lg:text-xl max-w-2xl mx-auto">
-            Our special offers page is currently under construction.
-            Stay tuned for amazing discounts, new arrivals,
-            and exclusive fashion collections.
-          </p>
-
-          <div className="mt-10">
-            <button className="bg-black text-white px-8 py-4 uppercase tracking-widest text-sm hover:opacity-90 transition">
-              Coming Soon
-            </button>
-          </div>
+              <p className="text-pink-600">
+                ₹{product.price}
+              </p>
+            </Link>
+          ))}
 
         </div>
-
       </section>
     </>
   );

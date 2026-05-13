@@ -305,6 +305,15 @@ await emailjs.send(
                 value={form.email}
                 onChange={set("email")}
                 type="email"
+                placeholder="example@example.com"
+              />
+
+              <Input
+                label="Phone"
+                value={form.phone}
+                onChange={set("phone")}
+                type="tel"
+                placeholder="+1 (555) 555-5555"
               />
 
             </Section>
@@ -316,12 +325,14 @@ await emailjs.send(
                 label="Full name"
                 value={form.name}
                 onChange={set("name")}
+                placeholder="John Doe"
               />
 
               <Input
                 label="Address"
                 value={form.address}
                 onChange={set("address")}
+                placeholder="123 Main Street"
               />
 
               <div className="grid grid-cols-2 gap-4">
@@ -330,12 +341,14 @@ await emailjs.send(
                   label="City"
                   value={form.city}
                   onChange={set("city")}
+                  placeholder="Chennai"
                 />
 
                 <Input
                   label="ZIP"
                   value={form.zip}
                   onChange={set("zip")}
+                  placeholder="600032"
                 />
 
               </div>
@@ -344,6 +357,7 @@ await emailjs.send(
                 label="Country"
                 value={form.country}
                 onChange={set("country")}
+                placeholder="India"
               />
 
             </Section>

@@ -29,8 +29,7 @@ export default function Account() {
 
   const { user, logout } =
     useAuth();
-  const BASE_URL =
-  "https://sooclothing-1tpa.vercel.app/";
+  const API = import.meta.env.VITE_API_URL;
   const [orders, setOrders] =
     useState([]);
 
@@ -54,7 +53,7 @@ export default function Account() {
     try {
 
       const res = await axios.get(
-        `${BASE_URL}/api/orders`
+        `${API}/api/orders`
       );
 
       // FILTER CURRENT USER ORDERS
@@ -240,7 +239,7 @@ export default function Account() {
                             >
 
                               <img
-                                src={`${BASE_URL}/uploads/${item.image}`}
+                                src={`${API}/uploads/${item.image}`}
                                 alt={item.name}
                                 className="w-20 h-20 object-cover"
                               />

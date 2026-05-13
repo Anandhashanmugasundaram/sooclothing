@@ -13,8 +13,7 @@ export function Products() {
 
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState("");
-  const BASE_URL =
-  "https://sooclothing-1tpa.vercel.app/";
+  const API = import.meta.env.VITE_API_URL;
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -22,7 +21,7 @@ export function Products() {
   const fetchProducts = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/api/products`
+        `${API}/api/products`
       );
 
       setProducts(res.data);

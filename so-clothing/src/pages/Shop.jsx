@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 
 const cats = ["all", "tops", "bottoms", "outerwear", "accessories"];
 
-const BASE_URL ="https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
+const API ="https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
 const ITEMS_PER_PAGE = 8;
 
 export default function Shop() {
@@ -38,7 +38,7 @@ export default function Shop() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/api/products`);
+      const res = await axios.get(`${API}/api/products`);
 
       setProducts(res.data);
     } catch (error) {

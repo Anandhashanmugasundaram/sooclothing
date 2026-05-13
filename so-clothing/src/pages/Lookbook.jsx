@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 
 export default function Lookbook() {
   const [offers, setOffers] = useState([]);
-  const BASE_URL ="https://sooclothing-1tpa.vercel.app/";
+  const API ="https://sooclothing-1tpa.vercel.app/";
 
   useEffect(() => {
     fetchOffers();
@@ -13,7 +13,7 @@ export default function Lookbook() {
 
   const fetchOffers = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/api/products`);
+      const res = await axios.get(`${API}/api/products`);
 
       const special = res.data.filter((p) => p.isSpecialOffer);
 

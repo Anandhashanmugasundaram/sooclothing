@@ -48,8 +48,7 @@ export default function Checkout() {
   } = useCart();
 
   const { user } = useAuth();
-  const BASE_URL =
-  "https://sooclothing-1tpa.vercel.app/";
+  const API = import.meta.env.VITE_API_URL;
   const nav = useNavigate();
 
   const [loading, setLoading] =

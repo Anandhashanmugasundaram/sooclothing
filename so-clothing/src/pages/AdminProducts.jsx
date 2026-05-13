@@ -13,8 +13,7 @@ export default function AdminProducts() {
 
   const [loading, setLoading] =
     useState(true);
-  const BASE_URL =
-  "https://sooclothing-1tpa.vercel.app/";
+  const API = import.meta.env.VITE_API_URL;
 
   const [editOpen, setEditOpen] =
     useState(false);
@@ -48,7 +47,7 @@ export default function AdminProducts() {
 
         const res =
           await axios.get(
-            `${BASE_URL}/api/products`
+            `${API}/api/products`
           );
 
         setProducts(res.data);
@@ -80,7 +79,7 @@ export default function AdminProducts() {
       try {
 
         await axios.delete(
-          `${BASE_URL}/api/products/${id}`
+          `${API}/api/products/${id}`
         );
 
         setProducts(
@@ -184,7 +183,7 @@ export default function AdminProducts() {
 
         const res =
           await axios.put(
-            `${BASE_URL}/api/products/${selectedId}`,
+            `${API}/api/products/${selectedId}`,
             data,
             {
               headers: {

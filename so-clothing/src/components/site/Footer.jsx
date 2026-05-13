@@ -74,10 +74,10 @@ export function Footer() {
           <FooterCol
             title="Brand"
             links={[
+              { label: "Home", to: "/" },
+              { label: "Shop", to: "/shop" },
               { label: "About", to: "/about" },
-              { label: "Lookbook", to: "/lookbook" },
-              { label: "Instagram", to: "/contact" },
-              { label: "TikTok", to: "/contact" },
+              { label: "Contact", to: "/contact" },
             ]}
           />
 
@@ -91,7 +91,7 @@ export function Footer() {
     className="
       font-display
       text-[18vw]
-      md:text-[14vw]
+      md:text-[11vw]
       leading-none
       uppercase
       text-foreground/10
@@ -99,7 +99,7 @@ export function Footer() {
       whitespace-nowrap
     "
   >
-    $O.CLOTHING®
+    $O.CLOTHINGS
   </p>
 
 </div>

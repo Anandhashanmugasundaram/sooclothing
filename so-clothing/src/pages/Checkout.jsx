@@ -124,8 +124,7 @@ const orders = items.map((it) => ({
 
   price: it.product.price * it.qty,
 
- image_url:
-  `${BASE_URL}/uploads/${it.product.image}`,
+  image_url: it.product.image,
 }));
 
 
@@ -417,11 +416,11 @@ await emailjs.send(
 
                   <div className="w-14 h-16 bg-background shrink-0 overflow-hidden relative">
 
-                    <img
-                      src={`${BASE_URL}/uploads/${it.product.image}`}
-                      alt={it.product.name}
-                      className="w-full h-full object-cover"
-                    />
+                  <img
+  src={it.product.image}
+  alt={it.product.name}
+  className="w-full h-full object-cover"
+/>
 
                     <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-[10px] flex items-center justify-center font-mono">
                       {it.qty}

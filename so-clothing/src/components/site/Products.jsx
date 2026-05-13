@@ -1,323 +1,252 @@
-
-
-
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import {
-  Heart,
-  ShoppingBag,
-  Star,
-  Eye,
-} from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function Products() {
-
   const sectionRef = useRef(null);
 
   const [products, setProducts] = useState([]);
 
-  // FILTER STATES
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState("");
 
-  // FETCH PRODUCTS
   useEffect(() => {
-
     fetchProducts();
-
   }, []);
 
   const fetchProducts = async () => {
-
     try {
-
       const res = await axios.get(
         "http://localhost:5000/api/products"
       );
-
-      console.log(res.data);
-
       setProducts(res.data);
-
     } catch (error) {
-
       console.log(error);
-
     }
   };
 
-  // HANDLE SIZE FILTER
-  const handleSizeChange = (size) => {
+  const filteredProducts = products
+    .filter((p) => !p.isSpecialOffer)
+    .filter((product) => {
+      const sizeMatch =
+        selectedSizes.length === 0 ||
+        product.sizes?.some((s) =>
+          selectedSizes.includes(s.toUpperCase())
+        );
 
-    if (selectedSizes.includes(size)) {
+      let priceMatch = true;
 
-      setSelectedSizes(
-        selectedSizes.filter((s) => s !== size)
-      );
+      if (selectedPrice === "0-200")
+        priceMatch = product.price <= 200;
 
-    } else {
+      if (selectedPrice === "201-400")
+        priceMatch =
+          product.price >= 201 && product.price <= 400;
 
-      setSelectedSizes([...selectedSizes, size]);
+      if (selectedPrice === "401-600")
+        priceMatch =
+          product.price >= 401 && product.price <= 600;
 
-    }
-  };
+      if (selectedPrice === "601-800")
+        priceMatch =
+          product.price >= 601 && product.price <= 800;
 
-  // FILTER PRODUCTS
-const filteredProducts = products
-  .filter((product) => {
+      if (selectedPrice === "801-1000")
+        priceMatch =
+          product.price >= 801 && product.price <= 1000;
 
-    // SIZE FILTER
-    const sizeMatch =
-      selectedSizes.length === 0 ||
-      product.sizes?.some((s) =>
-        selectedSizes.includes(s.toUpperCase())
-      );
+      if (selectedPrice === "1000+")
+        priceMatch = product.price > 1000;
 
-    // PRICE FILTER
-    let priceMatch = true;
-
-    if (selectedPrice === "0-200") {
-      priceMatch = product.price <= 200;
-    }
-
-    if (selectedPrice === "201-400") {
-      priceMatch =
-        product.price >= 201 &&
-        product.price <= 400;
-    }
-
-    if (selectedPrice === "401-600") {
-      priceMatch =
-        product.price >= 401 &&
-        product.price <= 600;
-    }
-
-    if (selectedPrice === "601-800") {
-      priceMatch =
-        product.price >= 601 &&
-        product.price <= 800;
-    }
-
-    if (selectedPrice === "801-1000") {
-      priceMatch =
-        product.price >= 801 &&
-        product.price <= 1000;
-    }
-
-    if (selectedPrice === "1000+") {
-      priceMatch = product.price > 1000;
-    }
-
-    return sizeMatch && priceMatch;
-
-  })
-  .slice(0, 8);
-
-  // GSAP ANIMATION
-  useEffect(() => {
-
-    if (!filteredProducts.length) return;
-
-    const ctx = gsap.context(() => {
-
-      gsap.from(
-        sectionRef.current.querySelectorAll(".product-card"),
-        {
-          opacity: 0,
-          y: 80,
-          duration: 1,
-          stagger: 0.1,
-        }
-      );
-
-    }, sectionRef);
-
-    return () => ctx.revert();
-
-  }, [filteredProducts]);
+      return sizeMatch && priceMatch;
+    })
+    .slice(0, 8);
 
   return (
+    <section ref={sectionRef} className="py-20 px-6">
 
-    <section
-      ref={sectionRef}
-      className="bg-background py-20"
-    >
+      <h1 className="text-3xl font-bold mb-8">
+        Latest Products
+      </h1>
 
-      <div className="w-full px-4 lg:px-8">
+      <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
 
-        {/* TITLE */}
-        <h1 className="text-4xl font-bold mb-10">
-          Latest Products
-        </h1>
+        {/* SIDEBAR */}
+        <div className="sticky top-24 h-fit">
 
-        {/* FILTER + PRODUCTS */}
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
+          <div className="bg-black text-white rounded-3xl p-8 relative overflow-hidden">
 
-          {/* FILTER SIDEBAR */}
-          {/* STORE CTA SIDEBAR */}
-<div className="sticky top-24 h-fit">
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full" />
+            <div className="absolute -bottom-16 -left-16 w-52 h-52 bg-white/5 rounded-full" />
 
-  <div
-    className="
-      bg-black
-      text-white
-      rounded-3xl
-      p-8
-      overflow-hidden
-      relative
-    "
-  >
+            <div className="relative z-10">
 
-    {/* BACKGROUND CIRCLE */}
-    <div
-      className="
-        absolute
-        -top-10
-        -right-10
-        w-40
-        h-40
-        rounded-full
-        bg-white/10
-      "
-    />
+              <p className="text-sm tracking-[0.3em] text-gray-300">
+                $O.CLOTHING
+              </p>
 
-    <div
-      className="
-        absolute
-        -bottom-16
-        -left-16
-        w-52
-        h-52
-        rounded-full
-        bg-white/5
-      "
-    />
+              <h2 className="text-3xl font-bold mt-4">
+                Explore Store
+              </h2>
 
-    {/* CONTENT */}
-    <div className="relative z-10">
+              <p className="text-gray-300 mt-4 text-sm leading-6">
+                Premium streetwear, oversized fits and new drops.
+              </p>
 
-      <p className="uppercase tracking-[0.3em] text-sm text-gray-300">
-        $O.CLOTHING
-      </p>
+              <Link
+                to="/shop"
+                className="
+                  group
+                  relative
+                  inline-flex
+                  items-center
+                  justify-center
+                  overflow-hidden
+                  mt-6
+                  px-7
+                  py-3
+                  rounded-xl
+                  font-semibold
+                  text-white
 
-      <h2 className="text-4xl font-bold mt-4 leading-tight">
-        Explore
-        <br />
-        The Full Store
-      </h2>
+                  bg-gradient-to-r
+                  from-black
+                  via-zinc-900
+                  to-neutral-800
 
-      <p className="text-gray-300 mt-5 leading-7">
-        Discover premium streetwear,
-        oversized fits, latest drops,
-        and exclusive collections.
-      </p>
+                  border
+                  border-white/10
 
-      {/* BUTTON */}
- <Link
-  to="/shop"
-  className="
-    group
-    relative
-    inline-flex
-    items-center
-    justify-center
-    overflow-hidden
-    mt-8
-    px-8
-    py-4
-    rounded-xl
-    font-semibold
-    text-white
+                  shadow-[0_10px_40px_rgba(0,0,0,0.35)]
 
-    bg-gradient-to-r
-    from-black
-    via-zinc-900
-    to-neutral-800
+                  transition-all
+                  duration-500
 
-    border
-    border-white/10
-
-    shadow-[0_10px_40px_rgba(0,0,0,0.35)]
-
-    transition-all
-    duration-500
-
-    hover:scale-105
-    hover:shadow-[0_15px_50px_rgba(255,255,255,0.08)]
-    hover:border-white/20
-  "
->
-
-  {/* SHINE EFFECT */}
-  <span
-    className="
-      absolute
-      inset-0
-      bg-gradient-to-r
-      from-transparent
-      via-white/20
-      to-transparent
-
-      translate-x-[-120%]
-      group-hover:translate-x-[120%]
-
-      transition-transform
-      duration-1000
-      skew-x-12
-    "
-  />
-
-  {/* TEXT */}
-  <span className="relative z-10 flex items-center gap-3 tracking-wide">
-
-    Visit Store
-
-    <span
-      className="
-        text-lg
-        transition-transform
-        duration-300
-        group-hover:translate-x-1
-      "
-    >
-      →
-    </span>
-
-  </span>
-
-</Link>
-
-    </div>
-
-  </div>
-
-</div>
-
-          {/* PRODUCTS SECTION */}
-          <div>
-
-            <p className="mb-6 text-lg">
-              {filteredProducts.length} Products Found
-            </p>
-
-            {/* PRODUCTS GRID */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-
-              {filteredProducts.map((product) => (
-
-                <ProductCard
-                  key={product._id}
-                  product={product}
+                  hover:scale-105
+                  hover:shadow-[0_15px_50px_rgba(255,255,255,0.08)]
+                  hover:border-white/20
+                "
+              >
+                <span
+                  className="
+                    absolute inset-0
+                    bg-gradient-to-r
+                    from-transparent
+                    via-white/20
+                    to-transparent
+                    translate-x-[-120%]
+                    group-hover:translate-x-[120%]
+                    transition-transform
+                    duration-1000
+                    skew-x-12
+                  "
                 />
 
-              ))}
+                <span className="relative z-10 flex items-center gap-2">
+                  Explore Now
+                  <span className="group-hover:translate-x-1 transition">
+                    →
+                  </span>
+                </span>
+
+              </Link>
 
             </div>
+
+          </div>
+        </div>
+
+        {/* PRODUCTS */}
+        <div>
+
+          <p className="mb-6 text-lg">
+            {filteredProducts.length} Products Found
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+
+            {filteredProducts.map((product) => (
+              <div key={product._id} className="group">
+
+                <Link to={`/product/${product.slug}`}>
+
+                  <div className="relative overflow-hidden rounded-[30px] bg-[#f7f7f7] border border-[#eee]">
+
+                    {/* 🔥 FIXED 20% OFF BADGE */}
+                    <div className="absolute top-5 right-5 z-30">
+                      <div className="px-4 py-2 rounded-xl bg-white shadow-md text-[13px] font-medium text-pink-500">
+                        20% offer
+                      </div>
+                    </div>
+
+                    {/* IMAGE BACKGROUND */}
+                    <div className="absolute inset-0">
+                      <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full border border-red-200" />
+                      <div className="absolute right-[-35px] top-[130px] w-[110px] h-[220px] rounded-full border-[10px] border-red-100 opacity-60" />
+                    </div>
+
+                    <div className="h-[260px] flex items-center justify-center p-4 relative z-10">
+                      <img
+                        src={`http://localhost:5000/uploads/${product.image}`}
+                        className="h-full object-contain group-hover:scale-105 transition"
+                        alt={product.name}
+                      />
+                    </div>
+
+                  </div>
+
+                  {/* TEXT */}
+                  <div className="mt-3">
+
+                    <h2 className="mt-2 font-semibold">
+                      {product.name}
+                    </h2>
+
+                    <p className="text-sm text-gray-500 mt-1">
+                      {product.category}
+                    </p>
+
+                    <div className="flex items-center gap-2 mt-2">
+
+                      <p className="text-base font-semibold">
+                        ₹{product.price}
+                      </p>
+
+                      <span className="text-sm text-gray-400 line-through">
+                        ₹{Math.floor(product.price * 1.2)}
+                      </span>
+
+                    </div>
+
+                    {/* SIZES */}
+                    <div className="flex gap-2 mt-3 flex-wrap">
+
+                      {product.sizes?.map((size, i) => (
+                        <span
+                          key={i}
+                          className="
+                            px-2 py-1 text-xs
+                            border rounded-full
+                            hover:bg-black hover:text-white
+                            transition
+                          "
+                        >
+                          {size.toUpperCase()}
+                        </span>
+                      ))}
+
+                    </div>
+
+                  </div>
+
+                </Link>
+
+              </div>
+            ))}
 
           </div>
 
@@ -354,7 +283,6 @@ export function ProductCard({ product }) {
           {/* ABSTRACT BACKGROUND */}
           <div className="absolute inset-0 overflow-hidden">
 
-            {/* CURVE LINE */}
             <div
               className="
                 absolute
@@ -368,7 +296,6 @@ export function ProductCard({ product }) {
               "
             ></div>
 
-            {/* SIDE SHAPE */}
             <div
               className="
                 absolute
@@ -418,7 +345,6 @@ export function ProductCard({ product }) {
             "
           >
 
-            {/* PRODUCT IMAGE */}
             <img
               src={
                 product.img ||
@@ -443,7 +369,6 @@ export function ProductCard({ product }) {
         {/* CONTENT */}
         <div className="pt-5 px-2 pb-3">
 
-          {/* PRODUCT NAME */}
           <h2
             className="
               text-[20px]
@@ -459,7 +384,6 @@ export function ProductCard({ product }) {
             {product.name}
           </h2>
 
-          {/* CATEGORY */}
           <p
             className="
               mt-1
@@ -471,7 +395,6 @@ export function ProductCard({ product }) {
             {product.category}
           </p>
 
-          {/* PRICE */}
           <div className="flex items-center gap-3 mt-3">
 
             <p className="text-[28px] leading-none font-medium text-[#0f1d4d]">

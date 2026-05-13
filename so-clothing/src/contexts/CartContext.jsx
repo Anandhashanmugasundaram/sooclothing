@@ -1,85 +1,101 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-
+import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   const cartKey = user?.email ? `cart_${user.email}` : null;
 
-  // LOAD CART
+  // ===============================
+  // LOAD CART (ONLY ONCE STABLE USER)
+  // ===============================
   useEffect(() => {
-    if (!user?.email) return;
+    if (loading) return;
+
+    // if logged out → clear cart UI
+    if (!user?.email) {
+      setItems([]);
+      setHydrated(true);
+      return;
+    }
 
     try {
       const saved = localStorage.getItem(cartKey);
+
       setItems(saved ? JSON.parse(saved) : []);
-    } catch {
+    } catch (err) {
+      console.log(err);
       setItems([]);
     }
-  }, [cartKey, user?.email]);
 
-  // SAVE CART
+    setHydrated(true);
+  }, [user?.email, loading, cartKey]);
+
+  // ===============================
+  // SAVE CART (AFTER HYDRATION ONLY)
+  // ===============================
   useEffect(() => {
-    if (!user?.email) return;
+    if (!hydrated || !user?.email) return;
 
     localStorage.setItem(cartKey, JSON.stringify(items));
-  }, [items, cartKey, user?.email]);
+  }, [items, cartKey, user?.email, hydrated]);
 
-  // ADD ITEM (NO MERGE = ALWAYS SEPARATE)
+  // ===============================
+  // ADD ITEM (ALWAYS SEPARATE)
+  // ===============================
   const add = (product, size, qty = 1) => {
     setItems((prev) => [
       ...prev,
       {
+        id: crypto.randomUUID(),
         product,
         size,
         qty,
-        id: Date.now(),
       },
     ]);
 
     setOpen(true);
   };
 
-  // REMOVE
+  // ===============================
+  // REMOVE ITEM
+  // ===============================
   const remove = (id) => {
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
-  // QTY UPDATE
+  // ===============================
+  // UPDATE QTY
+  // ===============================
   const setQty = (id, qty) => {
-    if (qty <= 0) {
-      remove(id);
-      return;
-    }
+    if (qty <= 0) return remove(id);
 
     setItems((prev) =>
-      prev.map((i) =>
-        i.id === id ? { ...i, qty } : i
-      )
+      prev.map((i) => (i.id === id ? { ...i, qty } : i))
     );
   };
 
-  // CLEAR
+  // ===============================
+  // CLEAR CART
+  // ===============================
   const clear = () => {
     setItems([]);
     if (cartKey) localStorage.removeItem(cartKey);
   };
 
-  const count = items.reduce((s, i) => s + i.qty, 0);
+  // ===============================
+  // TOTALS
+  // ===============================
+  const count = items.reduce((sum, i) => sum + i.qty, 0);
 
   const subtotal = items.reduce(
-    (s, i) => s + i.product.price * i.qty,
+    (sum, i) => sum + i.product.price * i.qty,
     0
   );
 

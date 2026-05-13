@@ -18,6 +18,10 @@ const productSchema = new mongoose.Schema(
     image: String,
 
     sizes: [String],
+       isSpecialOffer: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

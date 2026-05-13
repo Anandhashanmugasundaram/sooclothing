@@ -19,7 +19,7 @@ export default function Shop() {
 
   const [products, setProducts] = useState([]);
 
-  // TOP CATEGORY
+  // CATEGORY
   const [cat, setCat] = useState("all");
 
   // SORT
@@ -83,37 +83,25 @@ export default function Shop() {
   // FILTER + SEARCH + SORT
   const filteredList = useMemo(() => {
 
-    let l =
-      cat === "all"
-        ? [...products]
-        : products.filter(
-            (p) =>
-              p.category.toLowerCase() ===
-              cat.toLowerCase()
-          );
+ let l =
+  cat === "all"
+    ? products.filter((p) => !p.isSpecialOffer)
+    : products.filter(
+        (p) =>
+          p.category?.toLowerCase() ===
+            cat.toLowerCase() &&
+          !p.isSpecialOffer
+      );
 
-    // SEARCH FILTER
+    // SEARCH
     if (search.trim()) {
 
       const text = search.toLowerCase();
 
-      l.sort((a, b) => {
+      l = l.filter((p) =>
+        p.name?.toLowerCase().includes(text)
+      );
 
-        const aMatch = a.name
-          .toLowerCase()
-          .includes(text);
-
-        const bMatch = b.name
-          .toLowerCase()
-          .includes(text);
-
-        if (aMatch && !bMatch) return -1;
-
-        if (!aMatch && bMatch) return 1;
-
-        return 0;
-
-      });
     }
 
     // SIZE FILTER
@@ -675,7 +663,7 @@ export function ProductCard({ product }) {
                 h-[140px]
                 rounded-full
                 border
-                border-red-400
+                border-red-300
               "
             ></div>
 
@@ -689,8 +677,8 @@ export function ProductCard({ product }) {
                 h-[180px]
                 rounded-full
                 border-[8px]
-                border-red-300
-                opacity-60
+                border-pink-200
+                opacity-70
               "
             ></div>
 

@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 
 const cats = ["all", "tops", "bottoms", "outerwear", "accessories"];
 
-const BASE_URL ="https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
+const BASE_URL ="https://sooclothing.vercel.app/";
 const ITEMS_PER_PAGE = 8;
 
 export default function Shop() {

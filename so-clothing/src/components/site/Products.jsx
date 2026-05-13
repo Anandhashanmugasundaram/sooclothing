@@ -14,7 +14,7 @@ export function Products() {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState("");
   const BASE_URL =
-  "https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
+  "https://sooclothing.vercel.app/";
   useEffect(() => {
     fetchProducts();
   }, []);

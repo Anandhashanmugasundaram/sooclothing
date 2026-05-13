@@ -30,7 +30,7 @@ export default function Account() {
   const { user, logout } =
     useAuth();
   const BASE_URL =
-  "https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
+  "https://sooclothing.vercel.app/";
   const [orders, setOrders] =
     useState([]);
 

@@ -14,7 +14,7 @@ import { useCart } from "@/contexts/CartContext";
 export default function ProductDetail() {
   const { slug } = useParams();
   const { add } = useCart();
-  const BASE_URL ="https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
+  const BASE_URL ="https://sooclothing.vercel.app/";
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
   const [size, setSize] = useState("");

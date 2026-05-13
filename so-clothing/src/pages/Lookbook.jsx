@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 
 export default function Lookbook() {
   const [offers, setOffers] = useState([]);
-  const BASE_URL ="https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
+  const BASE_URL ="https://sooclothing.vercel.app/";
 
   useEffect(() => {
     fetchOffers();

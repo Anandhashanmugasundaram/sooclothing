@@ -5,7 +5,7 @@ import { toast } from "sonner";
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const BASE_URL =
-  "https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
+  "https://sooclothing.vercel.app/";
   useEffect(() => {
     fetchOrders();
   }, []);

@@ -9,7 +9,7 @@ import {
 
 import { useAuth } from "@/contexts/AuthContext";
 const BASE_URL =
-  "https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
+  "https://sooclothing.vercel.app/";
 import logo from "../assets/logo.png";
 
 import { z } from "zod";

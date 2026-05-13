@@ -19,6 +19,7 @@ import Lookbook from "./pages/Lookbook";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import AdminProducts from "./pages/AdminProducts";
+import AdminOrders from "./pages/AdminOrders"; // ✅ ADD
 
 export default function App() {
 
@@ -91,6 +92,14 @@ export default function App() {
             path="/admin-products"
             element={
               <AdminProducts />
+            }
+          />
+
+          {/* ✅ ADMIN ORDERS */}
+          <Route
+            path="/admin-orders"
+            element={
+              <AdminOrders />
             }
           />
 

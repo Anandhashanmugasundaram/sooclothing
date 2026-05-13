@@ -48,7 +48,7 @@ export default function ProductDetail() {
           (p) =>
             p.category === category &&
             p._id !== currentId &&
-            !p.isSpecialOffer // optional: keep consistent with shop
+            !p.isSpecialOffer
         )
         .slice(0, 4);
 
@@ -179,27 +179,16 @@ export default function ProductDetail() {
               </div>
 
               {/* PERKS */}
-<<<<<<< HEAD
               <div className="grid grid-cols-2 gap-4 py-6 border-y mb-8">
-                <Perk icon={<Truck className="w-5 h-5" />} label="Free Shipping" />
-                <Perk icon={<Shield className="w-5 h-5" />} label="Secure Payment" />
-=======
-
-              <div className="grid grid-cols-3 gap-4 py-6 border-y mb-8">
-
                 <Perk
                   icon={<Truck className="w-5 h-5" />}
                   label="Free Shipping"
                 />
 
-                
-
                 <Perk
                   icon={<Shield className="w-5 h-5" />}
                   label="Secure Payment"
                 />
-
->>>>>>> c55d84d797f9a8d5d717722538d42d40cb9f84f4
               </div>
 
               {/* DETAILS */}

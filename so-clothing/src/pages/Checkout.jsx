@@ -1,28 +1,62 @@
 import { useState } from "react";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Lock, CheckCircle2 } from "lucide-react";
+
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 
 const schema = z.object({
-  email: z.string().trim().email("Valid email required").max(255),
+  email: z
+    .string()
+    .trim()
+    .email("Valid email required")
+    .max(255),
 
-  name: z.string().trim().min(2, "Name required").max(100),
+  name: z
+    .string()
+    .trim()
+    .min(2, "Name required")
+    .max(100),
 
-  address: z.string().trim().min(4, "Address required").max(200),
+  phone: z
+    .string()
+    .trim()
+    .min(10, "Phone required"),
 
-  city: z.string().trim().min(2, "City required").max(80),
+  address: z
+    .string()
+    .trim()
+    .min(4, "Address required")
+    .max(200),
 
-  zip: z.string().trim().min(3, "ZIP required").max(12),
+  city: z
+    .string()
+    .trim()
+    .min(2, "City required")
+    .max(80),
 
-  country: z.string().trim().min(2).max(60),
+  zip: z
+    .string()
+    .trim()
+    .min(3, "ZIP required")
+    .max(12),
+
+  country: z
+    .string()
+    .trim()
+    .min(2)
+    .max(60),
 
   card: z
     .string()
     .trim()
-    .regex(/^[\d ]{13,19}$/, "Card number invalid"),
+    .regex(
+      /^[\d ]{13,19}$/,
+      "Card number invalid"
+    ),
 
   expiry: z
     .string()
@@ -70,7 +104,9 @@ export default function Checkout() {
     useState({
       email: user?.email ?? "",
       name: user?.name ?? "",
+      phone: "",
       address: "",
+      
       city: "",
       zip: "",
       country: "India",
@@ -108,17 +144,82 @@ export default function Checkout() {
       return;
     }
 
-    setLoading(true);
+    try {
 
-    await new Promise((r) =>
-      setTimeout(r, 1400)
-    );
+      setLoading(true);
 
-    setLoading(false);
+      const orderData = {
+        userEmail: form.email,
 
-    setDone(true);
+        customerName: form.name,
 
-    clear();
+        phone: form.phone,
+
+        address: form.address,
+
+        city: form.city,
+
+        zip: form.zip,
+
+        country: form.country,
+
+        items: items.map((it) => ({
+          productId: it.product._id,
+          name: it.product.name,
+          image: it.product.image,
+          size: it.size,
+          qty: it.qty,
+          price: it.product.price,
+        })),
+
+        subtotal,
+        shipping,
+        tax,
+        total,
+      };
+
+     await axios.post(
+  "http://localhost:5000/api/orders/create",
+  {
+    userEmail: form.email,
+    name: form.name,
+    phone: form.phone,
+    address: form.address,
+    city: form.city,
+    zip: form.zip,
+    country: form.country,
+
+    items: items.map((it) => ({
+      productId: it.product._id,
+      name: it.product.name,
+      image: it.product.image,
+      size: it.size,
+      qty: it.qty,
+      price: it.product.price,
+    })),
+
+    subtotal,
+    shipping,
+    tax,
+    total,
+  }
+);
+
+      setDone(true);
+
+      clear();
+
+    } catch (error) {
+
+      console.log(error);
+
+      toast.error("Order failed");
+
+    } finally {
+
+      setLoading(false);
+
+    }
   };
 
   // EMPTY CART
@@ -145,7 +246,7 @@ export default function Checkout() {
     );
   }
 
-  // ORDER SUCCESS
+  // SUCCESS
   if (done) {
 
     return (
@@ -225,7 +326,7 @@ export default function Checkout() {
           className="grid lg:grid-cols-3 gap-12"
         >
 
-          {/* LEFT SIDE */}
+          {/* LEFT */}
           <div className="lg:col-span-2 space-y-12">
 
             {/* CONTACT */}
@@ -247,6 +348,13 @@ export default function Checkout() {
                 label="Full name"
                 value={form.name}
                 onChange={set("name")}
+              />
+
+              <Input
+                label="Phone Number"
+                value={form.phone}
+                onChange={set("phone")}
+                placeholder="9876543210"
               />
 
               <Input
@@ -314,20 +422,19 @@ export default function Checkout() {
 
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* RIGHT */}
           <aside className="lg:sticky lg:top-28 lg:self-start bg-secondary p-8 space-y-5">
 
             <p className="font-display text-xl uppercase">
               Order
             </p>
 
-            {/* PRODUCTS */}
             <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
 
               {items.map((it) => (
 
                 <div
-                  key={`${it.product.id}-${it.size}`}
+                  key={it.id}
                   className="flex gap-3"
                 >
 
@@ -395,7 +502,6 @@ export default function Checkout() {
               bold
             />
 
-            {/* BUTTON */}
             <button
               type="submit"
               disabled={loading}

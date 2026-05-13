@@ -38,7 +38,7 @@ export function Footer() {
         </div>
 
         <div className="overflow-hidden border-t border-border pt-12">
-          <p className="font-display text-[18vw] md:text-[14vw] leading-none uppercase text-foreground/10 select-none whitespace-nowrap">
+          <p className="font-display text-[8vw] md:text-[14vw] leading-none uppercase text-foreground/10 select-none whitespace-nowrap">
             $O.CLOTHING®
           </p>
         </div>

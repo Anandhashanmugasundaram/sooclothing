@@ -10,15 +10,17 @@ export function CartProvider({ children }) {
   const [open, setOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
-  const cartKey = user?.email ? `cart_${user.email}` : null;
+  const cartKey = user?.email
+    ? `cart_${user.email}`
+    : null;
 
   // ===============================
-  // LOAD CART (ONLY ONCE STABLE USER)
+  // LOAD CART
   // ===============================
   useEffect(() => {
     if (loading) return;
 
-    // if logged out → clear cart UI
+    // LOGGED OUT
     if (!user?.email) {
       setItems([]);
       setHydrated(true);
@@ -38,16 +40,19 @@ export function CartProvider({ children }) {
   }, [user?.email, loading, cartKey]);
 
   // ===============================
-  // SAVE CART (AFTER HYDRATION ONLY)
+  // SAVE CART
   // ===============================
   useEffect(() => {
     if (!hydrated || !user?.email) return;
 
-    localStorage.setItem(cartKey, JSON.stringify(items));
+    localStorage.setItem(
+      cartKey,
+      JSON.stringify(items)
+    );
   }, [items, cartKey, user?.email, hydrated]);
 
   // ===============================
-  // ADD ITEM (ALWAYS SEPARATE)
+  // ADD ITEM
   // ===============================
   const add = (product, size, qty = 1) => {
     setItems((prev) => [
@@ -67,17 +72,26 @@ export function CartProvider({ children }) {
   // REMOVE ITEM
   // ===============================
   const remove = (id) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
+    setItems((prev) =>
+      prev.filter((item) => item.id !== id)
+    );
   };
 
   // ===============================
-  // UPDATE QTY
+  // UPDATE QUANTITY
   // ===============================
   const setQty = (id, qty) => {
-    if (qty <= 0) return remove(id);
+    if (qty <= 0) {
+      remove(id);
+      return;
+    }
 
     setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, qty } : i))
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, qty }
+          : item
+      )
     );
   };
 
@@ -86,16 +100,23 @@ export function CartProvider({ children }) {
   // ===============================
   const clear = () => {
     setItems([]);
-    if (cartKey) localStorage.removeItem(cartKey);
+
+    if (cartKey) {
+      localStorage.removeItem(cartKey);
+    }
   };
 
   // ===============================
   // TOTALS
   // ===============================
-  const count = items.reduce((sum, i) => sum + i.qty, 0);
+  const count = items.reduce(
+    (sum, item) => sum + item.qty,
+    0
+  );
 
   const subtotal = items.reduce(
-    (sum, i) => sum + i.product.price * i.qty,
+    (sum, item) =>
+      sum + item.product.price * item.qty,
     0
   );
 
@@ -120,6 +141,12 @@ export function CartProvider({ children }) {
 
 export const useCart = () => {
   const ctx = useContext(CartContext);
-  if (!ctx) throw new Error("useCart must be inside CartProvider");
+
+  if (!ctx) {
+    throw new Error(
+      "useCart must be inside CartProvider"
+    );
+  }
+
   return ctx;
 };

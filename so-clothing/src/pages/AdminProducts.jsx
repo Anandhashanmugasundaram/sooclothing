@@ -14,7 +14,7 @@ export default function AdminProducts() {
   const [loading, setLoading] =
     useState(true);
   const BASE_URL =
-  "https://sooclothing.vercel.app/";
+  "https://sooclothing-1tpa.vercel.app/";
 
   const [editOpen, setEditOpen] =
     useState(false);

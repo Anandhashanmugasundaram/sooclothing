@@ -8,7 +8,7 @@ export default function Admin() {
     localStorage.getItem("user")
   );
   const BASE_URL =
-  "https://sooclothing.vercel.app/";
+  "https://sooclothing-1tpa.vercel.app/";
   // PROTECT ADMIN PAGE
   if (!user?.isAdmin) {
     return <Navigate to="/" />;

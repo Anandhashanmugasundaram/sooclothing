@@ -49,7 +49,7 @@ export default function Checkout() {
 
   const { user } = useAuth();
   const BASE_URL =
-  "https://sooclothing.vercel.app/";
+  "https://sooclothing-1tpa.vercel.app/";
   const nav = useNavigate();
 
   const [loading, setLoading] =

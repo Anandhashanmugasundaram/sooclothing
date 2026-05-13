@@ -13,6 +13,8 @@ export default function AdminProducts() {
 
   const [loading, setLoading] =
     useState(true);
+  const BASE_URL =
+  "https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
 
   const [editOpen, setEditOpen] =
     useState(false);
@@ -46,7 +48,7 @@ export default function AdminProducts() {
 
         const res =
           await axios.get(
-            "http://localhost:5000/api/products"
+            `${BASE_URL}/api/products`
           );
 
         setProducts(res.data);

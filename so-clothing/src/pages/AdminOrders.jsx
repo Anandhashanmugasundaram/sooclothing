@@ -4,7 +4,8 @@ import { toast } from "sonner";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
-
+  const BASE_URL =
+  "https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -12,7 +13,7 @@ export default function AdminOrders() {
   const fetchOrders = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/orders"
+        `${BASE_URL}/api/orders`
       );
 
       setOrders(res.data);

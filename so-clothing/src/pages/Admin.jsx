@@ -7,7 +7,8 @@ export default function Admin() {
   const user = JSON.parse(
     localStorage.getItem("user")
   );
-
+  const BASE_URL =
+  "https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
   // PROTECT ADMIN PAGE
   if (!user?.isAdmin) {
     return <Navigate to="/" />;
@@ -66,7 +67,7 @@ export default function Admin() {
       data.append("image", image);
 
       const res = await axios.post(
-        "http://localhost:5000/api/products/add",
+        `${BASE_URL}/api/products/add`,
         data,
         {
           headers: {

@@ -48,7 +48,8 @@ export default function Checkout() {
   } = useCart();
 
   const { user } = useAuth();
-
+  const BASE_URL =
+  "https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
   const nav = useNavigate();
 
   const [loading, setLoading] =
@@ -123,8 +124,8 @@ const orders = items.map((it) => ({
 
   price: it.product.price * it.qty,
 
-  image_url:
-    `http://localhost:5000/uploads/${it.product.image}`,
+ image_url:
+  `${BASE_URL}/uploads/${it.product.image}`,
 }));
 
 
@@ -417,7 +418,7 @@ await emailjs.send(
                   <div className="w-14 h-16 bg-background shrink-0 overflow-hidden relative">
 
                     <img
-                      src={`http://localhost:5000/uploads/${it.product.image}`}
+                      src={`${BASE_URL}/uploads/${it.product.image}`}
                       alt={it.product.name}
                       className="w-full h-full object-cover"
                     />

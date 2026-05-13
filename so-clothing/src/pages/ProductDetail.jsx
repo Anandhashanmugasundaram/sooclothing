@@ -14,7 +14,7 @@ import { useCart } from "@/contexts/CartContext";
 export default function ProductDetail() {
   const { slug } = useParams();
   const { add } = useCart();
-
+  const BASE_URL ="https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
   const [size, setSize] = useState("");
@@ -40,7 +40,7 @@ export default function ProductDetail() {
   const fetchRelated = async (category, currentId) => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/products"
+        `${BASE_URL}/api/products`
       );
 
       const filtered = res.data

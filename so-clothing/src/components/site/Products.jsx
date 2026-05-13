@@ -1,3 +1,4 @@
+<<<<<<< HEAD
   import { Link } from "react-router-dom";
   import { useEffect, useRef, useState } from "react";
   import axios from "axios";
@@ -22,6 +23,46 @@
       try {
         const res = await axios.get(
           "http://localhost:5000/api/products"
+=======
+import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+export function Products() {
+  const sectionRef = useRef(null);
+
+  const [products, setProducts] = useState([]);
+
+  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [selectedPrice, setSelectedPrice] = useState("");
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/products"
+      );
+      setProducts(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const filteredProducts = products
+    .filter((p) => !p.isSpecialOffer)
+    .filter((product) => {
+      const sizeMatch =
+        selectedSizes.length === 0 ||
+        product.sizes?.some((s) =>
+          selectedSizes.includes(s.toUpperCase())
+>>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba
         );
         setProducts(res.data);
       } catch (error) {
@@ -78,7 +119,12 @@
           {/* SIDEBAR */}
           <div className="sticky top-24 h-fit">
 
+<<<<<<< HEAD
             <div className="bg-black text-white rounded-3xl p-8 relative overflow-hidden">
+=======
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full" />
+            <div className="absolute -bottom-16 -left-16 w-52 h-52 bg-white/5 rounded-full" />
+>>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba
 
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full" />
               <div className="absolute -bottom-16 -left-16 w-52 h-52 bg-white/5 rounded-full" />
@@ -93,9 +139,27 @@
                   Explore Store
                 </h2>
 
+<<<<<<< HEAD
                 <p className="text-gray-300 mt-4 text-sm leading-6">
                   Premium streetwear, oversized fits and new drops.
                 </p>
+=======
+              <Link
+                to="/shop"
+                className="
+                  group
+                  relative
+                  inline-flex
+                  items-center
+                  justify-center
+                  overflow-hidden
+                  mt-6
+                  px-7
+                  py-3
+                  rounded-xl
+                  font-semibold
+                  text-white
+>>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba
 
                 <Link
                   to="/shop"
@@ -152,6 +216,100 @@
                       →
                     </span>
                   </span>
+<<<<<<< HEAD
+=======
+                </span>
+
+              </Link>
+
+            </div>
+
+          </div>
+        </div>
+
+        {/* PRODUCTS */}
+        <div>
+
+          <p className="mb-6 text-lg">
+            {filteredProducts.length} Products Found
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+
+            {filteredProducts.map((product) => (
+              <div key={product._id} className="group">
+
+                <Link to={`/product/${product.slug}`}>
+
+                  <div className="relative overflow-hidden rounded-[30px] bg-[#f7f7f7] border border-[#eee]">
+
+                    {/* 🔥 FIXED 20% OFF BADGE */}
+                    <div className="absolute top-5 right-5 z-30">
+                      <div className="px-4 py-2 rounded-xl bg-white shadow-md text-[13px] font-medium text-pink-500">
+                        20% offer
+                      </div>
+                    </div>
+
+                    {/* IMAGE BACKGROUND */}
+                    <div className="absolute inset-0">
+                      <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full border border-red-200" />
+                      <div className="absolute right-[-35px] top-[130px] w-[110px] h-[220px] rounded-full border-[10px] border-red-100 opacity-60" />
+                    </div>
+
+                    <div className="h-[260px] flex items-center justify-center p-4 relative z-10">
+                      <img
+                        src={`http://localhost:5000/uploads/${product.image}`}
+                        className="h-full object-contain group-hover:scale-105 transition"
+                        alt={product.name}
+                      />
+                    </div>
+
+                  </div>
+
+                  {/* TEXT */}
+                  <div className="mt-3">
+
+                    <h2 className="mt-2 font-semibold">
+                      {product.name}
+                    </h2>
+
+                    <p className="text-sm text-gray-500 mt-1">
+                      {product.category}
+                    </p>
+
+                    <div className="flex items-center gap-2 mt-2">
+
+                      <p className="text-base font-semibold">
+                        ₹{product.price}
+                      </p>
+
+                      <span className="text-sm text-gray-400 line-through">
+                        ₹{Math.floor(product.price * 1.2)}
+                      </span>
+
+                    </div>
+
+                    {/* SIZES */}
+                    <div className="flex gap-2 mt-3 flex-wrap">
+
+                      {product.sizes?.map((size, i) => (
+                        <span
+                          key={i}
+                          className="
+                            px-2 py-1 text-xs
+                            border rounded-full
+                            hover:bg-black hover:text-white
+                            transition
+                          "
+                        >
+                          {size.toUpperCase()}
+                        </span>
+                      ))}
+
+                    </div>
+
+                  </div>
+>>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba
 
                 </Link>
 
@@ -167,7 +325,13 @@
               {filteredProducts.length} Products Found
             </p>
 
+<<<<<<< HEAD
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+=======
+    </section>
+  );
+}
+>>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba
 
               {filteredProducts.map((product) => (
                 <div key={product._id} className="group">
@@ -183,6 +347,7 @@
                         </div>
                       </div>
 
+<<<<<<< HEAD
                       {/* IMAGE BACKGROUND */}
                       <div className="absolute inset-0">
                         <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full border border-red-200" />
@@ -196,6 +361,34 @@
                           alt={product.name}
                         />
                       </div>
+=======
+            <div
+              className="
+                absolute
+                -top-20
+                -left-10
+                w-[180px]
+                h-[180px]
+                rounded-full
+                border
+                border-red-900
+              "
+            ></div>
+
+            <div
+              className="
+                absolute
+                right-[-35px]
+                top-[130px]
+                w-[110px]
+                h-[220px]
+                rounded-full
+                border-[10px]
+                border-red-300
+                opacity-60
+              "
+            ></div>
+>>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba
 
                     </div>
 
@@ -268,11 +461,54 @@
           <div
             className="
               relative
+<<<<<<< HEAD
               overflow-hidden
               rounded-[30px]
               bg-[#f7f7f7]
               border
               border-[#eeeeee]
+=======
+              h-[350px]
+              flex
+              items-center
+              justify-center
+              p-6
+              z-10
+            "
+          >
+
+            <img
+              src={
+                product.img ||
+                `http://localhost:5000/uploads/${product.image}`
+              }
+              alt={product.name}
+              className="
+                w-full
+                h-full
+                object-contain
+                rounded-[24px]
+                transition-all
+                duration-700
+                group-hover:scale-[1.04]
+              "
+            />
+
+          </div>
+
+        </div>
+
+        {/* CONTENT */}
+        <div className="pt-5 px-2 pb-3">
+
+          <h2
+            className="
+              text-[20px]
+              leading-snug
+              font-semibold
+              text-[#13204a]
+              line-clamp-2
+>>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba
               transition-all
               duration-500
               hover:-translate-y-2
@@ -280,10 +516,42 @@
             "
           >
 
+<<<<<<< HEAD
             {/* ABSTRACT BACKGROUND */}
             <div className="absolute inset-0 overflow-hidden">
 
               <div
+=======
+          <p
+            className="
+              mt-1
+              text-[17px]
+              text-gray-500
+              font-normal
+            "
+          >
+            {product.category}
+          </p>
+
+          <div className="flex items-center gap-3 mt-3">
+
+            <p className="text-[28px] leading-none font-medium text-[#0f1d4d]">
+              ₹{product.price}
+            </p>
+
+            <span className="text-gray-400 line-through text-lg mt-2">
+              ₹{Math.floor(product.price * 1.2)}
+            </span>
+
+          </div>
+
+          {/* SIZES */}
+          <div className="flex gap-2 mt-5 flex-wrap">
+
+            {product.sizes?.map((size, index) => (
+              <span
+                key={index}
+>>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba
                 className="
                   absolute
                   -top-20
@@ -384,6 +652,7 @@
               {product.name}
             </h2>
 
+<<<<<<< HEAD
             <p
               className="
                 mt-1
@@ -447,3 +716,8 @@
       </div>
     );
   }
+=======
+    </div>
+  );
+}
+>>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba

@@ -84,28 +84,25 @@ export function Footer() {
         </div>
 
         {/* BIG TEXT */}
-        <div className="overflow-hidden border-t border-border pt-12">
-<<<<<<< HEAD
-          <p className="font-display text-[8vw] md:text-[14vw] leading-none uppercase text-foreground/10 select-none whitespace-nowrap">
-=======
+       {/* BIG TEXT */}
+<div className="overflow-hidden border-t border-border pt-12">
 
-          <p
-            className="
-              font-display
-              text-[18vw]
-              md:text-[14vw]
-              leading-none
-              uppercase
-              text-foreground/10
-              select-none
-              whitespace-nowrap
-            "
-          >
->>>>>>> a9618187f9281c3736f2ffabfc0a2008ef4e42ba
-            $O.CLOTHING®
-          </p>
+  <p
+    className="
+      font-display
+      text-[18vw]
+      md:text-[14vw]
+      leading-none
+      uppercase
+      text-foreground/10
+      select-none
+      whitespace-nowrap
+    "
+  >
+    $O.CLOTHING®
+  </p>
 
-        </div>
+</div>
 
         {/* BOTTOM */}
         <div

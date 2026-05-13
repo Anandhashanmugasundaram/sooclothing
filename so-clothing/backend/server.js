@@ -16,15 +16,7 @@ const createAdmin = require("./config/createAdmin");
 const app = express();
 
 // MIDDLEWARES
-app.use(
-  cors({
-    origin: [
-      "https://sooclothing.vercel.app",
-      "https://sooclothing-git-anand-anands-projects-eec1eb1d.vercel.app",
-    ],
-    credentials: true,
-  })
-);
+app.use(cors());
 
 app.use(express.json());
 

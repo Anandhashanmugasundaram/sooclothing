@@ -18,7 +18,11 @@ const app = express();
 // MIDDLEWARES
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "https://sooclothing.vercel.app",
+      "https://sooclothing-git-anand-anands-projects-eec1eb1d.vercel.app",
+    ],
+    credentials: true,
   })
 );
 

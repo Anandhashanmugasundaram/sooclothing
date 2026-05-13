@@ -8,6 +8,8 @@ import {
   MapPin,
   Phone,
   Instagram,
+  Send,
+  ArrowUpRight,
 } from "lucide-react";
 
 import { PageHeader } from "@/components/site/PageHeader";
@@ -29,7 +31,6 @@ const schema = z.object({
 });
 
 export default function Contact() {
-
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -40,14 +41,12 @@ export default function Contact() {
     useState(false);
 
   const onSubmit = async (e) => {
-
     e.preventDefault();
 
     const parsed =
       schema.safeParse(form);
 
     if (!parsed.success) {
-
       toast.error(
         parsed.error.errors[0].message
       );
@@ -56,7 +55,6 @@ export default function Contact() {
     }
 
     try {
-
       setLoading(true);
 
       await emailjs.send(
@@ -81,7 +79,6 @@ export default function Contact() {
       });
 
     } catch (error) {
-
       console.log(error);
 
       toast.error(
@@ -89,181 +86,286 @@ export default function Contact() {
       );
 
     } finally {
-
       setLoading(false);
-
     }
   };
 
   return (
     <>
       <PageHeader
-        eyebrow="Get In Touch"
-        title="Contact"
+        eyebrow="$O.CLOTHING"
+        title="Contact Us"
       >
-        Wholesale, collaborations,
-        custom orders, or just to say hello
-        — we read every message.
+        Minimal streetwear inspired by
+        movement, culture, and the streets
+        of Chennai.
       </PageHeader>
 
-      <section className="py-20 lg:py-32">
+      <section className="relative overflow-hidden py-20 lg:py-32 bg-background">
 
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 grid lg:grid-cols-2 gap-16">
+        {/* BACKGROUND BLUR */}
+        <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-accent/10 blur-3xl rounded-full" />
 
-          {/* LEFT SIDE */}
-          <div className="space-y-10">
+        <div className="relative max-w-[1450px] mx-auto px-6 lg:px-12">
 
-            {/* SHOP IMAGE */}
-            <a
-              href="https://maps.google.com/?q=Deenadayalu+Street+T+Nagar+Chennai"
-              target="_blank"
-              rel="noreferrer"
-              className="block overflow-hidden rounded-2xl shadow-lg border border-border bg-secondary group"
-            >
+          <div className="grid lg:grid-cols-2 gap-14 items-start">
 
-              <img
-                src="/store-image.jpeg"
-                alt="SO Clothing Store"
-                className="w-full h-[600px] object-contain bg-black transition-transform duration-500 group-hover:scale-105"
-              />
+            {/* LEFT SIDE */}
+            <div className="space-y-8">
 
-            </a>
+              {/* IMAGE CARD */}
+              <div className="group relative overflow-hidden rounded-[2rem] border border-border bg-secondary shadow-2xl">
 
-            {/* CONTACT DETAILS */}
-            <div>
+                <img
+                  src="/store-image.jpeg"
+                  alt="$O Clothing Store"
+                  className="
+                    w-full
+                    h-[650px]
+                    object-cover
+                    transition-transform
+                    duration-700
+                    group-hover:scale-105
+                  "
+                />
 
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-3">
-                — Store Details
-              </p>
+                {/* OVERLAY */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
-              <h2 className="font-display text-3xl md:text-4xl uppercase mb-6">
-                Find Us
-              </h2>
+                {/* FLOATING CARD */}
+                <div
+                  className="
+                    absolute
+                    bottom-6
+                    left-6
+                    right-6
 
-              <div className="space-y-5 text-foreground/80">
+                    bg-background/70
+                    backdrop-blur-xl
 
-                <ContactItem
-                  icon={
-                    <MapPin className="w-4 h-4" />
-                  }
-                  title="Address"
+                    border
+                    border-white/10
+
+                    rounded-2xl
+                    p-6
+                  "
                 >
-                  Deenadayalu Street,
-                  T Nagar,
-                  Chennai,
-                  Tamil Nadu 600017,
-                  India
-                </ContactItem>
 
-                <ContactItem
+                  <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent mb-3">
+                    — Visit Our Store
+                  </p>
+
+                  <h2 className="font-display text-3xl uppercase text-white mb-3">
+                    $O.CLOTHING
+                  </h2>
+
+                  <p className="text-sm text-white/70 leading-relaxed">
+                    Premium streetwear crafted
+                    for bold individuals who
+                    live fashion beyond trends.
+                  </p>
+
+                </div>
+              </div>
+
+              {/* CONTACT INFO */}
+              <div className="grid sm:grid-cols-2 gap-5">
+
+                <ContactCard
                   icon={
-                    <Mail className="w-4 h-4" />
+                    <MapPin className="w-5 h-5" />
                   }
-                  title="Email"
-                >
-                  soclothingoff@gmail.com
-                </ContactItem>
+                  title="Location"
+                  content={
+                    <>
+                      Deenadayalu Street,
+                      T Nagar,
+                      Chennai
+                    </>
+                  }
+                />
 
-                <ContactItem
+                <ContactCard
                   icon={
-                    <Phone className="w-4 h-4" />
+                    <Phone className="w-5 h-5" />
                   }
                   title="Phone"
-                >
-                  +91 94445 45351
-                </ContactItem>
+                  content="+91 94445 45351"
+                />
 
-                <ContactItem
+                <ContactCard
                   icon={
-                    <Instagram className="w-4 h-4" />
+                    <Mail className="w-5 h-5" />
+                  }
+                  title="Email"
+                  content="soclothingoff@gmail.com"
+                />
+
+                <ContactCard
+                  icon={
+                    <Instagram className="w-5 h-5" />
                   }
                   title="Instagram"
-                >
-                  <a
-                    href="https://instagram.com/soclothingshop"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-accent transition"
-                  >
-                    @soclothingshop
-                  </a>
-                </ContactItem>
+                  content={
+                    <a
+                      href="https://instagram.com/soclothingshop"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-accent transition inline-flex items-center gap-2"
+                    >
+                      @$oclothingshop
+                      <ArrowUpRight className="w-4 h-4" />
+                    </a>
+                  }
+                />
 
               </div>
             </div>
-          </div>
 
-          {/* RIGHT SIDE FORM */}
-          <form
-            onSubmit={onSubmit}
-            className="bg-secondary p-8 lg:p-12 space-y-5 rounded-xl"
-          >
-
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">
-              — Send a Message
-            </p>
-
-            <Field
-              label="Name"
-              value={form.name}
-              onChange={(v) =>
-                setForm({
-                  ...form,
-                  name: v,
-                })
-              }
-            />
-
-            <Field
-              label="Email"
-              type="email"
-              value={form.email}
-              onChange={(v) =>
-                setForm({
-                  ...form,
-                  email: v,
-                })
-              }
-            />
-
-            {/* MESSAGE */}
-            <label className="block">
-
-              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground block mb-2">
-                Message
-              </span>
-
-              <textarea
-                value={form.message}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    message:
-                      e.target.value,
-                  })
-                }
-                rows={6}
-                className="w-full bg-transparent border border-border focus:border-accent outline-none px-4 py-3 font-mono text-sm resize-none"
-              />
-
-            </label>
-
-            {/* BUTTON */}
-            <button
-              disabled={loading}
-              className="w-full bg-accent text-accent-foreground py-4 font-mono text-xs uppercase tracking-[0.25em] hover:bg-accent/90 disabled:opacity-60"
+            {/* RIGHT SIDE */}
+            <div
+              className="
+                relative
+                bg-secondary/70
+                backdrop-blur-xl
+                border
+                border-border
+                rounded-[2rem]
+                p-8
+                lg:p-12
+                shadow-2xl
+              "
             >
 
-              {
-                loading
-                  ? "Sending..."
-                  : "Send Message"
-              }
+              <div className="mb-8">
 
-            </button>
+                <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-3">
+                  — Send Message
+                </p>
 
-          </form>
+                <h2 className="font-display text-4xl md:text-5xl uppercase mb-4">
+                  Let’s Talk
+                </h2>
 
+                <p className="text-muted-foreground leading-relaxed">
+                  Collaborations, wholesale,
+                  styling projects, or custom
+                  drops — connect with the
+                  $O.CLOTHING team.
+                </p>
+
+              </div>
+
+              <form
+                onSubmit={onSubmit}
+                className="space-y-6"
+              >
+
+                <Field
+                  label="Your Name"
+                  value={form.name}
+                  onChange={(v) =>
+                    setForm({
+                      ...form,
+                      name: v,
+                    })
+                  }
+                />
+
+                <Field
+                  label="Email Address"
+                  type="email"
+                  value={form.email}
+                  onChange={(v) =>
+                    setForm({
+                      ...form,
+                      email: v,
+                    })
+                  }
+                />
+
+                {/* MESSAGE */}
+                <label className="block">
+
+                  <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground block mb-3">
+                    Your Message
+                  </span>
+
+                  <textarea
+                    value={form.message}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        message:
+                          e.target.value,
+                      })
+                    }
+                    rows={7}
+                    placeholder="Tell us about your project..."
+                    className="
+                      w-full
+                      bg-background/50
+                      border
+                      border-border
+                      focus:border-accent
+                      outline-none
+                      px-5
+                      py-4
+                      rounded-xl
+                      font-mono
+                      text-sm
+                      resize-none
+                      transition
+                    "
+                  />
+
+                </label>
+
+                {/* BUTTON */}
+                <button
+                  disabled={loading}
+                  className="
+                    group
+                    w-full
+
+                    bg-accent
+                    text-accent-foreground
+
+                    py-4
+                    rounded-xl
+
+                    font-mono
+                    text-xs
+                    uppercase
+                    tracking-[0.3em]
+
+                    hover:scale-[1.02]
+                    hover:bg-accent/90
+
+                    transition-all
+                    duration-300
+
+                    disabled:opacity-60
+                  "
+                >
+
+                  <span className="inline-flex items-center gap-3">
+
+                    {
+                      loading
+                        ? "Sending..."
+                        : "Send Message"
+                    }
+
+                    <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+
+                  </span>
+
+                </button>
+
+              </form>
+            </div>
+          </div>
         </div>
       </section>
     </>
@@ -271,51 +373,76 @@ export default function Contact() {
 }
 
 
-// CONTACT ITEM
-function ContactItem({
+/* CONTACT CARD */
+function ContactCard({
   icon,
   title,
-  children,
+  content,
 }) {
-
   return (
+    <div
+      className="
+        bg-secondary
+        border
+        border-border
+        rounded-2xl
+        p-5
 
-    <div className="flex gap-4">
+        hover:border-accent/40
+        hover:-translate-y-1
 
-      <span className="text-accent mt-1">
-        {icon}
-      </span>
+        transition-all
+        duration-300
+      "
+    >
 
-      <div>
+      <div className="flex items-start gap-4">
 
-        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
-          {title}
-        </p>
+        <div
+          className="
+            w-11
+            h-11
+            rounded-full
+            bg-accent/10
+            text-accent
 
-        <p className="text-sm">
-          {children}
-        </p>
+            flex
+            items-center
+            justify-center
+            shrink-0
+          "
+        >
+          {icon}
+        </div>
 
+        <div>
+
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2">
+            {title}
+          </p>
+
+          <div className="text-sm leading-relaxed">
+            {content}
+          </div>
+
+        </div>
       </div>
-
     </div>
   );
 }
 
 
-// INPUT FIELD
+/* INPUT FIELD */
 function Field({
   label,
   value,
   onChange,
   ...props
 }) {
-
   return (
-
     <label className="block">
 
-      <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground block mb-2">
+      <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground block mb-3">
         {label}
       </span>
 
@@ -325,7 +452,28 @@ function Field({
         onChange={(e) =>
           onChange(e.target.value)
         }
-        className="w-full bg-transparent border border-border focus:border-accent outline-none px-4 py-3 font-mono text-sm"
+        className="
+          w-full
+          bg-background/50
+          border
+          border-border
+
+          focus:border-accent
+          focus:ring-2
+          focus:ring-accent/20
+
+          outline-none
+
+          px-5
+          py-4
+
+          rounded-xl
+
+          font-mono
+          text-sm
+
+          transition
+        "
       />
 
     </label>

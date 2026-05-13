@@ -8,7 +8,8 @@ import {
 } from "react-router-dom";
 
 import { useAuth } from "@/contexts/AuthContext";
-
+const BASE_URL =
+  "https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
 import logo from "../assets/logo.png";
 
 import { z } from "zod";
@@ -75,7 +76,7 @@ export default function Login() {
 
       // LOGIN API
       const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${BASE_URL}/api/auth/login`,
         {
           email: form.email,
           password:

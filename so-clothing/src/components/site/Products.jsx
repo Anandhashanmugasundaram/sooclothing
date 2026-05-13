@@ -13,7 +13,8 @@ export function Products() {
 
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState("");
-
+  const BASE_URL =
+  "https://sooclothing-1tpa-nh9kpsqdn-anands-projects-eec1eb1d.vercel.app";
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -21,7 +22,7 @@ export function Products() {
   const fetchProducts = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/products"
+        `${BASE_URL}/api/products`
       );
 
       setProducts(res.data);

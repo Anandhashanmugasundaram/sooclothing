@@ -80,7 +80,7 @@ export default function AdminProducts() {
       try {
 
         await axios.delete(
-          `http://localhost:5000/api/products/${id}`
+          `${BASE_URL}/api/products/${id}`
         );
 
         setProducts(
@@ -184,7 +184,7 @@ export default function AdminProducts() {
 
         const res =
           await axios.put(
-            `http://localhost:5000/api/products/${selectedId}`,
+            `${BASE_URL}/api/products/${selectedId}`,
             data,
             {
               headers: {

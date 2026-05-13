@@ -27,7 +27,7 @@ export default function ProductDetail() {
   const fetchProduct = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/products/${slug}`
+        `${BASE_URL}/api/products/${slug}`
       );
 
       setProduct(res.data);

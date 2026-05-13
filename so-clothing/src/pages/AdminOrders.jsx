@@ -26,7 +26,7 @@ export default function AdminOrders() {
   const deleteOrder = async (id) => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/orders/${id}`
+        `${BASE_URL}/api/orders/${id}`
       );
 
       toast.success("Order deleted");
@@ -46,7 +46,7 @@ export default function AdminOrders() {
   ) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/orders/${id}`,
+        `${BASE_URL}/api/orders/${id}`,
         {
           status,
         }
@@ -169,7 +169,7 @@ export default function AdminOrders() {
                       <img
                         src={
                           item.image
-                            ? `http://localhost:5000/uploads/${item.image}`
+                            ? `${BASE_URL}/uploads/${item.image}`
                             : "/placeholder.jpg"
                         }
                         alt={item.name}

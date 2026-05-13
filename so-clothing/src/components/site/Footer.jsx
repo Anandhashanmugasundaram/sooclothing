@@ -84,40 +84,91 @@ export function Footer() {
         </div>
 
         {/* BIG TEXT */}
-       {/* BIG TEXT */}
-<div className="overflow-hidden border-t border-border pt-12">
+        <div className="overflow-hidden border-t border-border pt-12">
 
-  <p
-    className="
-      font-display
-      text-[18vw]
-      md:text-[14vw]
-      leading-none
-      uppercase
-      text-foreground/10
-      select-none
-      whitespace-nowrap
-    "
-  >
-    $O.CLOTHING®
-  </p>
+          <p
+            className="
+              font-display
+              text-[18vw]
+              md:text-[14vw]
+              leading-none
+              uppercase
+              text-foreground/10
+              select-none
+              whitespace-nowrap
+            "
+          >
 
-</div>
+            $O.CLOTHING®
+
+          </p>
+
+        </div>
+
+        {/* POLICY LINKS */}
+        <div
+          className="
+            flex
+            flex-wrap
+            justify-center
+            items-center
+            gap-6
+            mt-10
+          "
+        >
+
+          <Link
+            to="/privacy-policy"
+            className="
+              text-sm
+              text-foreground/70
+              hover:text-accent
+              transition-colors
+            "
+          >
+            Privacy Policy
+          </Link>
+
+          <Link
+            to="/terms-and-conditions"
+            className="
+              text-sm
+              text-foreground/70
+              hover:text-accent
+              transition-colors
+            "
+          >
+            Terms & Conditions
+          </Link>
+
+          <Link
+            to="/refund-policy"
+            className="
+              text-sm
+              text-foreground/70
+              hover:text-accent
+              transition-colors
+            "
+          >
+            Refund Policy
+          </Link>
+
+        </div>
 
         {/* BOTTOM */}
         <div
-           className="
-    flex
-    flex-col
-    items-center
-    justify-center
-    gap-6
-    mt-8
-    pt-8
-    border-t
-    border-border
-    text-center
-  "
+          className="
+            flex
+            flex-col
+            items-center
+            justify-center
+            gap-6
+            mt-8
+            pt-8
+            border-t
+            border-border
+            text-center
+          "
         >
 
           {/* COPYRIGHT */}
@@ -134,8 +185,7 @@ export function Footer() {
           </p>
 
           {/* SOCIAL ICONS */}
-         
-<div className="flex items-center justify-center gap-5">
+          <div className="flex items-center justify-center gap-5">
 
             {/* INSTAGRAM */}
             <a

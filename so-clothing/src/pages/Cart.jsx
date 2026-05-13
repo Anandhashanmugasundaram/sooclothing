@@ -42,12 +42,12 @@ export default function Cart() {
                       to={`/product/${it.product.slug}`}
                       className="w-32 h-40 bg-secondary shrink-0 overflow-hidden"
                     >
-                      <img
-                        src={
-                          it.product.img ||
-                          `http://localhost:5000/uploads/${it.product.image}`
-                        }
-                        alt={it.product.name}
+                    <img
+  src={
+    it.product.image ||
+    "/fallback.png"
+  }
+  alt={it.product.name}
                         className="w-full h-full object-cover"
                       />
                     </Link>

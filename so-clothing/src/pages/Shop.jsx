@@ -721,21 +721,24 @@ export function ProductCard({ product }) {
             "
           >
 
-            <img
-              src={
-                product.img ||
-                `http://localhost:5000/uploads/${product.image}`
-              }
-              alt={product.name}
-              className="
-                w-full
-                h-full
-                object-contain
-                transition-all
-                duration-700
-                group-hover:scale-[1.05]
-              "
-            />
+          <img
+  src={product.image}
+  alt={product.name}
+  className="
+    w-full
+    h-full
+    object-contain
+    transition-all
+    duration-700
+    group-hover:scale-[1.05]
+  "
+  onError={() => {
+    console.log(
+      "FAILED IMAGE:",
+      product.image
+    );
+  }}
+/>
 
           </div>
 

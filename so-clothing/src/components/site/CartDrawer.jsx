@@ -94,7 +94,7 @@ export function CartDrawer() {
                     className="block w-20 h-24 bg-gray-100 shrink-0 overflow-hidden rounded"
                   >
                     <img
-                      src={`http://localhost:5000/uploads/${it.product.image}`}
+                      src={it.product.image || "/fallback.png"}
                       alt={it.product.name}
                       className="w-full h-full object-cover"
                     />

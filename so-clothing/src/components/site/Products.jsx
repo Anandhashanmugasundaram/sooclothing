@@ -192,7 +192,7 @@ export function Products() {
 
                     <div className="h-[260px] flex items-center justify-center p-4 relative z-10">
                       <img
-                        src={`http://localhost:5000/uploads/${product.image}`}
+                        src={product.image}
                         className="h-full object-contain group-hover:scale-105 transition"
                         alt={product.name}
                       />

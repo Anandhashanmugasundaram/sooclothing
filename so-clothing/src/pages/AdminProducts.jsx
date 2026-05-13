@@ -263,11 +263,10 @@ export default function AdminProducts() {
                   >
 
                     {/* IMAGE */}
-                    <img
-                      src={`http://localhost:5000/uploads/${product.image}`}
-                      alt={
-                        product.name
-                      }
+                  <img
+  src={product.image}
+  alt={product.name}
+
                       className="w-full h-[300px] object-cover"
                     />
 

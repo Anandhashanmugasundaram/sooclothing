@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const path = require("path");
 
 require("dotenv").config();
 
@@ -21,21 +20,10 @@ app.use(cors());
 
 app.use(express.json());
 
-// STATIC FILES
-app.use(
-  "/uploads",
-  express.static(
-    path.join(__dirname, "uploads")
-  )
-);
-
 // ROUTES
 app.use("/api/auth", authRoutes);
 
-app.use(
-  "/api/products",
-  productRoutes
-);
+app.use("/api/products", productRoutes);
 
 app.use("/api/users", userRoutes);
 

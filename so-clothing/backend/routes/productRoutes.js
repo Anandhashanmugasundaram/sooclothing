@@ -42,7 +42,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
       category,
       description,
       sizes: sizes ? sizes.split(",") : [],
-      image: req.file.filename,
+      image: req.file.path,
 
       // ✅ FIXED FIELD
       isSpecialOffer: specialOfferFlag,
@@ -148,8 +148,10 @@ router.put("/:id", upload.single("image"), async (req, res) => {
 
     // UPDATE IMAGE ONLY IF NEW IMAGE EXISTS
     if (req.file) {
-      product.image = req.file.filename;
-    }
+  console.log("UPDATED FILE:", req.file);
+
+  product.image = req.file.path;
+}
 
     await product.save();
 

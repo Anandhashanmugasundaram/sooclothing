@@ -36,8 +36,8 @@ export default function Lookbook() {
               className="border p-3 rounded-lg block"
             >
               <img
-                src={`http://localhost:5000/uploads/${product.image}`}
-                className="h-40 w-full object-contain"
+                src={product.image}
+                className="h-50 w-full object-contain"
               />
 
               <h2 className="mt-2 font-semibold">

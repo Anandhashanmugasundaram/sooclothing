@@ -100,7 +100,7 @@ export default function ProductDetail() {
             {/* IMAGE */}
             <div>
               <img
-                src={`http://localhost:5000/uploads/${product.image}`}
+                src={product.image}
                 alt={product.name}
                 className="w-full h-[700px] object-cover rounded-lg"
               />
@@ -227,7 +227,7 @@ export default function ProductDetail() {
                 className="border p-3 rounded-lg block hover:scale-[1.02] transition"
               >
                 <img
-                  src={`http://localhost:5000/uploads/${p.image}`}
+                  src={p.image}
                   className="h-40 w-full object-contain"
                   alt={p.name}
                 />

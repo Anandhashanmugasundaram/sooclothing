@@ -30,16 +30,17 @@ export function Footer() {
             { label: "Account", to: "/account" },
           ]} />
           <FooterCol title="Brand" links={[
+            { label: "Home", to: "/" },
             { label: "About", to: "/about" },
-            { label: "Lookbook", to: "/lookbook" },
-            { label: "Instagram", to: "/contact" },
-            { label: "TikTok", to: "/contact" },
+            { label: "Contact", to: "/contact" },
+            // { label: "Instagram", href: "https://www.instagram.com/_s0.clothing_/" },
+            { label: "Shop", to: "/shop" },
           ]} />
         </div>
 
         <div className="overflow-hidden border-t border-border pt-12">
-          <p className="font-display text-[18vw] md:text-[14vw] leading-none uppercase text-foreground/10 select-none whitespace-nowrap">
-            $O.CLOTHING®
+          <p className="font-display text-[15vw] md:text-[11vw] leading-none uppercase text-foreground/10 select-none whitespace-nowrap">
+            $O.CLOTHINGS
           </p>
         </div>
 

@@ -525,123 +525,80 @@ export default function About() {
 
             </div>
 
-            {/* GRID */}
-            <div
-              className="
-                grid
-                grid-cols-1
-                md:grid-cols-2
-                lg:grid-cols-3
-                gap-8
-              "
-            >
+{/* GRID */}
+<div
+  className="
+    grid
+    grid-cols-1
+    md:grid-cols-2
+    lg:grid-cols-3
+    gap-8
+  "
+>
 
-              {[
-                {
-                  icon: <Star size={34} />,
-                  title: "Premium Quality",
-                  desc:
-                    "Heavyweight fabrics with premium finishing and modern oversized fits.",
-                },
-                {
-                  icon: <Truck size={34} />,
-                  title: "Fast Shipping",
-                  desc:
-                    "Quick dispatch and reliable delivery across India.",
-                },
-                {
-                  icon: <ShieldCheck size={34} />,
-                  title: "Trusted Brand",
-                  desc:
-                    "Built for the new generation of streetwear lovers.",
-                },
-              ].map((card) => (
+  {[
+    {
+      icon: <Star size={34} />,
+      title: "Premium Quality",
+      desc:
+        "Heavyweight fabrics with premium finishing and modern oversized fits.",
+    },
+    {
+      icon: <Truck size={34} />,
+      title: "Fast Shipping",
+      desc:
+        "Quick dispatch and reliable delivery across India.",
+    },
+    {
+      icon: <ShieldCheck size={34} />,
+      title: "Trusted Brand",
+      desc:
+        "Built for the new generation of streetwear lovers.",
+    },
+  ].map((card) => (
 
-                <div
-                  key={card.title}
-                  className="
-                    zoom-card
-                    relative
-                    overflow-hidden
-                    rounded-[32px]
-                    border
-                    border-gray-200
-                    bg-[#fafafa]
-                    p-10
-                    transition-all
-                    duration-500
-                    hover:-translate-y-2
-                    hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]
-                    group
-                  "
-                >
+    <div
+      key={card.title}
+      className="
+        relative
+        overflow-hidden
+        rounded-[32px]
+        border
+        border-gray-200
+        bg-[#fafafa]
+        p-10
+      "
+    >
 
-                  {/* GLOW */}
-                  <div
-                    className="
-                      absolute
-                      top-0
-                      right-0
-                      w-[160px]
-                      h-[160px]
-                      bg-red-100
-                      rounded-full
-                      blur-[80px]
-                      opacity-0
-                      group-hover:opacity-100
-                      transition-all
-                      duration-500
-                    "
-                  />
+      <div
+        className="
+          w-16
+          h-16
+          rounded-2xl
+          bg-black
+          text-white
+          flex
+          items-center
+          justify-center
+          mb-8
+        "
+      >
+        {card.icon}
+      </div>
 
-                  {/* ICON */}
-                  <div
-                    className="
-                      relative
-                      z-10
-                      w-16
-                      h-16
-                      rounded-2xl
-                      bg-black
-                      text-white
-                      flex
-                      items-center
-                      justify-center
-                      mb-8
-                    "
-                  >
-                    {card.icon}
-                  </div>
+      <h3 className="text-2xl font-bold mb-4">
+        {card.title}
+      </h3>
 
-                  <h3
-                    className="
-                      relative
-                      z-10
-                      text-2xl
-                      font-bold
-                      text-black
-                      mb-4
-                    "
-                  >
-                    {card.title}
-                  </h3>
+      <p className="text-gray-600">
+        {card.desc}
+      </p>
 
-                  <p
-                    className="
-                      relative
-                      z-10
-                      text-gray-600
-                      leading-relaxed
-                    "
-                  >
-                    {card.desc}
-                  </p>
+    </div>
 
-                </div>
+  ))}
 
-              ))}
-
-            </div>
+</div>
 
           </div>
 

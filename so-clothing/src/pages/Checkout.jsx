@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Lock, CheckCircle2 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
+import emailjs from "@emailjs/browser";
 
 const schema = z.object({
   email: z.string().trim().email("Valid email required").max(255),
@@ -85,41 +86,109 @@ export default function Checkout() {
       [k]: e.target.value,
     });
 
-  const onSubmit = async (e) => {
+const onSubmit = async (e) => {
+  e.preventDefault();
 
-    e.preventDefault();
+  const parsed = schema.safeParse(form);
 
-    const parsed =
-      schema.safeParse(form);
+  if (!parsed.success) {
 
-    if (!parsed.success) {
+    const first =
+      Object.values(
+        parsed.error.flatten().fieldErrors
+      )[0]?.[0];
 
-      const first =
-        Object.values(
-          parsed.error.flatten()
-            .fieldErrors
-        )[0]?.[0];
+    toast.error(
+      first ?? "Please check the form"
+    );
 
-      toast.error(
-        first ??
-        "Please check the form"
-      );
+    return;
+  }
 
-      return;
-    }
+  try {
 
     setLoading(true);
 
-    await new Promise((r) =>
-      setTimeout(r, 1400)
-    );
+    // ORDER ITEMS STRING
+const orderId =
+  "SO-" +
+  Math.floor(Math.random() * 90000 + 10000);
 
-    setLoading(false);
+// ORDERS ARRAY
+const orders = items.map((it) => ({
+
+  name: `${it.product.name} - Size ${it.size}`,
+
+  units: it.qty,
+
+  price: it.product.price * it.qty,
+
+  image_url:
+    `http://localhost:5000/uploads/${it.product.image}`,
+}));
+
+
+// SEND EMAIL
+await emailjs.send(
+
+  import.meta.env.VITE_EMAILJS_SERVICE_ID,
+
+  import.meta.env.VITE_EMAILJS_ORDER_TEMPLATE_ID,
+
+  {
+
+    order_id: orderId,
+
+    email: form.email,
+
+    customer_email: form.email,
+
+    customer_name: form.name,
+
+    address: form.address,
+
+    city: form.city,
+
+    zip: form.zip,
+
+    country: form.country,
+
+    orders: orders,
+
+    cost: {
+
+      shipping: shipping,
+
+      tax: tax,
+
+      total: total,
+    },
+  },
+
+  import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+);
+
+    toast.success(
+      "Order placed successfully!"
+    );
 
     setDone(true);
 
     clear();
-  };
+
+  } catch (error) {
+
+    console.log(error);
+
+    toast.error(
+      "Failed to place order"
+    );
+
+  } finally {
+
+    setLoading(false);
+  }
+};
 
   // EMPTY CART
   if (

@@ -292,7 +292,7 @@ export function ProductCard({ product }) {
                 h-[180px]
                 rounded-full
                 border
-                border-red-200
+                border-red-400
               "
             ></div>
 
@@ -305,7 +305,7 @@ export function ProductCard({ product }) {
                 h-[220px]
                 rounded-full
                 border-[10px]
-                border-red-100
+                border-red-300
                 opacity-60
               "
             ></div>

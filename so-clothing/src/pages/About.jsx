@@ -92,7 +92,7 @@ export default function About() {
       >
 
         {/* HERO SECTION */}
-        <section className="relative py-24 lg:py-36">
+        <section className="relative py-14 lg:py-26">
 
           {/* BACKGROUND */}
           <div

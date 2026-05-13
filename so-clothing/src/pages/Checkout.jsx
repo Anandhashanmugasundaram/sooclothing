@@ -1,62 +1,29 @@
 import { useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Lock, CheckCircle2 } from "lucide-react";
-
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
+import emailjs from "@emailjs/browser";
 
 const schema = z.object({
-  email: z
-    .string()
-    .trim()
-    .email("Valid email required")
-    .max(255),
+  email: z.string().trim().email("Valid email required").max(255),
 
-  name: z
-    .string()
-    .trim()
-    .min(2, "Name required")
-    .max(100),
+  name: z.string().trim().min(2, "Name required").max(100),
 
-  phone: z
-    .string()
-    .trim()
-    .min(10, "Phone required"),
+  address: z.string().trim().min(4, "Address required").max(200),
 
-  address: z
-    .string()
-    .trim()
-    .min(4, "Address required")
-    .max(200),
+  city: z.string().trim().min(2, "City required").max(80),
 
-  city: z
-    .string()
-    .trim()
-    .min(2, "City required")
-    .max(80),
+  zip: z.string().trim().min(3, "ZIP required").max(12),
 
-  zip: z
-    .string()
-    .trim()
-    .min(3, "ZIP required")
-    .max(12),
-
-  country: z
-    .string()
-    .trim()
-    .min(2)
-    .max(60),
+  country: z.string().trim().min(2).max(60),
 
   card: z
     .string()
     .trim()
-    .regex(
-      /^[\d ]{13,19}$/,
-      "Card number invalid"
-    ),
+    .regex(/^[\d ]{13,19}$/, "Card number invalid"),
 
   expiry: z
     .string()
@@ -104,9 +71,7 @@ export default function Checkout() {
     useState({
       email: user?.email ?? "",
       name: user?.name ?? "",
-      phone: "",
       address: "",
-      
       city: "",
       zip: "",
       country: "India",
@@ -121,106 +86,109 @@ export default function Checkout() {
       [k]: e.target.value,
     });
 
-  const onSubmit = async (e) => {
+const onSubmit = async (e) => {
+  e.preventDefault();
 
-    e.preventDefault();
+  const parsed = schema.safeParse(form);
 
-    const parsed =
-      schema.safeParse(form);
+  if (!parsed.success) {
 
-    if (!parsed.success) {
+    const first =
+      Object.values(
+        parsed.error.flatten().fieldErrors
+      )[0]?.[0];
 
-      const first =
-        Object.values(
-          parsed.error.flatten()
-            .fieldErrors
-        )[0]?.[0];
+    toast.error(
+      first ?? "Please check the form"
+    );
 
-      toast.error(
-        first ??
-        "Please check the form"
-      );
+    return;
+  }
 
-      return;
-    }
+  try {
 
-    try {
+    setLoading(true);
 
-      setLoading(true);
+    // ORDER ITEMS STRING
+const orderId =
+  "SO-" +
+  Math.floor(Math.random() * 90000 + 10000);
 
-      const orderData = {
-        userEmail: form.email,
+// ORDERS ARRAY
+const orders = items.map((it) => ({
 
-        customerName: form.name,
+  name: `${it.product.name} - Size ${it.size}`,
 
-        phone: form.phone,
+  units: it.qty,
 
-        address: form.address,
+  price: it.product.price * it.qty,
 
-        city: form.city,
+  image_url:
+    `http://localhost:5000/uploads/${it.product.image}`,
+}));
 
-        zip: form.zip,
 
-        country: form.country,
+// SEND EMAIL
+await emailjs.send(
 
-        items: items.map((it) => ({
-          productId: it.product._id,
-          name: it.product.name,
-          image: it.product.image,
-          size: it.size,
-          qty: it.qty,
-          price: it.product.price,
-        })),
+  import.meta.env.VITE_EMAILJS_SERVICE_ID,
 
-        subtotal,
-        shipping,
-        tax,
-        total,
-      };
+  import.meta.env.VITE_EMAILJS_ORDER_TEMPLATE_ID,
 
-     await axios.post(
-  "http://localhost:5000/api/orders/create",
   {
-    userEmail: form.email,
-    name: form.name,
-    phone: form.phone,
+
+    order_id: orderId,
+
+    email: form.email,
+
+    customer_email: form.email,
+
+    customer_name: form.name,
+
     address: form.address,
+
     city: form.city,
+
     zip: form.zip,
+
     country: form.country,
 
-    items: items.map((it) => ({
-      productId: it.product._id,
-      name: it.product.name,
-      image: it.product.image,
-      size: it.size,
-      qty: it.qty,
-      price: it.product.price,
-    })),
+    orders: orders,
 
-    subtotal,
-    shipping,
-    tax,
-    total,
-  }
+    cost: {
+
+      shipping: shipping,
+
+      tax: tax,
+
+      total: total,
+    },
+  },
+
+  import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 );
 
-      setDone(true);
+    toast.success(
+      "Order placed successfully!"
+    );
 
-      clear();
+    setDone(true);
 
-    } catch (error) {
+    clear();
 
-      console.log(error);
+  } catch (error) {
 
-      toast.error("Order failed");
+    console.log(error);
 
-    } finally {
+    toast.error(
+      "Failed to place order"
+    );
 
-      setLoading(false);
+  } finally {
 
-    }
-  };
+    setLoading(false);
+  }
+};
 
   // EMPTY CART
   if (
@@ -246,7 +214,7 @@ export default function Checkout() {
     );
   }
 
-  // SUCCESS
+  // ORDER SUCCESS
   if (done) {
 
     return (
@@ -326,7 +294,7 @@ export default function Checkout() {
           className="grid lg:grid-cols-3 gap-12"
         >
 
-          {/* LEFT */}
+          {/* LEFT SIDE */}
           <div className="lg:col-span-2 space-y-12">
 
             {/* CONTACT */}
@@ -348,13 +316,6 @@ export default function Checkout() {
                 label="Full name"
                 value={form.name}
                 onChange={set("name")}
-              />
-
-              <Input
-                label="Phone Number"
-                value={form.phone}
-                onChange={set("phone")}
-                placeholder="9876543210"
               />
 
               <Input
@@ -422,19 +383,20 @@ export default function Checkout() {
 
           </div>
 
-          {/* RIGHT */}
+          {/* RIGHT SIDE */}
           <aside className="lg:sticky lg:top-28 lg:self-start bg-secondary p-8 space-y-5">
 
             <p className="font-display text-xl uppercase">
               Order
             </p>
 
+            {/* PRODUCTS */}
             <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
 
               {items.map((it) => (
 
                 <div
-                  key={it.id}
+                  key={`${it.product.id}-${it.size}`}
                   className="flex gap-3"
                 >
 
@@ -502,6 +464,7 @@ export default function Checkout() {
               bold
             />
 
+            {/* BUTTON */}
             <button
               type="submit"
               disabled={loading}

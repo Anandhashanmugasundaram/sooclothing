@@ -27,13 +27,13 @@ export default function AdminOrders() {
       await axios.delete(
         `${API}/api/orders/${id}`
       );
-
+       console.log("ORDERS API RESPONSE:", res.data);
       toast.success("Order deleted");
 
       fetchOrders();
     } catch (error) {
       console.log(error);
-
+      console.log("FETCH ORDERS ERROR:", error);
       toast.error("Delete failed");
     }
   };

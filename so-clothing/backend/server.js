@@ -19,7 +19,7 @@ app.use(
   cors({
     origin: [
       "https://sooclothing.vercel.app",
-      "http://localhost:5173",
+      "https://sooclothing-1tpa.vercel.app",
     ],
     credentials: true,
   })

@@ -27,7 +27,7 @@
         await axios.delete(
           `${API}/api/orders/${id}`
         );
-        console.log("ORDERS API RESPONSE:", res.data);
+       
         toast.success("Order deleted");
 
         fetchOrders();

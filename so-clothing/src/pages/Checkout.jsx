@@ -6,11 +6,14 @@ import { Lock, CheckCircle2 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import emailjs from "@emailjs/browser";
+import axios from "axios";
 
 const schema = z.object({
   email: z.string().trim().email("Valid email required").max(255),
 
   name: z.string().trim().min(2, "Name required").max(100),
+
+  phone: z.string().trim().min(7, "Phone required").max(10),
 
   address: z.string().trim().min(4, "Address required").max(200),
 
@@ -71,6 +74,7 @@ export default function Checkout() {
     useState({
       email: user?.email ?? "",
       name: user?.name ?? "",
+      phone: user?.phone ?? "",
       address: "",
       city: "",
       zip: "",
@@ -108,6 +112,29 @@ const onSubmit = async (e) => {
   try {
 
     setLoading(true);
+    await axios.post(`${API}/api/orders`, {
+  userEmail: form.email,
+  name: form.name,
+  phone: form.phone || "",
+  address: form.address,
+  city: form.city,
+  zip: form.zip,
+  country: form.country,
+
+  items: items.map((it) => ({
+    productId: it.product.id,
+    name: it.product.name,
+    image: it.product.image,
+    size: it.size,
+    qty: it.qty,
+    price: it.product.price,
+  })),
+
+  subtotal,
+  shipping,
+  tax,
+  total: subtotal + shipping + tax,
+});
 
     // ORDER ITEMS STRING
 const orderId =
@@ -141,6 +168,8 @@ await emailjs.send(
     email: form.email,
 
     customer_email: form.email,
+
+    customer_phone: form.phone,
 
     customer_name: form.name,
 

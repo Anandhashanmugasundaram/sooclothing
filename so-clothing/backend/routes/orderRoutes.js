@@ -6,7 +6,7 @@ const Order = require("../models/orderModel");
 
 
 // CREATE ORDER
-router.post("/create", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
 
     console.log("Incoming Order:");

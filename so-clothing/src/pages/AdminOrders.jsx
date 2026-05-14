@@ -166,11 +166,11 @@
                       >
 
                         <img
-                          src={
-                            item.image
-                              ? `${API}/uploads/${item.image}`
-                              : "/placeholder.jpg"
-                          }
+                         src={
+  item.image
+    ? `${API}${item.image}`
+    : "/placeholder.jpg"
+}
                           alt={item.name}
                           className="w-20 h-20 object-cover rounded"
                         />

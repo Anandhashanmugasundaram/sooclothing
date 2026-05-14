@@ -165,16 +165,15 @@
                         className="flex items-center gap-4 border p-4 rounded-lg"
                       >
 <img
-  src={imageUrl}
+  src={
+    item.image
+      ? item.image.startsWith("http")
+        ? item.image
+        : `${API}${item.image}`
+      : "/placeholder.jpg"
+  }
   alt={item.name}
   className="w-20 h-20 object-cover rounded"
-
-  onError={(e) => {
-    console.log("IMAGE FAILED:", imageUrl);
-    console.log("RAW IMAGE:", item.image);
-console.log("FINAL IMAGE URL:", imageUrl);
-    e.target.src = "/placeholder.jpg";
-  }}
 />
                       
                         <div className="flex-1">

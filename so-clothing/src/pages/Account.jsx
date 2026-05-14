@@ -238,11 +238,11 @@ export default function Account() {
                               className="flex items-center gap-4 border border-border p-4"
                             >
 
-                              <img
-                                src={`${API}/uploads/${item.image}`}
-                                alt={item.name}
-                                className="w-20 h-20 object-cover"
-                              />
+                             <img
+  src={item.image}
+  alt={item.name}
+  className="w-20 h-20 object-cover"
+/>
 
                               <div className="flex-1">
 

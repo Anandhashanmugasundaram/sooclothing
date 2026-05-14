@@ -13,7 +13,7 @@ export default function AdminProducts() {
 
   const [loading, setLoading] =
     useState(true);
-  const API = import.meta.env.VITE_API_URL;
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
 
   const [editOpen, setEditOpen] =
     useState(false);

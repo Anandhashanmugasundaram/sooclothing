@@ -29,7 +29,7 @@ export default function Account() {
 
   const { user, logout } =
     useAuth();
-  const API = import.meta.env.VITE_API_URL;
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
   const [orders, setOrders] =
     useState([]);
 

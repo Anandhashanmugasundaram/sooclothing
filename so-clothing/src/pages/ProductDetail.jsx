@@ -14,7 +14,7 @@ import { useCart } from "@/contexts/CartContext";
 export default function ProductDetail() {
   const { slug } = useParams();
   const { add } = useCart();
-  const API = import.meta.env.VITE_API_URL;
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
   console.log(import.meta.env.VITE_API_URL)
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);

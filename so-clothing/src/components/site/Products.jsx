@@ -13,7 +13,7 @@ export function Products() {
 
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState("");
-  const API = import.meta.env.VITE_API_URL;
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
   useEffect(() => {
     fetchProducts();
   }, []);

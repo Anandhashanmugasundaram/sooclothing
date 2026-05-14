@@ -48,7 +48,7 @@ export default function Checkout() {
   } = useCart();
 
   const { user } = useAuth();
-  const API = import.meta.env.VITE_API_URL;
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
   const nav = useNavigate();
 
   const [loading, setLoading] =

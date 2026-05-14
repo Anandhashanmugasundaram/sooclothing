@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 
 import { useAuth } from "@/contexts/AuthContext";
-const API = import.meta.env.VITE_API_URL;
+const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
 import logo from "../assets/logo.png";
 
 import { z } from "zod";

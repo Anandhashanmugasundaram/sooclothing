@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
-  const API = import.meta.env.VITE_API_URL;
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
   useEffect(() => {
     fetchOrders();
   }, []);

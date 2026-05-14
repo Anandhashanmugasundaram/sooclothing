@@ -7,7 +7,7 @@ export default function Admin() {
   const user = JSON.parse(
     localStorage.getItem("user")
   );
-  const API = import.meta.env.VITE_API_URL;
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
   // PROTECT ADMIN PAGE
   if (!user?.isAdmin) {
     return <Navigate to="/" />;

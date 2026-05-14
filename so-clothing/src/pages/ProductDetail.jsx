@@ -14,7 +14,8 @@ import { useCart } from "@/contexts/CartContext";
 export default function ProductDetail() {
   const { slug } = useParams();
   const { add } = useCart();
-
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
+  console.log(import.meta.env.VITE_API_URL)
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
   const [size, setSize] = useState("");
@@ -27,7 +28,7 @@ export default function ProductDetail() {
   const fetchProduct = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/products/${slug}`
+        `${API}/api/products/${slug}`
       );
 
       setProduct(res.data);
@@ -40,7 +41,7 @@ export default function ProductDetail() {
   const fetchRelated = async (category, currentId) => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/products"
+        `${API}/api/products`
       );
 
       const filtered = res.data

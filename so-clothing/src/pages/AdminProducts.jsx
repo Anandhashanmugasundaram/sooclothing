@@ -13,6 +13,7 @@ export default function AdminProducts() {
 
   const [loading, setLoading] =
     useState(true);
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
 
   const [editOpen, setEditOpen] =
     useState(false);
@@ -46,7 +47,7 @@ export default function AdminProducts() {
 
         const res =
           await axios.get(
-            "http://localhost:5000/api/products"
+            `${API}/api/products`
           );
 
         setProducts(res.data);
@@ -78,7 +79,7 @@ export default function AdminProducts() {
       try {
 
         await axios.delete(
-          `http://localhost:5000/api/products/${id}`
+          `${API}/api/products/${id}`
         );
 
         setProducts(
@@ -182,7 +183,7 @@ export default function AdminProducts() {
 
         const res =
           await axios.put(
-            `http://localhost:5000/api/products/${selectedId}`,
+            `${API}/api/products/${selectedId}`,
             data,
             {
               headers: {

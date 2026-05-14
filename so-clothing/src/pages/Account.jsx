@@ -29,7 +29,7 @@ export default function Account() {
 
   const { user, logout } =
     useAuth();
-
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
   const [orders, setOrders] =
     useState([]);
 
@@ -53,7 +53,7 @@ export default function Account() {
     try {
 
       const res = await axios.get(
-        "http://localhost:5000/api/orders"
+        `${API}/api/orders`
       );
 
       // FILTER CURRENT USER ORDERS
@@ -239,7 +239,7 @@ export default function Account() {
                             >
 
                               <img
-                                src={`http://localhost:5000/uploads/${item.image}`}
+                                src={`${API}/uploads/${item.image}`}
                                 alt={item.name}
                                 className="w-20 h-20 object-cover"
                               />

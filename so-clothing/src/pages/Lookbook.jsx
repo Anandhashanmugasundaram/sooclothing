@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 
 export default function Lookbook() {
   const [offers, setOffers] = useState([]);
+  const API =import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     fetchOffers();
@@ -12,7 +13,7 @@ export default function Lookbook() {
 
   const fetchOffers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/products");
+      const res = await axios.get(`${API}/api/products`);
 
       const special = res.data.filter((p) => p.isSpecialOffer);
 

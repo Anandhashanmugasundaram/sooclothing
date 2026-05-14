@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
-
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -12,7 +12,7 @@ export default function AdminOrders() {
   const fetchOrders = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/orders"
+        `${API}/api/orders`
       );
 
       setOrders(res.data);
@@ -25,7 +25,7 @@ export default function AdminOrders() {
   const deleteOrder = async (id) => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/orders/${id}`
+        `${API}/api/orders/${id}`
       );
 
       toast.success("Order deleted");
@@ -45,7 +45,7 @@ export default function AdminOrders() {
   ) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/orders/${id}`,
+        `${API}/api/orders/${id}`,
         {
           status,
         }
@@ -168,7 +168,7 @@ export default function AdminOrders() {
                       <img
                         src={
                           item.image
-                            ? `http://localhost:5000/uploads/${item.image}`
+                            ? `${API}/uploads/${item.image}`
                             : "/placeholder.jpg"
                         }
                         alt={item.name}

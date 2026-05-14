@@ -13,7 +13,7 @@ export function Products() {
 
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState("");
-
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -21,7 +21,7 @@ export function Products() {
   const fetchProducts = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/products"
+        `${API}/api/products`
       );
 
       setProducts(res.data);

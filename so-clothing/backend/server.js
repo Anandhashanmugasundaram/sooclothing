@@ -15,7 +15,16 @@ const createAdmin = require("./config/createAdmin");
 const app = express();
 
 // MIDDLEWARES
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://sooclothing.vercel.app",
+      "http://localhost:5173",
+    ],
+    credentials: true,
+  })
+);
+
 
 app.use(express.json());
 

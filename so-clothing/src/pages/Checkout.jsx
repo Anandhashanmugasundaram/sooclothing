@@ -65,7 +65,7 @@ export default function Checkout() {
   ).toFixed(2);
 
   const total =
-    subtotal + shipping + tax;
+    subtotal;
 
   const [form, setForm] =
     useState({
@@ -455,7 +455,7 @@ await emailjs.send(
               value={`₹ ${subtotal}`}
             />
 
-            <Row
+   {/*         <Row
               label="Shipping"
               value={
                 shipping === 0
@@ -475,7 +475,7 @@ await emailjs.send(
               label="Total"
               value={`₹ ${total}`}
               bold
-            />
+            /> */}
 
             {/* BUTTON */}
             <button

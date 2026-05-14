@@ -14,7 +14,7 @@ import { useCart } from "@/contexts/CartContext";
 export default function ProductDetail() {
   const { slug } = useParams();
   const { add } = useCart();
-  const API ="https://sooclothing-1tpa.vercel.app";
+  const API = import.meta.env.VITE_API_URL;
   console.log(import.meta.env.VITE_API_URL)
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);

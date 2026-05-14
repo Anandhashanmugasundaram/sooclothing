@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 
 export default function Lookbook() {
   const [offers, setOffers] = useState([]);
-  const API ="https://sooclothing-1tpa.vercel.app";
+  const API =import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     fetchOffers();

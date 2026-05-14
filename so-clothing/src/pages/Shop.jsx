@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 
 const cats = ["all", "tops", "bottoms", "outerwear", "accessories"];
 
-const API ="https://sooclothing-1tpa.vercel.app";
+const API =import.meta.env.VITE_API_URL;
 const ITEMS_PER_PAGE = 8;
 
 export default function Shop() {

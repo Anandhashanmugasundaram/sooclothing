@@ -1,0 +1,27 @@
+export const PIN_PREFIXES = {
+  Chennai: "6000",
+  Mumbai: "4000",
+  Delhi: "1100",
+  Bangalore: "5600",
+  Kolkata: "7000",
+  Hyderabad: "5000",
+  Pune: "4110",
+  Ahmedabad: "3800",
+
+  // Tamil Nadu cities
+  Coimbatore: "6410",
+  Madurai: "6250",
+  Salem: "6360",
+  Tiruchirappalli: "6200",
+  Tirunelveli: "6270",
+  Erode: "6380",
+  Vellore: "6320",
+  Thanjavur: "6130",
+  Dindigul: "6240",
+  Kanchipuram: "6310",
+  Karur: "6390",
+  Nagercoil: "6290",
+  Hosur: "6350",
+  Cuddalore: "6070",
+  Kumbakonam: "6120",
+};

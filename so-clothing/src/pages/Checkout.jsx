@@ -6,6 +6,8 @@ import { Lock, CheckCircle2 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import emailjs from "@emailjs/browser";
+import { PIN_PREFIXES } from "@/data/pinPrefixes";
+import { CITIES } from "@/data/cities";
 import axios from "axios";
 
 const schema = z.object({
@@ -13,13 +15,30 @@ const schema = z.object({
 
   name: z.string().trim().min(2, "Name required").max(100),
 
-  phone: z.string().trim().min(7, "Phone required").max(10),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\d{10}$/, "Enter a valid 10-digit phone number"),
 
   address: z.string().trim().min(4, "Address required").max(200),
 
-  city: z.string().trim().min(2, "City required").max(80),
+ city: z
+  .string()
+  .trim()
+  .refine(
+    (val) =>
+      CITIES.some(
+        (c) => c.toLowerCase() === val.toLowerCase()
+      ),
+    {
+      message: "Enter a valid city",
+    }
+  ),
 
-  zip: z.string().trim().min(3, "ZIP required").max(12),
+  zip: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "Enter a valid 6-digit PIN code"),
 
   country: z.string().trim().min(2).max(60),
 
@@ -31,10 +50,7 @@ const schema = z.object({
   expiry: z
     .string()
     .trim()
-    .regex(
-      /^(0[1-9]|1[0-2])\/\d{2}$/,
-      "Use MM/YY"
-    ),
+    .regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Use MM/YY"),
 
   cvc: z
     .string()
@@ -43,46 +59,35 @@ const schema = z.object({
 });
 
 export default function Checkout() {
-
-  const {
-    items,
-    subtotal,
-    clear,
-  } = useCart();
+  const { items, subtotal, clear } = useCart();
 
   const { user } = useAuth();
-  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
+  const API =
+    import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";
   const nav = useNavigate();
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [done, setDone] =
-    useState(false);
+  const [done, setDone] = useState(false);
 
-  const shipping =
-    subtotal > 150 ? 0 : 12;
+  const shipping = subtotal > 150 ? 0 : 12;
 
-  const tax = +(
-    subtotal * 0.08
-  ).toFixed(2);
+  const tax = +(subtotal * 0.08).toFixed(2);
 
-  const total =
-    subtotal;
+  const total = subtotal;
 
-  const [form, setForm] =
-    useState({
-      email: user?.email ?? "",
-      name: user?.name ?? "",
-      phone: user?.phone ?? "",
-      address: "",
-      city: "",
-      zip: "",
-      country: "India",
-      card: "",
-      expiry: "",
-      cvc: "",
-    });
+  const [form, setForm] = useState({
+    email: user?.email ?? "",
+    name: user?.name ?? "",
+    phone: user?.phone ?? "",
+    address: "",
+    city: "",
+    zip: "",
+    country: "India",
+    card: "",
+    expiry: "",
+    cvc: "",
+  });
 
   const set = (k) => (e) =>
     setForm({
@@ -90,146 +95,135 @@ export default function Checkout() {
       [k]: e.target.value,
     });
 
-const onSubmit = async (e) => {
-  e.preventDefault();
+  const onSubmit = async (e) => {
+    e.preventDefault();
 
-  const parsed = schema.safeParse(form);
+    const parsed = schema.safeParse(form);
 
-  if (!parsed.success) {
+    if (!parsed.success) {
+      const errors = parsed.error.flatten().fieldErrors;
 
-    const first =
-      Object.values(
-        parsed.error.flatten().fieldErrors
-      )[0]?.[0];
+      const firstError =
+        errors.phone?.[0] ||
+        errors.email?.[0] ||
+        errors.name?.[0] ||
+        "Enter the form correctly";
 
-    toast.error(
-      first ?? "Please check the form"
-    );
+      toast.error(firstError);
 
+      return;
+    }
+     const cityPrefix = PIN_PREFIXES[form.city];
+  const zip = form.zip;
+
+  if (!cityPrefix) {
+    toast.error("Select a valid city");
     return;
   }
 
-  try {
-
-    setLoading(true);
-    await axios.post(`${API}/api/orders`, {
-  userEmail: form.email,
-  name: form.name,
-  phone: form.phone || "",
-  address: form.address,
-  city: form.city,
-  zip: form.zip,
-  country: form.country,
-
-  items: items.map((it) => ({
-    productId: it.product.id,
-    name: it.product.name,
-    image: it.product.image,
-    size: it.size,
-    qty: it.qty,
-    price: it.product.price,
-  })),
-
-  subtotal,
-  shipping,
-  tax,
-  total: subtotal + shipping + tax,
-});
-
-    // ORDER ITEMS STRING
-const orderId =
-  "SO-" +
-  Math.floor(Math.random() * 90000 + 10000);
-
-// ORDERS ARRAY
-const orders = items.map((it) => ({
-
-  name: `${it.product.name} - Size ${it.size}`,
-
-  units: it.qty,
-
-  price: it.product.price * it.qty,
-
-  image_url: it.product.image,
-}));
-
-
-// SEND EMAIL
-await emailjs.send(
-
-  import.meta.env.VITE_EMAILJS_SERVICE_ID,
-
-  import.meta.env.VITE_EMAILJS_ORDER_TEMPLATE_ID,
-
-  {
-
-    order_id: orderId,
-
-    email: form.email,
-
-    customer_email: form.email,
-
-    customer_phone: form.phone,
-
-    customer_name: form.name,
-
-    address: form.address,
-
-    city: form.city,
-
-    zip: form.zip,
-
-    country: form.country,
-
-    orders: orders,
-
-    cost: {
-
-      shipping: shipping,
-
-      tax: tax,
-
-      total: total,
-    },
-  },
-
-  import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-);
-
-    toast.success(
-      "Order placed successfully!"
-    );
-
-    setDone(true);
-
-    clear();
-
-  } catch (error) {
-
-    console.log(error);
-
-    toast.error(
-      "Failed to place order"
-    );
-
-  } finally {
-
-    setLoading(false);
+  if (!zip.startsWith(cityPrefix)) {
+    toast.error(`PIN must start with ${cityPrefix} for ${form.city}`);
+    return;
   }
-};
+
+    try {
+      setLoading(true);
+      await axios.post(`${API}/api/orders`, {
+        userEmail: form.email,
+        name: form.name,
+        phone: form.phone || "",
+        address: form.address,
+        city: form.city,
+        zip: form.zip,
+        country: form.country,
+
+        items: items.map((it) => ({
+          productId: it.product.id,
+          name: it.product.name,
+          image: it.product.image,
+          size: it.size,
+          qty: it.qty,
+          price: it.product.price,
+        })),
+
+        subtotal,
+        shipping,
+        tax,
+        total: subtotal + shipping + tax,
+      });
+
+      // ORDER ITEMS STRING
+      const orderId = "SO-" + Math.floor(Math.random() * 90000 + 10000);
+
+      // ORDERS ARRAY
+      const orders = items.map((it) => ({
+        name: `${it.product.name} - Size ${it.size}`,
+
+        units: it.qty,
+
+        price: it.product.price * it.qty,
+
+        image_url: it.product.image,
+      }));
+
+      // SEND EMAIL
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+
+        import.meta.env.VITE_EMAILJS_ORDER_TEMPLATE_ID,
+
+        {
+          order_id: orderId,
+
+          email: form.email,
+
+          customer_email: form.email,
+
+          customer_phone: form.phone,
+
+          customer_name: form.name,
+
+          address: form.address,
+
+          city: form.city,
+
+          zip: form.zip,
+
+          country: form.country,
+
+          orders: orders,
+
+          cost: {
+            shipping: shipping,
+
+            tax: tax,
+
+            total: total,
+          },
+        },
+
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      );
+
+      toast.success("Order placed successfully!");
+
+      setDone(true);
+
+      clear();
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Failed to place order");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // EMPTY CART
-  if (
-    items.length === 0 &&
-    !done
-  ) {
-
+  if (items.length === 0 && !done) {
     return (
       <div className="pt-44 pb-32 text-center px-6">
-
-        <p className="font-display text-3xl uppercase mb-4">
-          Bag is empty
-        </p>
+        <p className="font-display text-3xl uppercase mb-4">Bag is empty</p>
 
         <Link
           to="/shop"
@@ -237,19 +231,15 @@ await emailjs.send(
         >
           ← Back to shop
         </Link>
-
       </div>
     );
   }
 
   // ORDER SUCCESS
   if (done) {
-
     return (
       <section className="pt-44 pb-32">
-
         <div className="max-w-2xl mx-auto px-6 text-center">
-
           <CheckCircle2 className="w-16 h-16 text-accent mx-auto mb-8" />
 
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-4">
@@ -261,20 +251,15 @@ await emailjs.send(
           </h1>
 
           <p className="text-foreground/70 mb-2">
-            Order #
-            SO-
-            {Math.floor(
-              Math.random() * 90000 + 10000
-            )}
+            Order # SO-
+            {Math.floor(Math.random() * 90000 + 10000)}
           </p>
 
           <p className="text-foreground/70 mb-10">
-            A confirmation has been sent to{" "}
-            {form.email}
+            A confirmation has been sent to {form.email}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-
             <Link
               to="/shop"
               className="bg-accent text-accent-foreground px-10 py-4 font-mono text-xs uppercase tracking-[0.25em]"
@@ -283,30 +268,22 @@ await emailjs.send(
             </Link>
 
             <button
-              onClick={() =>
-                nav("/account")
-              }
+              onClick={() => nav("/account")}
               className="border border-border px-10 py-4 font-mono text-xs uppercase tracking-[0.25em] hover:border-accent"
             >
               View Orders
             </button>
-
           </div>
-
         </div>
-
       </section>
     );
   }
 
   return (
     <section className="pt-28 lg:pt-32 pb-20">
-
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-
         {/* HEADER */}
         <div className="mb-12">
-
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-4">
             — Secure Checkout
           </p>
@@ -314,20 +291,13 @@ await emailjs.send(
           <h1 className="font-display text-4xl md:text-6xl uppercase leading-none">
             Checkout
           </h1>
-
         </div>
 
-        <form
-          onSubmit={onSubmit}
-          className="grid lg:grid-cols-3 gap-12"
-        >
-
+        <form onSubmit={onSubmit} className="grid lg:grid-cols-3 gap-12">
           {/* LEFT SIDE */}
           <div className="lg:col-span-2 space-y-12">
-
             {/* CONTACT */}
             <Section title="01 / Contact">
-
               <Input
                 label="Email"
                 value={form.email}
@@ -341,14 +311,12 @@ await emailjs.send(
                 value={form.phone}
                 onChange={set("phone")}
                 type="tel"
-                placeholder="+1 (555) 555-5555"
+                placeholder="9876543210"
               />
-
             </Section>
 
             {/* SHIPPING */}
             <Section title="02 / Shipping">
-
               <Input
                 label="Full name"
                 value={form.name}
@@ -364,7 +332,6 @@ await emailjs.send(
               />
 
               <div className="grid grid-cols-2 gap-4">
-
                 <Input
                   label="City"
                   value={form.city}
@@ -378,7 +345,6 @@ await emailjs.send(
                   onChange={set("zip")}
                   placeholder="600032"
                 />
-
               </div>
 
               <Input
@@ -387,7 +353,6 @@ await emailjs.send(
                 onChange={set("country")}
                 placeholder="India"
               />
-
             </Section>
 
             {/* PAYMENT */}
@@ -395,7 +360,6 @@ await emailjs.send(
               title="03 / Payment"
               subtitle="Demo only — no card will be charged."
             >
-
               <Input
                 label="Card number"
                 value={form.card}
@@ -404,7 +368,6 @@ await emailjs.send(
               />
 
               <div className="grid grid-cols-2 gap-4">
-
                 <Input
                   label="Expiry (MM/YY)"
                   value={form.expiry}
@@ -418,46 +381,31 @@ await emailjs.send(
                   onChange={set("cvc")}
                   placeholder="123"
                 />
-
               </div>
-
             </Section>
-
           </div>
 
           {/* RIGHT SIDE */}
           <aside className="lg:sticky lg:top-28 lg:self-start bg-secondary p-8 space-y-5">
-
-            <p className="font-display text-xl uppercase">
-              Order
-            </p>
+            <p className="font-display text-xl uppercase">Order</p>
 
             {/* PRODUCTS */}
             <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
-
               {items.map((it) => (
-
-                <div
-                  key={`${it.product.id}-${it.size}`}
-                  className="flex gap-3"
-                >
-
+                <div key={`${it.product.id}-${it.size}`} className="flex gap-3">
                   <div className="w-14 h-16 bg-background shrink-0 overflow-hidden relative">
-
-                  <img
-  src={it.product.image}
-  alt={it.product.name}
-  className="w-full h-full object-cover"
-/>
+                    <img
+                      src={it.product.image}
+                      alt={it.product.name}
+                      className="w-full h-full object-cover"
+                    />
 
                     <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-[10px] flex items-center justify-center font-mono">
                       {it.qty}
                     </span>
-
                   </div>
 
                   <div className="flex-1 min-w-0">
-
                     <p className="font-display text-sm uppercase truncate">
                       {it.product.name}
                     </p>
@@ -465,46 +413,18 @@ await emailjs.send(
                     <p className="font-mono text-[10px] text-muted-foreground uppercase">
                       Size {it.size}
                     </p>
-
                   </div>
 
                   <p className="font-mono text-xs">
                     ₹ {it.product.price * it.qty}
                   </p>
-
                 </div>
               ))}
-
             </div>
 
             <div className="h-px bg-border" />
 
-            <Row
-              label="Subtotal"
-              value={`₹ ${subtotal}`}
-            />
-
-   {/*         <Row
-              label="Shipping"
-              value={
-                shipping === 0
-                  ? "Free"
-                  : `₹ ${shipping}`
-              }
-            />
-
-            <Row
-              label="Tax"
-              value={`₹ ${tax}`}
-            />
-
-            <div className="h-px bg-border" />
-
-            <Row
-              label="Total"
-              value={`₹ ${total}`}
-              bold
-            /> */}
+            <Row label="Subtotal" value={`₹ ${subtotal}`} />
 
             {/* BUTTON */}
             <button
@@ -512,74 +432,42 @@ await emailjs.send(
               disabled={loading}
               className="w-full bg-accent text-accent-foreground py-4 font-mono text-xs uppercase tracking-[0.25em] hover:bg-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
             >
-
               <Lock className="w-3.5 h-3.5" />
 
-              {
-                loading
-                  ? "Processing..."
-                  : `Pay ₹ ${total}`
-              }
-
+              {loading ? "Processing..." : `Pay ₹ ${total}`}
             </button>
 
             <p className="text-[11px] text-muted-foreground text-center">
               🔒 Demo checkout — no real payment is processed.
             </p>
-
           </aside>
-
         </form>
-
       </div>
-
     </section>
   );
 }
 
-
 // SECTION
-function Section({
-  title,
-  subtitle,
-  children,
-}) {
-
+function Section({ title, subtitle, children }) {
   return (
-
     <div>
-
       <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent mb-2">
         {title}
       </p>
 
-      {
-        subtitle && (
-          <p className="text-xs text-muted-foreground mb-4">
-            {subtitle}
-          </p>
-        )
-      }
+      {subtitle && (
+        <p className="text-xs text-muted-foreground mb-4">{subtitle}</p>
+      )}
 
-      <div className="space-y-4">
-        {children}
-      </div>
-
+      <div className="space-y-4">{children}</div>
     </div>
   );
 }
 
-
 // INPUT
-function Input({
-  label,
-  ...props
-}) {
-
+function Input({ label, ...props }) {
   return (
-
     <label className="block">
-
       <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground block mb-2">
         {label}
       </span>
@@ -588,35 +476,23 @@ function Input({
         {...props}
         className="w-full bg-transparent border border-border focus:border-accent outline-none px-4 py-3 font-mono text-sm transition-colors"
       />
-
     </label>
   );
 }
 
-
 // ROW
-function Row({
-  label,
-  value,
-  bold,
-}) {
-
+function Row({ label, value, bold }) {
   return (
-
     <div
       className={`flex justify-between font-mono ${
-        bold
-          ? "text-base"
-          : "text-sm"
+        bold ? "text-base" : "text-sm"
       }`}
     >
-
       <span className="uppercase tracking-widest text-xs text-muted-foreground">
         {label}
       </span>
 
       <span>{value}</span>
-
     </div>
   );
 }

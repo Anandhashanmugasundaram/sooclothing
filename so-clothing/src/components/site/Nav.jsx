@@ -326,7 +326,7 @@ export function Nav() {
         {/* MOBILE MENU */}
         {open && (
 
-          <div className="lg:hidden bg-background border-t border-border">
+          <div className="lg:hidden bg-background bg-gray-200 border-t border-border">
 
             <ul className="flex flex-col p-6 gap-4">
 

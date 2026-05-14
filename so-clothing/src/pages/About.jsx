@@ -55,21 +55,21 @@ export default function About() {
         }
       );
 
-      gsap.from(
-        sectionRef.current.querySelectorAll(".zoom-card"),
-        {
-          opacity: 0,
-          scale: 0.92,
-          stagger: 0.12,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".cards-section",
-            start: "top 85%",
-          },
-        }
-      );
+const cards = sectionRef.current.querySelectorAll(".zoom-card");
 
+if (cards.length) {
+  gsap.from(cards, {
+    opacity: 0,
+    scale: 0.92,
+    stagger: 0.12,
+    duration: 1,
+    ease: "power3.out",
+    scrollTrigger: {
+      trigger: sectionRef.current.querySelector(".cards-section"),
+      start: "top 85%",
+    },
+  });
+}
     }, sectionRef);
 
     return () => ctx.revert();
@@ -560,6 +560,7 @@ export default function About() {
     <div
       key={card.title}
       className="
+        zoom-card
         relative
         overflow-hidden
         rounded-[32px]

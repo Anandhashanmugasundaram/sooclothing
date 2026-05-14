@@ -1,7 +1,7 @@
 const express = require("express");
 
 const User =
-  require("../models/user");
+  require("../models/Users");
 
 const authMiddleware =
   require("../middleware/authMiddleware");

@@ -59,15 +59,33 @@ export default function ProductDetail() {
     }
   };
 
-  const onAdd = () => {
-    if (!size) {
-      toast.error("Select a size");
-      return;
-    }
+ const onAdd = () => {
 
-    add(product, size, qty);
-    toast.success(`${product.name} added to bag`);
-  };
+  if (!size) {
+    toast.error("Select a size");
+    return;
+  }
+
+  // OUT OF STOCK
+  if (product.quantity === 0) {
+    toast.error("Out of stock");
+    return;
+  }
+
+  // PREVENT EXCEEDING STOCK
+  if (qty > product.quantity) {
+    toast.error(
+      `Only ${product.quantity} items available`
+    );
+    return;
+  }
+
+  add(product, size, qty);
+
+  toast.success(
+    `${product.name} added to bag`
+  );
+};
 
   if (!product) {
     return (
@@ -163,12 +181,18 @@ export default function ProductDetail() {
                     {qty}
                   </span>
 
-                  <button
-                    onClick={() => setQty(qty + 1)}
-                    className="w-12 h-12 flex items-center justify-center"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
+                <button
+  onClick={() => {
+    if (qty < product.quantity) {
+      setQty(qty + 1);
+    } else {
+      toast.error("Stock limit reached");
+    }
+  }}
+  className="w-12 h-12 flex items-center justify-center"
+>
+  <Plus className="w-4 h-4" />
+</button>
                 </div>
 
                 <button

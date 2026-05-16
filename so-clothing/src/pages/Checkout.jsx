@@ -20,20 +20,25 @@ const schema = z.object({
     .trim()
     .regex(/^\d{10}$/, "Enter a valid 10-digit phone number"),
 
-  address: z.string().trim().min(4, "Address required").max(200),
+  address: z
+    .string()
+    .trim()
+    .min(10, "Enter complete address")
+    .max(200)
+    .regex(
+      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./-]+$/,
+      "Enter a valid address",
+    ),
 
- city: z
-  .string()
-  .trim()
-  .refine(
-    (val) =>
-      CITIES.some(
-        (c) => c.toLowerCase() === val.toLowerCase()
-      ),
-    {
-      message: "Enter a valid city",
-    }
-  ),
+  city: z
+    .string()
+    .trim()
+    .refine(
+      (val) => CITIES.some((c) => c.toLowerCase() === val.toLowerCase()),
+      {
+        message: "Enter a valid city",
+      },
+    ),
 
   zip: z
     .string()
@@ -113,18 +118,18 @@ export default function Checkout() {
 
       return;
     }
-     const cityPrefix = PIN_PREFIXES[form.city];
-  const zip = form.zip;
+    const cityPrefix = PIN_PREFIXES[form.city];
+    const zip = form.zip;
 
-  if (!cityPrefix) {
-    toast.error("Select a valid city");
-    return;
-  }
+    if (!cityPrefix) {
+      toast.error("Select a valid city");
+      return;
+    }
 
-  if (!zip.startsWith(cityPrefix)) {
-    toast.error(`PIN must start with ${cityPrefix} for ${form.city}`);
-    return;
-  }
+    if (!zip.startsWith(cityPrefix)) {
+      toast.error(`PIN must start with ${cityPrefix} for ${form.city}`);
+      return;
+    }
 
     try {
       setLoading(true);
@@ -328,7 +333,7 @@ export default function Checkout() {
                 label="Address"
                 value={form.address}
                 onChange={set("address")}
-                placeholder="123 Main Street"
+                placeholder="Eg: No 12, Gandhi Street, Anna Nagar, Chennai"
               />
 
               <div className="grid grid-cols-2 gap-4">

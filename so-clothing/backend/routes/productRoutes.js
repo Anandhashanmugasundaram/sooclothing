@@ -12,14 +12,15 @@ router.post("/add", upload.single("image"), async (req, res) => {
     console.log("BODY:", req.body);
     console.log("FILE:", req.file);
 
-    const {
-      name,
-      price,
-      category,
-      description,
-      sizes,
-      isSpecialOffer, // ✅ ADDED
-    } = req.body;
+  const {
+  name,
+  price,
+  category,
+  description,
+  sizes,
+  quantity,
+  isSpecialOffer,
+} = req.body;
 
     // CHECK IMAGE
     if (!req.file) {
@@ -42,6 +43,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
       category,
       description,
       sizes: sizes ? sizes.split(",") : [],
+      quantity: Number(quantity),
       image: req.file.path,
 
       // ✅ FIXED FIELD

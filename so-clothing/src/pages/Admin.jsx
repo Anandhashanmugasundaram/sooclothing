@@ -3,11 +3,9 @@ import axios from "axios";
 import { Link, Navigate } from "react-router-dom";
 
 export default function Admin() {
-
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
-  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
+  const user = JSON.parse(localStorage.getItem("user"));
+  const API =
+    import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";
   // PROTECT ADMIN PAGE
   if (!user?.isAdmin) {
     return <Navigate to="/" />;
@@ -19,22 +17,19 @@ export default function Admin() {
     category: "",
     description: "",
     sizes: "",
+    quantity: "",
     isSpecialOffer: false,
   });
 
-  const [image, setImage] =
-    useState(null);
+  const [image, setImage] = useState(null);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   // SUBMIT PRODUCT
   const submitHandler = async (e) => {
-
     e.preventDefault();
 
     try {
-
       setLoading(true);
 
       const data = new FormData();
@@ -43,38 +38,23 @@ export default function Admin() {
 
       data.append("price", form.price);
 
-      data.append(
-        "category",
-        form.category
-      );
+      data.append("category", form.category);
 
-      data.append(
-        "description",
-        form.description
-      );
+      data.append("description", form.description);
 
-      data.append(
-        "sizes",
-        form.sizes
-      );
+      data.append("sizes", form.sizes);
 
-      data.append(
-        "isSpecialOffer",
-        form.isSpecialOffer
-      );
+      data.append("quantity", form.quantity);
+
+      data.append("isSpecialOffer", form.isSpecialOffer);
 
       data.append("image", image);
 
-      const res = await axios.post(
-        `${API}/api/products/add`,
-        data,
-        {
-          headers: {
-            "Content-Type":
-              "multipart/form-data",
-          },
-        }
-      );
+      const res = await axios.post(`${API}/api/products/add`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       alert("Product Uploaded");
 
@@ -86,42 +66,28 @@ export default function Admin() {
         price: "",
         category: "",
         description: "",
+        quantity: "",
         sizes: "",
         isSpecialOffer: false,
       });
 
       setImage(null);
-
     } catch (error) {
-
       console.log(error);
 
-      alert(
-        error.response?.data
-          ?.message ||
-          "Upload failed"
-      );
-
+      alert(error.response?.data?.message || "Upload failed");
     } finally {
-
       setLoading(false);
-
     }
   };
 
   return (
-
     <div className="min-h-screen bg-white p-10 mt-12">
-
       <div className="max-w-xl mx-auto">
-
-        <h1 className="text-4xl font-bold mb-10">
-          Admin Upload Panel
-        </h1>
+        <h1 className="text-4xl font-bold mb-10">Admin Upload Panel</h1>
 
         {/* ADMIN NAVIGATION */}
         <div className="mb-6 flex gap-4">
-
           <Link
             to="/admin-products"
             className="bg-black text-white px-6 py-3 inline-block"
@@ -135,15 +101,10 @@ export default function Admin() {
           >
             View Orders
           </Link>
-
         </div>
 
         {/* FORM */}
-        <form
-          onSubmit={submitHandler}
-          className="space-y-5"
-        >
-
+        <form onSubmit={submitHandler} className="space-y-5">
           {/* PRODUCT NAME */}
           <input
             type="text"
@@ -183,8 +144,7 @@ export default function Admin() {
             onChange={(e) =>
               setForm({
                 ...form,
-                category:
-                  e.target.value,
+                category: e.target.value,
               })
             }
             required
@@ -204,6 +164,20 @@ export default function Admin() {
             }
           />
 
+          <input
+            type="number"
+            placeholder="Stock Quantity"
+            className="border p-4 w-full"
+            value={form.quantity}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                quantity: e.target.value,
+              })
+            }
+            required
+          />
+
           {/* DESCRIPTION */}
           <textarea
             rows="5"
@@ -213,8 +187,7 @@ export default function Admin() {
             onChange={(e) =>
               setForm({
                 ...form,
-                description:
-                  e.target.value,
+                description: e.target.value,
               })
             }
             required
@@ -222,34 +195,24 @@ export default function Admin() {
 
           {/* SPECIAL OFFER */}
           <label className="flex items-center gap-2">
-
             <input
               type="checkbox"
-              checked={
-                form.isSpecialOffer
-              }
+              checked={form.isSpecialOffer}
               onChange={(e) =>
                 setForm({
                   ...form,
-                  isSpecialOffer:
-                    e.target.checked,
+                  isSpecialOffer: e.target.checked,
                 })
               }
             />
-
             Special Offer
-
           </label>
 
           {/* IMAGE */}
           <input
             type="file"
             accept="image/*"
-            onChange={(e) =>
-              setImage(
-                e.target.files[0]
-              )
-            }
+            onChange={(e) => setImage(e.target.files[0])}
             required
           />
 
@@ -259,17 +222,10 @@ export default function Admin() {
             disabled={loading}
             className="bg-black text-white px-8 py-4 w-full"
           >
-
-            {loading
-              ? "Uploading..."
-              : "Upload Product"}
-
+            {loading ? "Uploading..." : "Upload Product"}
           </button>
-
         </form>
-
       </div>
-
     </div>
   );
 }

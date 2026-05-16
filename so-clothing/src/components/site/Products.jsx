@@ -225,20 +225,21 @@ export function Products() {
 
                     {/* SIZES */}
                     <div className="flex gap-2 mt-3 flex-wrap">
-
-                      {product.sizes?.map((size, i) => (
-                        <span
-                          key={i}
-                          className="
-                            px-2 py-1 text-xs
-                            border rounded-full
-                            hover:bg-black hover:text-white
-                            transition
-                          "
-                        >
-                          {size.toUpperCase()}
-                        </span>
-                      ))}
+{
+  product.sizes?.map((s, i) => (
+    <span
+      key={i}
+      className="
+        px-2 py-1 text-xs
+        border rounded-full
+        hover:bg-black hover:text-white
+        transition
+      "
+    >
+      {s.size.toUpperCase()}
+    </span>
+  ))
+}
 
                     </div>
 

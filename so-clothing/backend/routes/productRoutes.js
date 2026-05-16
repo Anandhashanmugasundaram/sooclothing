@@ -12,13 +12,12 @@ router.post("/add", upload.single("image"), async (req, res) => {
     console.log("BODY:", req.body);
     console.log("FILE:", req.file);
 
-  const {
+const {
   name,
   price,
   category,
   description,
   sizes,
-  quantity,
   isSpecialOffer,
 } = req.body;
 
@@ -36,19 +35,29 @@ router.post("/add", upload.single("image"), async (req, res) => {
     const specialOfferFlag = isSpecialOffer === "true";
 
     // CREATE PRODUCT
-    const product = new Product({
-      name,
-      slug,
-      price: Number(price),
-      category,
-      description,
-      sizes: sizes ? sizes.split(",") : [],
-      quantity: Number(quantity),
-      image: req.file.path,
+const product = new Product({
+  name,
+  slug,
+  price: Number(price),
+  category,
+  description,
 
-      // ✅ FIXED FIELD
-      isSpecialOffer: specialOfferFlag,
-    });
+  sizes: sizes
+    ? sizes.split(",").map((item) => {
+        const [size, quantity] =
+          item.split(":");
+
+        return {
+          size: size.trim(),
+          quantity: Number(quantity),
+        };
+      })
+    : [],
+
+  image: req.file.path,
+
+  isSpecialOffer: specialOfferFlag,
+});
 
     await product.save();
 
@@ -122,13 +131,12 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       });
     }
 
-  const {
+const {
   name,
   price,
   category,
   description,
   sizes,
-  quantity,
   isSpecialOffer,
 } = req.body;
 
@@ -142,9 +150,18 @@ router.put("/:id", upload.single("image"), async (req, res) => {
     product.category = category || product.category;
     product.description = description || product.description;
 
-    product.sizes = sizes ? sizes.split(",") : product.sizes;
-    if (quantity !== undefined) {
-  product.quantity = Number(quantity);
+if (sizes) {
+  product.sizes = sizes
+    .split(",")
+    .map((item) => {
+      const [size, quantity] =
+        item.split(":");
+
+      return {
+        size: size.trim(),
+        quantity: Number(quantity),
+      };
+    });
 }
 
     // ✅ FIX SPECIAL OFFER UPDATE

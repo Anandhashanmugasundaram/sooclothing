@@ -28,7 +28,7 @@ const [form, setForm] =
     category: "",
     description: "",
     sizes: "",
-    quantity: "",
+   
   });
 
   const [image, setImage] =
@@ -116,13 +116,19 @@ const [form, setForm] =
         product._id
       );
 
-   setForm({
+setForm({
   name: product.name,
   price: product.price,
   category: product.category,
   description: product.description,
-  sizes: product.sizes?.join(","),
-  quantity: product.quantity,
+
+  sizes: product.sizes
+    ?.map(
+      (s) =>
+        `${s.size}:${s.quantity}`
+    )
+    .join(","),
+
 });
 
       setImage(null);
@@ -167,10 +173,6 @@ const [form, setForm] =
           form.sizes
         );
 
-        data.append(
-  "quantity",
-  form.quantity
-);
 
         if (image) {
 
@@ -440,7 +442,7 @@ const [form, setForm] =
               {/* SIZES */}
               <input
                 type="text"
-                placeholder="Sizes (S,M,L)"
+                placeholder="Sizes with stock (S:2,M:3,L:1)"
                 className="border p-4 w-full"
                 value={
                   form.sizes
@@ -458,19 +460,7 @@ const [form, setForm] =
               />
 
 
-{/* STOCK QUANTITY */}
-<input
-  type="number"
-  placeholder="Stock Quantity"
-  className="border p-4 w-full"
-  value={form.quantity}
-  onChange={(e) =>
-    setForm({
-      ...form,
-      quantity: e.target.value,
-    })
-  }
-/>
+
 
               {/* DESCRIPTION */}
               <textarea

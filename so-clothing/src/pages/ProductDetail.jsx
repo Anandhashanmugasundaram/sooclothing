@@ -2,24 +2,22 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
-import {
-  Minus,
-  Plus,
-  Truck,
-  Shield,
-} from "lucide-react";
+import { Minus, Plus, Truck, Shield } from "lucide-react";
 
 import { useCart } from "@/contexts/CartContext";
 
 export default function ProductDetail() {
   const { slug } = useParams();
   const { add } = useCart();
-  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
-  console.log(import.meta.env.VITE_API_URL)
+  const API =
+    import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";
+  console.log(import.meta.env.VITE_API_URL);
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
   const [size, setSize] = useState("");
   const [qty, setQty] = useState(1);
+  const selectedSizeStock =
+    product?.sizes?.find((s) => s.size === size)?.quantity || 0;
 
   useEffect(() => {
     fetchProduct();
@@ -27,9 +25,7 @@ export default function ProductDetail() {
 
   const fetchProduct = async () => {
     try {
-      const res = await axios.get(
-        `${API}/api/products/${slug}`
-      );
+      const res = await axios.get(`${API}/api/products/${slug}`);
 
       setProduct(res.data);
       fetchRelated(res.data.category, res.data._id);
@@ -40,16 +36,12 @@ export default function ProductDetail() {
 
   const fetchRelated = async (category, currentId) => {
     try {
-      const res = await axios.get(
-        `${API}/api/products`
-      );
+      const res = await axios.get(`${API}/api/products`);
 
       const filtered = res.data
         .filter(
           (p) =>
-            p.category === category &&
-            p._id !== currentId &&
-            !p.isSpecialOffer
+            p.category === category && p._id !== currentId && !p.isSpecialOffer,
         )
         .slice(0, 4);
 
@@ -59,33 +51,26 @@ export default function ProductDetail() {
     }
   };
 
- const onAdd = () => {
+  const onAdd = () => {
+    if (!size) {
+      toast.error("Select a size");
+      return;
+    }
 
-  if (!size) {
-    toast.error("Select a size");
-    return;
-  }
+    if (selectedSizeStock === 0) {
+      toast.error("Out of stock");
+      return;
+    }
 
-  // OUT OF STOCK
-  if (product.quantity === 0) {
-    toast.error("Out of stock");
-    return;
-  }
+    if (qty > selectedSizeStock) {
+      toast.error(`Only ${selectedSizeStock} items available`);
+      return;
+    }
 
-  // PREVENT EXCEEDING STOCK
-  if (qty > product.quantity) {
-    toast.error(
-      `Only ${product.quantity} items available`
-    );
-    return;
-  }
+    add(product, size, qty);
 
-  add(product, size, qty);
-
-  toast.success(
-    `${product.name} added to bag`
-  );
-};
+    toast.success(`${product.name} added to bag`);
+  };
 
   if (!product) {
     return (
@@ -99,7 +84,6 @@ export default function ProductDetail() {
     <>
       <section className="pt-28 lg:pt-32 pb-20">
         <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
-
           {/* BREADCRUMB */}
           <nav className="text-sm mb-8">
             <Link to="/" className="hover:text-gray-500">
@@ -115,7 +99,6 @@ export default function ProductDetail() {
 
           {/* MAIN PRODUCT */}
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
-
             {/* IMAGE */}
             <div>
               <img
@@ -127,18 +110,13 @@ export default function ProductDetail() {
 
             {/* DETAILS */}
             <div className="lg:sticky lg:top-28 lg:self-start">
-
               <p className="uppercase text-sm text-gray-500 mb-3">
                 {product.category}
               </p>
 
-              <h1 className="text-5xl font-bold mb-4">
-                {product.name}
-              </h1>
+              <h1 className="text-5xl font-bold mb-4">{product.name}</h1>
 
-              <p className="text-2xl mb-8">
-                ₹ {product.price}
-              </p>
+              <p className="text-2xl mb-8">₹ {product.price}</p>
 
               <p className="text-gray-600 leading-relaxed mb-10">
                 {product.description}
@@ -151,15 +129,21 @@ export default function ProductDetail() {
                 <div className="flex flex-wrap gap-3">
                   {product.sizes?.map((s) => (
                     <button
-                      key={s}
-                      onClick={() => setSize(s)}
+                      key={s.size}
+                      onClick={() => {
+                        setSize(s.size);
+                        setQty(1);
+                      }}
+                      disabled={s.quantity === 0}
                       className={`px-5 py-3 border transition ${
-                        size === s
+                        size === s.size
                           ? "bg-black text-white"
                           : "hover:bg-black hover:text-white"
+                      } ${
+                        s.quantity === 0 ? "opacity-50 cursor-not-allowed" : ""
                       }`}
                     >
-                      {s}
+                      {s.size} ({s.quantity})
                     </button>
                   ))}
                 </div>
@@ -169,30 +153,26 @@ export default function ProductDetail() {
               <div className="flex gap-3 mb-6">
                 <div className="flex items-center border">
                   <button
-                    onClick={() =>
-                      setQty(Math.max(1, qty - 1))
-                    }
+                    onClick={() => setQty(Math.max(1, qty - 1))}
                     className="w-12 h-12 flex items-center justify-center"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
 
-                  <span className="w-12 text-center">
-                    {qty}
-                  </span>
+                  <span className="w-12 text-center">{qty}</span>
 
-                <button
-  onClick={() => {
-    if (qty < product.quantity) {
-      setQty(qty + 1);
-    } else {
-      toast.error("Stock limit reached");
-    }
-  }}
-  className="w-12 h-12 flex items-center justify-center"
->
-  <Plus className="w-4 h-4" />
-</button>
+                  <button
+                    onClick={() => {
+                      if (qty < selectedSizeStock) {
+                        setQty(qty + 1);
+                      } else {
+                        toast.error("Stock limit reached");
+                      }
+                    }}
+                    className="w-12 h-12 flex items-center justify-center"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
                 </div>
 
                 <button
@@ -218,9 +198,7 @@ export default function ProductDetail() {
 
               {/* DETAILS */}
               <div>
-                <p className="uppercase text-sm mb-4">
-                  Product Details
-                </p>
+                <p className="uppercase text-sm mb-4">Product Details</p>
 
                 <ul className="space-y-2 text-gray-600">
                   <li>Premium Quality Material</li>
@@ -229,7 +207,6 @@ export default function ProductDetail() {
                   <li>Long Lasting Fabric</li>
                 </ul>
               </div>
-
             </div>
           </div>
         </div>
@@ -238,13 +215,9 @@ export default function ProductDetail() {
       {/* RELATED PRODUCTS */}
       <section className="border-t py-20">
         <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
-
-          <h2 className="text-4xl font-bold mb-10">
-            Related Products
-          </h2>
+          <h2 className="text-4xl font-bold mb-10">Related Products</h2>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-
             {related.map((p) => (
               <Link
                 key={p._id}
@@ -257,14 +230,11 @@ export default function ProductDetail() {
                   alt={p.name}
                 />
 
-                <h2 className="mt-2 font-semibold">
-                  {p.name}
-                </h2>
+                <h2 className="mt-2 font-semibold">{p.name}</h2>
 
                 <p>₹{p.price}</p>
               </Link>
             ))}
-
           </div>
         </div>
       </section>

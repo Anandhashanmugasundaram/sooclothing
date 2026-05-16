@@ -17,7 +17,7 @@ export default function Admin() {
     category: "",
     description: "",
     sizes: "",
-    quantity: "",
+    
     isSpecialOffer: false,
   });
 
@@ -44,7 +44,7 @@ export default function Admin() {
 
       data.append("sizes", form.sizes);
 
-      data.append("quantity", form.quantity);
+  
 
       data.append("isSpecialOffer", form.isSpecialOffer);
 
@@ -66,7 +66,7 @@ export default function Admin() {
         price: "",
         category: "",
         description: "",
-        quantity: "",
+      
         sizes: "",
         isSpecialOffer: false,
       });
@@ -153,7 +153,7 @@ export default function Admin() {
           {/* SIZES */}
           <input
             type="text"
-            placeholder="Sizes (S,M,L,XL)"
+            placeholder="Sizes & Stock (S:2,M:3,L:1)"
             className="border p-4 w-full"
             value={form.sizes}
             onChange={(e) =>
@@ -164,19 +164,7 @@ export default function Admin() {
             }
           />
 
-          <input
-            type="number"
-            placeholder="Stock Quantity"
-            className="border p-4 w-full"
-            value={form.quantity}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                quantity: e.target.value,
-              })
-            }
-            required
-          />
+         
 
           {/* DESCRIPTION */}
           <textarea

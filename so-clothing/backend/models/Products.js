@@ -17,19 +17,25 @@ const productSchema = new mongoose.Schema(
 
     image: String,
 
-    sizes: [String],
-       isSpecialOffer: {
+    sizes: [
+      {
+        size: {
+          type: String,
+        },
+
+        quantity: {
+          type: Number,
+          default: 0,
+        },
+      },
+    ],
+
+    isSpecialOffer: {
       type: Boolean,
       default: false,
     },
-
-    quantity: {
-  type: Number,
-  required: true,
-  default: 0,
-},
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Product", productSchema);

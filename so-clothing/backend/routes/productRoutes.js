@@ -122,14 +122,15 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       });
     }
 
-    const {
-      name,
-      price,
-      category,
-      description,
-      sizes,
-      isSpecialOffer, // ✅ ADDED
-    } = req.body;
+  const {
+  name,
+  price,
+  category,
+  description,
+  sizes,
+  quantity,
+  isSpecialOffer,
+} = req.body;
 
     product.name = name || product.name;
 
@@ -142,6 +143,9 @@ router.put("/:id", upload.single("image"), async (req, res) => {
     product.description = description || product.description;
 
     product.sizes = sizes ? sizes.split(",") : product.sizes;
+    if (quantity !== undefined) {
+  product.quantity = Number(quantity);
+}
 
     // ✅ FIX SPECIAL OFFER UPDATE
     if (isSpecialOffer !== undefined) {

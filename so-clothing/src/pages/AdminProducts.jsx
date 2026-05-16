@@ -21,14 +21,15 @@ export default function AdminProducts() {
   const [selectedId, setSelectedId] =
     useState(null);
 
-  const [form, setForm] =
-    useState({
-      name: "",
-      price: "",
-      category: "",
-      description: "",
-      sizes: "",
-    });
+const [form, setForm] =
+  useState({
+    name: "",
+    price: "",
+    category: "",
+    description: "",
+    sizes: "",
+    quantity: "",
+  });
 
   const [image, setImage] =
     useState(null);
@@ -115,20 +116,14 @@ export default function AdminProducts() {
         product._id
       );
 
-      setForm({
-        name:
-          product.name,
-        price:
-          product.price,
-        category:
-          product.category,
-        description:
-          product.description,
-        sizes:
-          product.sizes?.join(
-            ","
-          ),
-      });
+   setForm({
+  name: product.name,
+  price: product.price,
+  category: product.category,
+  description: product.description,
+  sizes: product.sizes?.join(","),
+  quantity: product.quantity,
+});
 
       setImage(null);
 
@@ -171,6 +166,11 @@ export default function AdminProducts() {
           "sizes",
           form.sizes
         );
+
+        data.append(
+  "quantity",
+  form.quantity
+);
 
         if (image) {
 
@@ -456,6 +456,21 @@ export default function AdminProducts() {
                   })
                 }
               />
+
+
+{/* STOCK QUANTITY */}
+<input
+  type="number"
+  placeholder="Stock Quantity"
+  className="border p-4 w-full"
+  value={form.quantity}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      quantity: e.target.value,
+    })
+  }
+/>
 
               {/* DESCRIPTION */}
               <textarea

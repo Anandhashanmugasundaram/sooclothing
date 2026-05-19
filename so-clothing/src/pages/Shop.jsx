@@ -595,6 +595,7 @@ export function ProductCard({ product }) {
           {/* SIZES */}
           <div className="flex flex-wrap gap-2 mt-4">
             {product.sizes?.map((size, index) => (
+              console.log(size),
               <span
                 key={index}
                 className="
@@ -619,8 +620,7 @@ export function ProductCard({ product }) {
                     duration-300
                   "
               >
-                {size.toUpperCase()}
-              </span>
+{size.size.toUpperCase()}              </span>
             ))}
           </div>
         </div>

@@ -148,7 +148,7 @@ export default function Lookbook() {
                   transition
                 "
               >
-                {size.toUpperCase()}
+                {size.size.toUpperCase()}
               </span>
             ))}
 

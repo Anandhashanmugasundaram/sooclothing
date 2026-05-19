@@ -19,6 +19,7 @@ import {
 } from "@/contexts/CartContext";
 
 import "./index.css";
+import ScrollToTop from "./components/site/ScrollToTop.jsx";
 
 ReactDOM.createRoot(
   document.getElementById("root")
@@ -27,6 +28,7 @@ ReactDOM.createRoot(
   <React.StrictMode>
 
     <BrowserRouter>
+     <ScrollToTop />
 
       <AuthProvider>
 

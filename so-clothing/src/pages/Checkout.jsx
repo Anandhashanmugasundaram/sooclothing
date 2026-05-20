@@ -102,19 +102,37 @@ export default function Checkout() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+      if (!user) {
+
+    toast.error("Please login to continue");
+
+    nav("/account");
+
+    return;
+
+  }
 
     const parsed = schema.safeParse(form);
 
     if (!parsed.success) {
       const errors = parsed.error.flatten().fieldErrors;
 
-      const firstError =
-        errors.phone?.[0] ||
-        errors.email?.[0] ||
-        errors.name?.[0] ||
-        "Enter the form correctly";
+     const firstError =
+  errors.phone?.[0] ||
+  errors.email?.[0] ||
+  errors.name?.[0] ||
+  errors.address?.[0] ||
+  errors.city?.[0] ||
+  errors.zip?.[0] ||
+  errors.country?.[0] ||
+  errors.card?.[0] ||
+  errors.expiry?.[0] ||
+  errors.cvc?.[0] ||
+  "Enter the form correctly";
 
       toast.error(firstError);
+      console.log(errors);
+      
 
       return;
     }

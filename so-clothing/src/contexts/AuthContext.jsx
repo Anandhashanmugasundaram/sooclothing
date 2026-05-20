@@ -87,7 +87,7 @@ export function AuthProvider({ children }) {
       setUser(null);
       localStorage.removeItem("user");
 
-      toast.success("Logged out successfully");
+      
 
       navigate("/");
     } catch (err) {

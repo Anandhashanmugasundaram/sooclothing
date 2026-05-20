@@ -1,7 +1,4 @@
-import {
-  Route,
-  Routes,
-} from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import { Toaster } from "sonner";
 
@@ -21,11 +18,12 @@ import Admin from "./pages/Admin";
 import AdminProducts from "./pages/AdminProducts";
 import AdminOrders from "./pages/AdminOrders"; // ✅ ADD
 import PremiumLoader from "./components/site/PremiumLoader";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import ReturnPolicy from "./pages/ReturnPolicy";
 
 export default function App() {
-
   return (
-
     <>
 
      <PremiumLoader />
@@ -34,89 +32,44 @@ export default function App() {
         position="top-center"
         theme="light"
       />
-
+      <Toaster position="top-center" theme="light" />
       <Layout>
-
         <Routes>
+          <Route path="/" element={<Index />} />
 
-          <Route
-            path="/"
-            element={<Index />}
-          />
+          <Route path="/shop" element={<Shop />} />
 
-          <Route
-            path="/shop"
-            element={<Shop />}
-          />
+          <Route path="/product/:slug" element={<ProductDetail />} />
 
-          <Route
-            path="/product/:slug"
-            element={
-              <ProductDetail />
-            }
-          />
+          <Route path="/cart" element={<Cart />} />
 
-          <Route
-            path="/cart"
-            element={<Cart />}
-          />
+          <Route path="/checkout" element={<Checkout />} />
 
-          <Route
-            path="/checkout"
-            element={<Checkout />}
-          />
+          <Route path="/account" element={<Account />} />
 
-          <Route
-            path="/account"
-            element={<Account />}
-          />
+          <Route path="/about" element={<About />} />
 
-          <Route
-            path="/about"
-            element={<About />}
-          />
+          <Route path="/contact" element={<Contact />} />
 
-          <Route
-            path="/contact"
-            element={<Contact />}
-          />
+          <Route path="/lookbook" element={<Lookbook />} />
 
-          <Route
-            path="/lookbook"
-            element={<Lookbook />}
-          />
+          <Route path="/admin" element={<Admin />} />
 
-          <Route
-            path="/admin"
-            element={<Admin />}
-          />
+          <Route path="/admin-products" element={<AdminProducts />} />
+          <Route path="/refund-policy" element={<ReturnPolicy />} />
 
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route
-            path="/admin-products"
-            element={
-              <AdminProducts />
-            }
+            path="/terms-and-conditions"
+            element={<TermsAndConditions />}
           />
 
           {/* ✅ ADMIN ORDERS */}
-          <Route
-            path="/admin-orders"
-            element={
-              <AdminOrders />
-            }
-          />
+          <Route path="/admin-orders" element={<AdminOrders />} />
 
-          <Route
-            path="*"
-            element={<NotFound />}
-          />
-
+          <Route path="*" element={<NotFound />} />
         </Routes>
-
       </Layout>
-
     </>
-
   );
-
 }

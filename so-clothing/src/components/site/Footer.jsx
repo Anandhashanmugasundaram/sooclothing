@@ -2,48 +2,27 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
 
 export function Footer() {
-
   // WHATSAPP MESSAGE
   const whatsappMessage =
     "Hello SO.CLOTHING 👋 I’m interested in your products. Please share more details.";
 
   return (
-
     <footer className="bg-secondary border-t border-border pt-20 pb-8">
-
       <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
-
         {/* TOP SECTION */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-12 mb-20">
-
           {/* BRAND */}
           <div className="col-span-2">
+            <Link to="/" className="flex items-center gap-3 mb-6">
+              <img src={logo} alt="SO.CLOTHING" className="h-10 w-10" />
 
-            <Link
-              to="/"
-              className="flex items-center gap-3 mb-6"
-            >
-
-              <img
-                src={logo}
-                alt="SO.CLOTHING"
-                className="h-10 w-10"
-              />
-
-              <span className="font-display text-lg">
-                $O.CLOTHING
-              </span>
-
+              <span className="font-display text-lg">$O.CLOTHING</span>
             </Link>
 
             <p className="text-foreground/60 max-w-xs text-sm leading-relaxed">
-
-              Premium streetwear born from the wild.
-              Crafted in small batches for those who
-              run alone.
-
+              Premium streetwear born from the wild. Crafted in small batches
+              for those who run alone.
             </p>
-
           </div>
 
           {/* SHOP */}
@@ -80,14 +59,12 @@ export function Footer() {
               { label: "Contact", to: "/contact" },
             ]}
           />
-
         </div>
 
         {/* BIG TEXT */}
         <div className="overflow-hidden border-t border-border pt-12">
-
-  <p
-    className="
+          <p
+            className="
       font-display
       text-[18vw]
       md:text-[11vw]
@@ -97,10 +74,9 @@ export function Footer() {
       select-none
       whitespace-nowrap
     "
-  >
-    $O.CLOTHINGS
-  </p>
-
+          >
+            $O.CLOTHINGS
+          </p>
         </div>
 
         {/* POLICY LINKS */}
@@ -114,7 +90,6 @@ export function Footer() {
             mt-10
           "
         >
-
           <Link
             to="/privacy-policy"
             className="
@@ -150,7 +125,6 @@ export function Footer() {
           >
             Refund Policy
           </Link>
-
         </div>
 
         {/* BOTTOM */}
@@ -168,7 +142,6 @@ export function Footer() {
             text-center
           "
         >
-
           {/* COPYRIGHT */}
           <p
             className="
@@ -184,7 +157,6 @@ export function Footer() {
 
           {/* SOCIAL ICONS */}
           <div className="flex items-center justify-center gap-5">
-
             {/* INSTAGRAM */}
             <a
               href="https://www.instagram.com/_s0.clothing_/"
@@ -208,15 +180,13 @@ export function Footer() {
                 hover:scale-110
               "
             >
-
               <i className="fa-brands fa-instagram text-lg"></i>
-
             </a>
 
             {/* WHATSAPP */}
             <a
               href={`https://wa.me/919444545351?text=${encodeURIComponent(
-                whatsappMessage
+                whatsappMessage,
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -237,28 +207,18 @@ export function Footer() {
                 hover:shadow-[0_10px_25px_rgba(34,197,94,0.4)]
               "
             >
-
               <i className="fa-brands fa-whatsapp text-lg"></i>
-
             </a>
-
           </div>
-
         </div>
-
       </div>
-
     </footer>
-
   );
 }
 
 function FooterCol({ title, links }) {
-
   return (
-
     <div>
-
       <p
         className="
           font-mono
@@ -273,11 +233,8 @@ function FooterCol({ title, links }) {
       </p>
 
       <ul className="space-y-3">
-
         {links.map((l) => (
-
           <li key={l.label}>
-
             <Link
               to={l.to}
               className="
@@ -287,18 +244,11 @@ function FooterCol({ title, links }) {
                 transition-colors
               "
             >
-
               {l.label}
-
             </Link>
-
           </li>
-
         ))}
-
       </ul>
-
     </div>
-
   );
 }

@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 
 const cats = ["all", "tops", "bottoms", "outerwear", "accessories"];
 
-const API =import.meta.env.VITE_API_URL;
+const API = import.meta.env.VITE_API_URL;
 const ITEMS_PER_PAGE = 8;
 
 export default function Shop() {
@@ -76,7 +76,9 @@ export default function Shop() {
     // SIZE FILTER
     if (selectedSizes.length > 0) {
       l = l.filter((product) =>
-        product.sizes?.some((s) => selectedSizes.includes(s.toUpperCase())),
+        product.sizes?.some((s) =>
+          selectedSizes.includes(s.size.toUpperCase()),
+        ),
       );
     }
 
@@ -594,11 +596,13 @@ export function ProductCard({ product }) {
 
           {/* SIZES */}
           <div className="flex flex-wrap gap-2 mt-4">
-            {product.sizes?.map((size, index) => (
-              console.log(size),
-              <span
-                key={index}
-                className="
+            {product.sizes?.map(
+              (size, index) => (
+                console.log(size),
+                (
+                  <span
+                    key={index}
+                    className="
                     min-w-[42px]
                     h-9
                     px-3
@@ -619,9 +623,12 @@ export function ProductCard({ product }) {
                     transition-all
                     duration-300
                   "
-              >
-{size.size.toUpperCase()}              </span>
-            ))}
+                  >
+                    {size.size.toUpperCase()}{" "}
+                  </span>
+                )
+              ),
+            )}
           </div>
         </div>
       </Link>

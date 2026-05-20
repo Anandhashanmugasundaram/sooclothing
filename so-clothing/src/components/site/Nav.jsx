@@ -400,9 +400,7 @@ export function Nav() {
 
                       await logout();
 
-                      toast.success(
-                        "Logged out successfully"
-                      );
+                     
 
                       setOpen(false);
 

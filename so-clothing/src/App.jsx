@@ -20,12 +20,15 @@ import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import AdminProducts from "./pages/AdminProducts";
 import AdminOrders from "./pages/AdminOrders"; // ✅ ADD
+import PremiumLoader from "./components/site/PremiumLoader";
 
 export default function App() {
 
   return (
 
     <>
+
+     <PremiumLoader />
 
       <Toaster
         position="top-center"

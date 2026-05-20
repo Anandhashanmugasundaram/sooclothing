@@ -102,6 +102,15 @@ export default function Checkout() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+      if (!user) {
+
+    toast.error("Please login to continue");
+
+    nav("/account");
+
+    return;
+
+  }
 
     const parsed = schema.safeParse(form);
 

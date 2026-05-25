@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import AdminProducts from "./pages/AdminProducts";
 import AdminOrders from "./pages/AdminOrders"; // ✅ ADD
+import PremiumLoader from "./components/site/PremiumLoader";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import ReturnPolicy from "./pages/ReturnPolicy";
@@ -24,8 +25,14 @@ import ReturnPolicy from "./pages/ReturnPolicy";
 export default function App() {
   return (
     <>
-      <Toaster position="top-center" theme="light" />
 
+     <PremiumLoader />
+
+      <Toaster
+        position="top-center"
+        theme="light"
+      />
+      <Toaster position="top-center" theme="light" />
       <Layout>
         <Routes>
           <Route path="/" element={<Index />} />

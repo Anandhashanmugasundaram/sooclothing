@@ -54,6 +54,18 @@ const orderSchema = new mongoose.Schema(
       default: "Pending",
     },
 
+    // PAYMENT
+    paymentId: {
+      type: String,
+      default: "",
+    },
+
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Paid", "Failed"],
+      default: "Pending",
+    },
+
     subtotal: Number,
     shipping: Number,
     tax: Number,
@@ -64,7 +76,4 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model(
-  "Order",
-  orderSchema
-);
+module.exports = mongoose.model("Order", orderSchema);

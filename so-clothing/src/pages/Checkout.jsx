@@ -10,6 +10,9 @@ import { PIN_PREFIXES } from "@/data/pinPrefixes";
 import { CITIES } from "@/data/cities";
 import axios from "axios";
 
+// =====================================
+// VALIDATION SCHEMA (no card fields)
+// =====================================
 const schema = z.object({
   email: z.string().trim().email("Valid email required").max(255),
 
@@ -35,9 +38,7 @@ const schema = z.object({
     .trim()
     .refine(
       (val) => CITIES.some((c) => c.toLowerCase() === val.toLowerCase()),
-      {
-        message: "Enter a valid city",
-      },
+      { message: "Enter a valid city" },
     ),
 
   zip: z
@@ -46,39 +47,23 @@ const schema = z.object({
     .regex(/^\d{6}$/, "Enter a valid 6-digit PIN code"),
 
   country: z.string().trim().min(2).max(60),
-
-  card: z
-    .string()
-    .trim()
-    .regex(/^[\d ]{13,19}$/, "Card number invalid"),
-
-  expiry: z
-    .string()
-    .trim()
-    .regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Use MM/YY"),
-
-  cvc: z
-    .string()
-    .trim()
-    .regex(/^\d{3,4}$/, "CVC invalid"),
 });
 
 export default function Checkout() {
   const { items, subtotal, clear } = useCart();
-
   const { user } = useAuth();
+
   const API =
     import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";
+
   const nav = useNavigate();
 
   const [loading, setLoading] = useState(false);
-
   const [done, setDone] = useState(false);
+  const [confirmedEmail, setConfirmedEmail] = useState("");
 
   const shipping = subtotal > 150 ? 0 : 12;
-
   const tax = +(subtotal * 0.08).toFixed(2);
-
   const total = subtotal;
 
   const [form, setForm] = useState({
@@ -89,165 +74,179 @@ export default function Checkout() {
     city: "",
     zip: "",
     country: "India",
-    card: "",
-    expiry: "",
-    cvc: "",
   });
 
-  const set = (k) => (e) =>
-    setForm({
-      ...form,
-      [k]: e.target.value,
-    });
+  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
+  // =====================================
+  // SUBMIT → RAZORPAY
+  // =====================================
   const onSubmit = async (e) => {
     e.preventDefault();
-      if (!user) {
 
-    toast.error("Please login to continue");
+    if (!user) {
+      toast.error("Please login to continue");
+      nav("/account");
+      return;
+    }
 
-    nav("/account");
-
-    return;
-
-  }
-
+    // VALIDATE FORM
     const parsed = schema.safeParse(form);
 
     if (!parsed.success) {
       const errors = parsed.error.flatten().fieldErrors;
-
-     const firstError =
-  errors.phone?.[0] ||
-  errors.email?.[0] ||
-  errors.name?.[0] ||
-  errors.address?.[0] ||
-  errors.city?.[0] ||
-  errors.zip?.[0] ||
-  errors.country?.[0] ||
-  errors.card?.[0] ||
-  errors.expiry?.[0] ||
-  errors.cvc?.[0] ||
-  "Enter the form correctly";
-
+      const firstError =
+        errors.phone?.[0] ||
+        errors.email?.[0] ||
+        errors.name?.[0] ||
+        errors.address?.[0] ||
+        errors.city?.[0] ||
+        errors.zip?.[0] ||
+        errors.country?.[0] ||
+        "Enter the form correctly";
       toast.error(firstError);
-      console.log(errors);
-      
-
       return;
     }
-    const cityPrefix = PIN_PREFIXES[form.city];
-    const zip = form.zip;
 
+    // VALIDATE PIN PREFIX
+    const cityPrefix = PIN_PREFIXES[form.city];
     if (!cityPrefix) {
       toast.error("Select a valid city");
       return;
     }
-
-    if (!zip.startsWith(cityPrefix)) {
+    if (!form.zip.startsWith(cityPrefix)) {
       toast.error(`PIN must start with ${cityPrefix} for ${form.city}`);
       return;
     }
 
     try {
       setLoading(true);
-      await axios.post(`${API}/api/orders`, {
-        userEmail: form.email,
-        name: form.name,
-        phone: form.phone || "",
-        address: form.address,
-        city: form.city,
-        zip: form.zip,
-        country: form.country,
 
-        items: items.map((it) => ({
-          productId: it.product.id,
-          name: it.product.name,
-          image: it.product.image,
-          size: it.size,
-          qty: it.qty,
-          price: it.product.price,
-        })),
-
-        subtotal,
-        shipping,
-        tax,
-        total: subtotal + shipping + tax,
-      });
-
-      // ORDER ITEMS STRING
-      const orderId = "SO-" + Math.floor(Math.random() * 90000 + 10000);
-
-      // ORDERS ARRAY
-      const orders = items.map((it) => ({
-        name: `${it.product.name} - Size ${it.size}`,
-
-        units: it.qty,
-
-        price: it.product.price * it.qty,
-
-        image_url: it.product.image,
-      }));
-
-      // SEND EMAIL
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-
-        import.meta.env.VITE_EMAILJS_ORDER_TEMPLATE_ID,
-
-        {
-          order_id: orderId,
-
-          email: form.email,
-
-          customer_email: form.email,
-
-          customer_phone: form.phone,
-
-          customer_name: form.name,
-
-          address: form.address,
-
-          city: form.city,
-
-          zip: form.zip,
-
-          country: form.country,
-
-          orders: orders,
-
-          cost: {
-            shipping: shipping,
-
-            tax: tax,
-
-            total: total,
-          },
-        },
-
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      // 1. CREATE RAZORPAY ORDER
+      const { data: razorpayOrder } = await axios.post(
+        `${API}/api/payment/create-order`,
+        { amount: subtotal },
       );
 
-      toast.success("Order placed successfully!");
+      // 2. OPEN RAZORPAY CHECKOUT
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: "INR",
+        name: "Soo Clothing",
+        description: "Order Payment",
+        order_id: razorpayOrder.id,
 
-      setDone(true);
+        handler: async (response) => {
+          try {
+            // 3. VERIFY PAYMENT
+            const { data: verifyData } = await axios.post(
+              `${API}/api/payment/verify`,
+              response,
+            );
 
-      clear();
+            if (!verifyData.success) {
+              toast.error("Payment verification failed");
+              return;
+            }
+
+            // 4. SAVE ORDER TO DB
+            await axios.post(`${API}/api/orders`, {
+              userEmail: form.email,
+              name: form.name,
+              phone: form.phone,
+              address: form.address,
+              city: form.city,
+              zip: form.zip,
+              country: form.country,
+              items: items.map((it) => ({
+                productId: it.product.id,
+                name: it.product.name,
+                image: it.product.image,
+                size: it.size,
+                qty: it.qty,
+                price: it.product.price,
+              })),
+              subtotal,
+              shipping,
+              tax,
+              total: subtotal + shipping + tax,
+              paymentId: verifyData.paymentId,
+              paymentStatus: "Paid",
+            });
+
+            // 5. SEND EMAIL
+            const orderId = "SO-" + Math.floor(Math.random() * 90000 + 10000);
+
+            await emailjs.send(
+              import.meta.env.VITE_EMAILJS_SERVICE_ID,
+              import.meta.env.VITE_EMAILJS_ORDER_TEMPLATE_ID,
+              {
+                order_id: orderId,
+                email: form.email,
+                customer_email: form.email,
+                customer_phone: form.phone,
+                customer_name: form.name,
+                address: form.address,
+                city: form.city,
+                zip: form.zip,
+                country: form.country,
+                orders: items.map((it) => ({
+                  name: `${it.product.name} - Size ${it.size}`,
+                  units: it.qty,
+                  price: it.product.price * it.qty,
+                  image_url: it.product.image,
+                })),
+                cost: { shipping, tax, total },
+              },
+              import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+            );
+
+            // 6. DONE
+            setConfirmedEmail(form.email);
+            toast.success("Order placed successfully!");
+            setDone(true);
+            clear();
+          } catch (err) {
+            console.log(err);
+            toast.error("Order saving failed after payment");
+          } finally {
+            setLoading(false);
+          }
+        },
+
+        prefill: {
+          name: form.name,
+          email: form.email,
+          contact: form.phone,
+        },
+
+        theme: { color: "#000000" },
+
+        modal: {
+          ondismiss: () => {
+            setLoading(false);
+            toast.error("Payment cancelled");
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
       console.log(error);
-
-      toast.error("Failed to place order");
-    } finally {
+      toast.error("Failed to initiate payment");
       setLoading(false);
     }
   };
 
+  // =====================================
   // EMPTY CART
+  // =====================================
   if (items.length === 0 && !done) {
     return (
       <div className="pt-44 pb-32 text-center px-6">
         <p className="font-display text-3xl uppercase mb-4">Bag is empty</p>
-
         <Link
           to="/shop"
           className="font-mono text-xs uppercase tracking-widest text-accent"
@@ -258,7 +257,9 @@ export default function Checkout() {
     );
   }
 
+  // =====================================
   // ORDER SUCCESS
+  // =====================================
   if (done) {
     return (
       <section className="pt-44 pb-32">
@@ -274,12 +275,11 @@ export default function Checkout() {
           </h1>
 
           <p className="text-foreground/70 mb-2">
-            Order # SO-
-            {Math.floor(Math.random() * 90000 + 10000)}
+            Order # SO-{Math.floor(Math.random() * 90000 + 10000)}
           </p>
 
           <p className="text-foreground/70 mb-10">
-            A confirmation has been sent to {form.email}
+            A confirmation has been sent to {confirmedEmail}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -302,6 +302,9 @@ export default function Checkout() {
     );
   }
 
+  // =====================================
+  // CHECKOUT FORM
+  // =====================================
   return (
     <section className="pt-28 lg:pt-32 pb-20">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
@@ -378,37 +381,25 @@ export default function Checkout() {
               />
             </Section>
 
-            {/* PAYMENT */}
-            <Section
-              title="03 / Payment"
-              subtitle="Demo only — no card will be charged."
-            >
-              <Input
-                label="Card number"
-                value={form.card}
-                onChange={set("card")}
-                placeholder="4242 4242 4242 4242"
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  label="Expiry (MM/YY)"
-                  value={form.expiry}
-                  onChange={set("expiry")}
-                  placeholder="12/28"
-                />
-
-                <Input
-                  label="CVC"
-                  value={form.cvc}
-                  onChange={set("cvc")}
-                  placeholder="123"
-                />
+            {/* PAYMENT INFO */}
+            <Section title="03 / Payment">
+              <div className="border border-border p-5 flex items-start gap-4">
+                <Lock className="w-4 h-4 text-accent mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-mono text-xs uppercase tracking-widest mb-1">
+                    Secured by Razorpay
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    You will be redirected to Razorpay's secure payment page to
+                    complete your purchase. We accept UPI, Cards, Net Banking &
+                    Wallets.
+                  </p>
+                </div>
               </div>
             </Section>
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* RIGHT SIDE — ORDER SUMMARY */}
           <aside className="lg:sticky lg:top-28 lg:self-start bg-secondary p-8 space-y-5">
             <p className="font-display text-xl uppercase">Order</p>
 
@@ -422,7 +413,6 @@ export default function Checkout() {
                       alt={it.product.name}
                       className="w-full h-full object-cover"
                     />
-
                     <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-[10px] flex items-center justify-center font-mono">
                       {it.qty}
                     </span>
@@ -432,7 +422,6 @@ export default function Checkout() {
                     <p className="font-display text-sm uppercase truncate">
                       {it.product.name}
                     </p>
-
                     <p className="font-mono text-[10px] text-muted-foreground uppercase">
                       Size {it.size}
                     </p>
@@ -449,19 +438,18 @@ export default function Checkout() {
 
             <Row label="Subtotal" value={`₹ ${subtotal}`} />
 
-            {/* BUTTON */}
+            {/* PAY BUTTON */}
             <button
               type="submit"
               disabled={loading}
               className="w-full bg-accent text-accent-foreground py-4 font-mono text-xs uppercase tracking-[0.25em] hover:bg-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
             >
               <Lock className="w-3.5 h-3.5" />
-
               {loading ? "Processing..." : `Pay ₹ ${total}`}
             </button>
 
             <p className="text-[11px] text-muted-foreground text-center">
-              🔒 Demo checkout — no real payment is processed.
+              🔒 Secured by Razorpay
             </p>
           </aside>
         </form>
@@ -470,31 +458,26 @@ export default function Checkout() {
   );
 }
 
-// SECTION
-function Section({ title, subtitle, children }) {
+// =====================================
+// REUSABLE COMPONENTS
+// =====================================
+function Section({ title, children }) {
   return (
     <div>
-      <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent mb-2">
+      <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent mb-4">
         {title}
       </p>
-
-      {subtitle && (
-        <p className="text-xs text-muted-foreground mb-4">{subtitle}</p>
-      )}
-
       <div className="space-y-4">{children}</div>
     </div>
   );
 }
 
-// INPUT
 function Input({ label, ...props }) {
   return (
     <label className="block">
       <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground block mb-2">
         {label}
       </span>
-
       <input
         {...props}
         className="w-full bg-transparent border border-border focus:border-accent outline-none px-4 py-3 font-mono text-sm transition-colors"
@@ -503,18 +486,14 @@ function Input({ label, ...props }) {
   );
 }
 
-// ROW
 function Row({ label, value, bold }) {
   return (
     <div
-      className={`flex justify-between font-mono ${
-        bold ? "text-base" : "text-sm"
-      }`}
+      className={`flex justify-between font-mono ${bold ? "text-base" : "text-sm"}`}
     >
       <span className="uppercase tracking-widest text-xs text-muted-foreground">
         {label}
       </span>
-
       <span>{value}</span>
     </div>
   );

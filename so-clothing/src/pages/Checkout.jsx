@@ -11,41 +11,23 @@ import { CITIES } from "@/data/cities";
 import axios from "axios";
 
 // =====================================
-// VALIDATION SCHEMA (no card fields)
+// VALIDATION SCHEMA
 // =====================================
 const schema = z.object({
   email: z.string().trim().email("Valid email required").max(255),
-
   name: z.string().trim().min(2, "Name required").max(100),
-
-  phone: z
-    .string()
-    .trim()
-    .regex(/^\d{10}$/, "Enter a valid 10-digit phone number"),
-
+  phone: z.string().trim().regex(/^\d{10}$/, "Enter a valid 10-digit phone number"),
   address: z
     .string()
     .trim()
     .min(10, "Enter complete address")
     .max(200)
-    .regex(
-      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./-]+$/,
-      "Enter a valid address",
-    ),
-
-  city: z
-    .string()
-    .trim()
-    .refine(
-      (val) => CITIES.some((c) => c.toLowerCase() === val.toLowerCase()),
-      { message: "Enter a valid city" },
-    ),
-
-  zip: z
-    .string()
-    .trim()
-    .regex(/^\d{6}$/, "Enter a valid 6-digit PIN code"),
-
+    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./-]+$/, "Enter a valid address"),
+  city: z.string().trim().refine(
+    (val) => CITIES.some((c) => c.toLowerCase() === val.toLowerCase()),
+    { message: "Enter a valid city" }
+  ),
+  zip: z.string().trim().regex(/^\d{6}$/, "Enter a valid 6-digit PIN code"),
   country: z.string().trim().min(2).max(60),
 });
 
@@ -53,18 +35,17 @@ export default function Checkout() {
   const { items, subtotal, clear } = useCart();
   const { user } = useAuth();
 
-  const API =
-    import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";
-
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";
   const nav = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [confirmedEmail, setConfirmedEmail] = useState("");
+  const [confirmedOrderId, setConfirmedOrderId] = useState("");
 
   const shipping = subtotal > 150 ? 0 : 12;
   const tax = +(subtotal * 0.08).toFixed(2);
-  const total = subtotal;
+  const total = subtotal + shipping + tax;
 
   const [form, setForm] = useState({
     email: user?.email ?? "",
@@ -90,9 +71,13 @@ export default function Checkout() {
       return;
     }
 
+    if (items.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
     // VALIDATE FORM
     const parsed = schema.safeParse(form);
-
     if (!parsed.success) {
       const errors = parsed.error.flatten().fieldErrors;
       const firstError =
@@ -119,13 +104,19 @@ export default function Checkout() {
       return;
     }
 
+    // CHECK RAZORPAY SDK
+    if (!window.Razorpay) {
+      toast.error("Payment SDK not loaded. Please refresh the page.");
+      return;
+    }
+
     try {
       setLoading(true);
 
       // 1. CREATE RAZORPAY ORDER
       const { data: razorpayOrder } = await axios.post(
         `${API}/api/payment/create-order`,
-        { amount: subtotal },
+        { amount: subtotal }
       );
 
       // 2. OPEN RAZORPAY CHECKOUT
@@ -142,11 +133,12 @@ export default function Checkout() {
             // 3. VERIFY PAYMENT
             const { data: verifyData } = await axios.post(
               `${API}/api/payment/verify`,
-              response,
+              response
             );
 
             if (!verifyData.success) {
               toast.error("Payment verification failed");
+              setLoading(false);
               return;
             }
 
@@ -170,7 +162,7 @@ export default function Checkout() {
               subtotal,
               shipping,
               tax,
-              total: subtotal + shipping + tax,
+              total,
               paymentId: verifyData.paymentId,
               paymentStatus: "Paid",
             });
@@ -199,17 +191,18 @@ export default function Checkout() {
                 })),
                 cost: { shipping, tax, total },
               },
-              import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+              import.meta.env.VITE_EMAILJS_PUBLIC_KEY
             );
 
             // 6. DONE
             setConfirmedEmail(form.email);
+            setConfirmedOrderId(orderId);
             toast.success("Order placed successfully!");
             setDone(true);
             clear();
           } catch (err) {
-            console.log(err);
-            toast.error("Order saving failed after payment");
+            console.error(err);
+            toast.error("Order saving failed after payment. Contact support.");
           } finally {
             setLoading(false);
           }
@@ -233,9 +226,12 @@ export default function Checkout() {
 
       const rzp = new window.Razorpay(options);
       rzp.open();
+
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to initiate payment");
+      console.error(error);
+      toast.error(
+        error?.response?.data?.message || "Failed to initiate payment"
+      );
       setLoading(false);
     }
   };
@@ -275,7 +271,7 @@ export default function Checkout() {
           </h1>
 
           <p className="text-foreground/70 mb-2">
-            Order # SO-{Math.floor(Math.random() * 90000 + 10000)}
+            Order # {confirmedOrderId}
           </p>
 
           <p className="text-foreground/70 mb-10">
@@ -289,7 +285,6 @@ export default function Checkout() {
             >
               Keep Shopping
             </Link>
-
             <button
               onClick={() => nav("/account")}
               className="border border-border px-10 py-4 font-mono text-xs uppercase tracking-[0.25em] hover:border-accent"
@@ -308,20 +303,22 @@ export default function Checkout() {
   return (
     <section className="pt-28 lg:pt-32 pb-20">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+
         {/* HEADER */}
         <div className="mb-12">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-4">
             — Secure Checkout
           </p>
-
           <h1 className="font-display text-4xl md:text-6xl uppercase leading-none">
             Checkout
           </h1>
         </div>
 
         <form onSubmit={onSubmit} className="grid lg:grid-cols-3 gap-12">
+
           {/* LEFT SIDE */}
           <div className="lg:col-span-2 space-y-12">
+
             {/* CONTACT */}
             <Section title="01 / Contact">
               <Input
@@ -331,7 +328,6 @@ export default function Checkout() {
                 type="email"
                 placeholder="example@example.com"
               />
-
               <Input
                 label="Phone"
                 value={form.phone}
@@ -349,14 +345,12 @@ export default function Checkout() {
                 onChange={set("name")}
                 placeholder="John Doe"
               />
-
               <Input
                 label="Address"
                 value={form.address}
                 onChange={set("address")}
                 placeholder="Eg: No 12, Gandhi Street, Anna Nagar, Chennai"
               />
-
               <div className="grid grid-cols-2 gap-4">
                 <Input
                   label="City"
@@ -364,7 +358,6 @@ export default function Checkout() {
                   onChange={set("city")}
                   placeholder="Chennai"
                 />
-
                 <Input
                   label="ZIP"
                   value={form.zip}
@@ -372,7 +365,6 @@ export default function Checkout() {
                   placeholder="600032"
                 />
               </div>
-
               <Input
                 label="Country"
                 value={form.country}
@@ -381,7 +373,7 @@ export default function Checkout() {
               />
             </Section>
 
-            {/* PAYMENT INFO */}
+            {/* PAYMENT */}
             <Section title="03 / Payment">
               <div className="border border-border p-5 flex items-start gap-4">
                 <Lock className="w-4 h-4 text-accent mt-0.5 shrink-0" />
@@ -390,9 +382,8 @@ export default function Checkout() {
                     Secured by Razorpay
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    You will be redirected to Razorpay's secure payment page to
-                    complete your purchase. We accept UPI, Cards, Net Banking &
-                    Wallets.
+                    You will be redirected to Razorpay's secure payment page.
+                    We accept UPI, Cards, Net Banking & Wallets.
                   </p>
                 </div>
               </div>
@@ -403,7 +394,7 @@ export default function Checkout() {
           <aside className="lg:sticky lg:top-28 lg:self-start bg-secondary p-8 space-y-5">
             <p className="font-display text-xl uppercase">Order</p>
 
-            {/* PRODUCTS */}
+            {/* ITEMS */}
             <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
               {items.map((it) => (
                 <div key={`${it.product.id}-${it.size}`} className="flex gap-3">
@@ -417,7 +408,6 @@ export default function Checkout() {
                       {it.qty}
                     </span>
                   </div>
-
                   <div className="flex-1 min-w-0">
                     <p className="font-display text-sm uppercase truncate">
                       {it.product.name}
@@ -426,7 +416,6 @@ export default function Checkout() {
                       Size {it.size}
                     </p>
                   </div>
-
                   <p className="font-mono text-xs">
                     ₹ {it.product.price * it.qty}
                   </p>
@@ -436,7 +425,12 @@ export default function Checkout() {
 
             <div className="h-px bg-border" />
 
+            {/* TOTALS */}
             <Row label="Subtotal" value={`₹ ${subtotal}`} />
+            <Row label="Shipping" value={shipping === 0 ? "FREE" : `₹ ${shipping}`} />
+            <Row label="Tax (8%)" value={`₹ ${tax}`} />
+            <div className="h-px bg-border" />
+            <Row label="Total" value={`₹ ${total.toFixed(2)}`} bold />
 
             {/* PAY BUTTON */}
             <button
@@ -445,7 +439,7 @@ export default function Checkout() {
               className="w-full bg-accent text-accent-foreground py-4 font-mono text-xs uppercase tracking-[0.25em] hover:bg-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
             >
               <Lock className="w-3.5 h-3.5" />
-              {loading ? "Processing..." : `Pay ₹ ${total}`}
+              {loading ? "Processing..." : `Pay ₹ ${total.toFixed(2)}`}
             </button>
 
             <p className="text-[11px] text-muted-foreground text-center">
@@ -488,9 +482,7 @@ function Input({ label, ...props }) {
 
 function Row({ label, value, bold }) {
   return (
-    <div
-      className={`flex justify-between font-mono ${bold ? "text-base" : "text-sm"}`}
-    >
+    <div className={`flex justify-between font-mono ${bold ? "text-base font-bold" : "text-sm"}`}>
       <span className="uppercase tracking-widest text-xs text-muted-foreground">
         {label}
       </span>

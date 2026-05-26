@@ -77,6 +77,28 @@ const product = new Product({
 // =====================================
 // GET ALL PRODUCTS
 // =====================================
+// DECREMENT STOCK AFTER ORDER
+router.post("/decrement-stock", async (req, res) => {
+  try {
+    const { items } = req.body;
+
+    for (const item of items) {
+      await Product.updateOne(
+        {
+          _id: item.productId,
+          "sizes.size": item.size,
+          "sizes.quantity": { $gte: item.qty }, // ← only decrement if enough stock exists
+        },
+        { $inc: { "sizes.$.quantity": -item.qty } }
+      );
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find().sort({

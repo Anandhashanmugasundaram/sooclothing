@@ -162,6 +162,14 @@ export default function Checkout() {
               paymentId: verifyData.paymentId,
               paymentStatus: "Paid",
             });
+            // Decrement stock for each item
+await axios.post(`${API}/api/products/decrement-stock`, {
+  items: items.map((it) => ({
+    productId: it.product._id,   // MongoDB _id
+    size: it.size,
+    qty: it.qty,
+  })),
+});
 
             const orderId = "SO-" + Math.floor(Math.random() * 90000 + 10000);
 

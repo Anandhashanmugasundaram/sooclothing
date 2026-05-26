@@ -115,108 +115,148 @@ export function CartDrawer() {
           <>
             {/* ITEMS */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              {items.map((it) => (
-                <div key={it.id} className="flex gap-4 border-b pb-6">
-                  {/* IMAGE */}
-                  <Link
-                    to={`/product/${it.product.slug}`}
-                    onClick={() => setOpen(false)}
-                    className="block w-20 h-24 bg-gray-100 shrink-0 overflow-hidden rounded"
-                  >
-                    <img
-                      src={it.product.image || "/fallback.png"}
-                      alt={it.product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </Link>
+              {items.map((it) => {
+                // Get stock for this item's size from the product data
+                const stockForSize =
+                  it.product.sizes?.find((s) => s.size === it.size)?.quantity ?? 0;
+                const atStockLimit = it.qty >= stockForSize;
 
-                  {/* DETAILS */}
-                  <div className="flex-1 flex flex-col">
-                    {/* TOP */}
-                    <div className="flex justify-between gap-2">
-                      <Link
-                        to={`/product/${it.product.slug}`}
-                        onClick={() => setOpen(false)}
-                        className="uppercase hover:text-red-500 transition-colors"
-                        style={{
-                          fontFamily: "'Cormorant Garamond', serif",
-                          fontSize: "1rem",
-                          fontWeight: 600,
-                          letterSpacing: "0.01em",
-                          lineHeight: 1.3,
-                        }}
-                      >
-                        {it.product.name}
-                      </Link>
-
-                      <button
-                        onClick={() => remove(it.id)}
-                        className="text-gray-400 hover:text-red-500 transition shrink-0"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* SIZE */}
-                    <p
-                      className="mt-1"
-                      style={{
-                        fontFamily: "'DM Sans', sans-serif",
-                        fontSize: "0.62rem",
-                        letterSpacing: "0.2em",
-                        textTransform: "uppercase",
-                        color: "#9ca3af",
-                        fontWeight: 400,
-                      }}
+                return (
+                  <div key={it.id} className="flex gap-4 border-b pb-6">
+                    {/* IMAGE */}
+                    <Link
+                      to={`/product/${it.product.slug}`}
+                      onClick={() => setOpen(false)}
+                      className="block w-20 h-24 bg-gray-100 shrink-0 overflow-hidden rounded"
                     >
-                      Size {it.size}
-                    </p>
+                      <img
+                        src={it.product.image || "/fallback.png"}
+                        alt={it.product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </Link>
 
-                    {/* BOTTOM */}
-                    <div className="mt-auto flex justify-between items-end">
-                      {/* QTY */}
-                      <div className="flex items-center border">
-                        <button
-                          onClick={() => setQty(it.id, it.qty - 1)}
-                          className="w-8 h-8 flex items-center justify-center hover:bg-gray-100"
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-
-                        <span
-                          className="w-8 text-center"
+                    {/* DETAILS */}
+                    <div className="flex-1 flex flex-col">
+                      {/* TOP */}
+                      <div className="flex justify-between gap-2">
+                        <Link
+                          to={`/product/${it.product.slug}`}
+                          onClick={() => setOpen(false)}
+                          className="uppercase hover:text-red-500 transition-colors"
                           style={{
                             fontFamily: "'Cormorant Garamond', serif",
                             fontSize: "1rem",
-                            fontWeight: 500,
+                            fontWeight: 600,
+                            letterSpacing: "0.01em",
+                            lineHeight: 1.3,
                           }}
                         >
-                          {it.qty}
-                        </span>
+                          {it.product.name}
+                        </Link>
 
                         <button
-                          onClick={() => setQty(it.id, it.qty + 1)}
-                          className="w-8 h-8 flex items-center justify-center hover:bg-gray-100"
+                          onClick={() => remove(it.id)}
+                          className="text-gray-400 hover:text-red-500 transition shrink-0"
                         >
-                          <Plus className="w-3 h-3" />
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
 
-                      {/* PRICE */}
-                      <p
-                        style={{
-                          fontFamily: "'Cormorant Garamond', serif",
-                          fontSize: "1.05rem",
-                          fontWeight: 700,
-                          color: "#0f1d4d",
-                        }}
-                      >
-                        ₹{it.product.price * it.qty}
-                      </p>
+                      {/* SIZE + STOCK */}
+                      <div className="mt-1 flex items-center gap-2">
+                        <p
+                          style={{
+                            fontFamily: "'DM Sans', sans-serif",
+                            fontSize: "0.62rem",
+                            letterSpacing: "0.2em",
+                            textTransform: "uppercase",
+                            color: "#9ca3af",
+                            fontWeight: 400,
+                          }}
+                        >
+                          Size {it.size}
+                        </p>
+
+                        {/* Stock warning badge */}
+                        {atStockLimit && (
+                          <span
+                            style={{
+                              fontFamily: "'DM Sans', sans-serif",
+                              fontSize: "0.55rem",
+                              letterSpacing: "0.15em",
+                              textTransform: "uppercase",
+                              fontWeight: 500,
+                              color: "#ef4444",
+                              border: "1px solid #fca5a5",
+                              borderRadius: "4px",
+                              padding: "1px 6px",
+                            }}
+                          >
+                            Max stock
+                          </span>
+                        )}
+                      </div>
+
+                      {/* BOTTOM */}
+                      <div className="mt-auto flex justify-between items-end">
+                        {/* QTY */}
+                        <div className="flex items-center border">
+                          <button
+                            onClick={() => setQty(it.id, it.qty - 1)}
+                            className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 transition"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+
+                          <span
+                            className="w-8 text-center"
+                            style={{
+                              fontFamily: "'Cormorant Garamond', serif",
+                              fontSize: "1rem",
+                              fontWeight: 500,
+                            }}
+                          >
+                            {it.qty}
+                          </span>
+
+                          <button
+                            onClick={() => {
+                              if (atStockLimit) {
+                                toast.error(
+                                  `Only ${stockForSize} in stock for size ${it.size}`
+                                );
+                                return;
+                              }
+                              setQty(it.id, it.qty + 1);
+                            }}
+                            disabled={atStockLimit}
+                            className={`w-8 h-8 flex items-center justify-center transition ${
+                              atStockLimit
+                                ? "opacity-30 cursor-not-allowed"
+                                : "hover:bg-gray-100"
+                            }`}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        {/* PRICE */}
+                        <p
+                          style={{
+                            fontFamily: "'Cormorant Garamond', serif",
+                            fontSize: "1.05rem",
+                            fontWeight: 700,
+                            color: "#0f1d4d",
+                          }}
+                        >
+                          ₹{it.product.price * it.qty}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* FOOTER */}

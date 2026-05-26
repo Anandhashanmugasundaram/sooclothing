@@ -324,34 +324,31 @@ export function Hero() {
           </div>
 
           {/* TITLE */}
-          <h1
-            ref={titleRef}
-            className="uppercase leading-[0.85] max-w-5xl text-[18vw] sm:text-[15vw] md:text-[10vw] lg:text-[9rem]"
-            style={{
-              fontFamily: "'Archivo Black', sans-serif",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            <span className="block overflow-hidden">
-              <span className="hero-line-inner block">
-                Wear
-              </span>
-            </span>
+<h1
+  ref={titleRef}
+  className="uppercase leading-[0.85] max-w-5xl text-[22vw] sm:text-[19vw] md:text-[14vw] lg:text-[12rem]"
+  style={{
+    fontFamily: "'Cormorant Garamond', serif",
+    fontWeight: 700,
+    letterSpacing: "-0.02em",
+  }}
+>
+  <span className="block overflow-hidden">
+    <span className="hero-line-inner block">Wear</span>
+  </span>
 
-            <span className="block overflow-hidden">
-              <span className="hero-line-inner block">
-                The{" "}
-                <span
-                  className="text-accent italic"
-                  style={{
-                    fontStyle: "italic",
-                  }}
-                >
-                  Wild
-                </span>
-              </span>
-            </span>
-          </h1>
+  <span className="block overflow-hidden">
+    <span className="hero-line-inner block">
+      The{" "}
+      <span
+        className="text-accent"
+        style={{ fontStyle: "italic", fontWeight: 700 }}
+      >
+        Wild
+      </span>
+    </span>
+  </span>
+</h1>
 
           {/* COPY + CTA */}
           <div className="mt-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 max-w-5xl">

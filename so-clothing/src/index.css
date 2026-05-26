@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,21 +8,15 @@
   :root {
     --background: 40 30% 97%;
     --foreground: 0 0% 8%;
-
     --primary: 0 0% 8%;
     --primary-foreground: 40 30% 97%;
-
     --secondary: 40 20% 92%;
     --secondary-foreground: 0 0% 8%;
-
     --muted: 40 15% 90%;
     --muted-foreground: 0 0% 40%;
-
     --accent: 14 80% 50%;
     --accent-foreground: 40 30% 97%;
-
     --border: 30 12% 86%;
-
     --bone: 40 30% 97%;
     --ink: 0 0% 8%;
     --ember: 14 80% 50%;
@@ -42,7 +36,7 @@
 }
 
 @layer utilities {
-  .font-display { font-family: 'Archivo Black', sans-serif; letter-spacing: -0.02em; }
+  .font-display { font-family: 'Cormorant Garamond', serif; letter-spacing: -0.02em; }
   .font-mono { font-family: 'Space Mono', monospace; }
 
   .marquee { animation: marquee 30s linear infinite; }
@@ -60,7 +54,6 @@
   }
   .pulse-ember { animation: pulse-ember 2s infinite; }
 
-  /* GSAP base states — start hidden so no flash before JS runs */
   .gsap-fade { opacity: 0; transform: translateY(40px); }
   .gsap-rise { opacity: 0; transform: translateY(80px); }
   .gsap-parallax-img { will-change: transform; }

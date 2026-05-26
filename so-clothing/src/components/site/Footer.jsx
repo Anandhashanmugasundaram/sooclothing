@@ -94,7 +94,7 @@ export function Footer() {
             className="leading-none uppercase select-none whitespace-nowrap text-foreground/10"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(12vw, 18vw, 18vw)",
+              fontSize: "clamp(12vw, 13vw, 18vw)",
               fontWeight: 700,
               letterSpacing: "-0.02em",
             }}

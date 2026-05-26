@@ -13,26 +13,135 @@ if (!document.head.querySelector('[href*="Cormorant"]')) {
   document.head.appendChild(fontLink);
 }
 
+const ORB_PALETTE = ["#d4906a", "#c46b4a", "#b8a490", "#e8c9a8", "#c9b99a"];
+
+function createOrbs(count = 6) {
+  return Array.from({ length: count }, (_, i) => ({
+    x: Math.random() * 1400,
+    y: Math.random() * 600,
+    r: 70 + Math.random() * 100,
+    color: ORB_PALETTE[i % ORB_PALETTE.length],
+    speedX: (Math.random() - 0.5) * 0.3,
+    speedY: (Math.random() - 0.5) * 0.2,
+    alpha: 0.06 + Math.random() * 0.08,
+  }));
+}
+
+function createDots(count = 32) {
+  return Array.from({ length: count }, () => ({
+    x: Math.random() * 1400,
+    y: Math.random() * 600,
+    r: 1 + Math.random() * 2.5,
+    speedX: (Math.random() - 0.5) * 0.18,
+    speedY: -0.12 - Math.random() * 0.22,
+    alpha: 0.1 + Math.random() * 0.18,
+    color: ORB_PALETTE[Math.floor(Math.random() * ORB_PALETTE.length)],
+  }));
+}
+
 export function Drops() {
   const sectionRef = useRef(null);
+  const canvasRef = useRef(null);
   const imageRef = useRef(null);
   const textRef = useRef(null);
+  const animFrameRef = useRef(null);
 
+  // Canvas background animation
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const section = sectionRef.current;
+    const orbs = createOrbs(6);
+    const dots = createDots(32);
+
+    function resize() {
+      canvas.width = section.offsetWidth;
+      canvas.height = section.offsetHeight;
+    }
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(section);
+
+    function loop() {
+      const W = canvas.width;
+      const H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      // Floating soft orbs
+      orbs.forEach((o) => {
+        o.x += o.speedX;
+        o.y += o.speedY;
+        if (o.x > W + o.r) o.x = -o.r;
+        if (o.x < -o.r) o.x = W + o.r;
+        if (o.y > H + o.r) o.y = -o.r;
+        if (o.y < -o.r) o.y = H + o.r;
+
+        const hex = Math.round(o.alpha * 255).toString(16).padStart(2, "0");
+        const grad = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.r);
+        grad.addColorStop(0, o.color + hex);
+        grad.addColorStop(1, o.color + "00");
+        ctx.beginPath();
+        ctx.arc(o.x, o.y, o.r, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      });
+
+      // Rising particles
+      dots.forEach((d) => {
+        d.x += d.speedX;
+        d.y += d.speedY;
+        if (d.y < -4) {
+          d.y = H + 4;
+          d.x = Math.random() * W;
+        }
+        if (d.x > W + 4) d.x = -4;
+        if (d.x < -4) d.x = W + 4;
+        const hex = Math.round(d.alpha * 255).toString(16).padStart(2, "0");
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fillStyle = d.color + hex;
+        ctx.fill();
+      });
+
+      animFrameRef.current = requestAnimationFrame(loop);
+    }
+    loop();
+
+    // Pulse orb alphas with GSAP
+    orbs.forEach((o, i) => {
+      gsap.to(o, {
+        alpha: o.alpha * 1.6,
+        duration: 2.5 + i * 0.4,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut",
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(animFrameRef.current);
+      ro.disconnect();
+    };
+  }, []);
+
+  // Scroll reveal animations
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(imageRef.current, {
         opacity: 0,
         y: 80,
-        duration: 1.2,
+        scale: 0.97,
+        duration: 1.3,
         ease: "power3.out",
+        transformOrigin: "center bottom",
         scrollTrigger: { trigger: sectionRef.current, start: "top 75%" },
       });
 
-      gsap.from(textRef.current, {
+      gsap.from(textRef.current.children, {
         opacity: 0,
-        y: 40,
+        y: 30,
         duration: 1,
-        delay: 0.2,
+        stagger: 0.15,
         ease: "power3.out",
         scrollTrigger: { trigger: sectionRef.current, start: "top 75%" },
       });
@@ -48,7 +157,32 @@ export function Drops() {
       className="relative overflow-hidden bg-secondary py-24 lg:py-32 border-y border-border"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
-      <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
+      {/* Canvas background */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 pointer-events-none"
+        style={{ zIndex: 0 }}
+      />
+
+      {/* Grain overlay */}
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ zIndex: 1, opacity: 0.035 }}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <filter id="grain-drops">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.85"
+            numOctaves="4"
+            stitchTiles="stitch"
+          />
+          <feColorMatrix type="saturate" values="0" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#grain-drops)" />
+      </svg>
+
+      <div className="max-w-[1600px] mx-auto px-6 lg:px-12" style={{ position: "relative", zIndex: 2 }}>
 
         {/* TOP TEXT */}
         <div ref={textRef} className="mb-16 text-center">

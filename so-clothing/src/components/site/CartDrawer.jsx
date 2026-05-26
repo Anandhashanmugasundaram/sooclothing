@@ -5,16 +5,22 @@ import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 
+// Google Fonts injection
+const fontLink = document.createElement("link");
+fontLink.href =
+  "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap";
+fontLink.rel = "stylesheet";
+if (!document.head.querySelector('[href*="Cormorant"]')) {
+  document.head.appendChild(fontLink);
+}
+
 export function CartDrawer() {
   const { user } = useAuth();
   const { items, open, setOpen, setQty, remove, subtotal } = useCart();
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [open]);
 
   return (
@@ -32,34 +38,75 @@ export function CartDrawer() {
         className={`fixed top-0 right-0 bottom-0 z-50 w-full sm:w-[440px] bg-white border-l flex flex-col transition-transform duration-500 ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
+        style={{ fontFamily: "'DM Sans', sans-serif" }}
       >
         {/* HEADER */}
         <div className="flex items-center justify-between p-6 border-b">
-          <p className="text-xl font-semibold uppercase">
-            Bag <span className="text-gray-500 text-sm">({items.length})</span>
+          <p
+            className="uppercase"
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "1.3rem",
+              fontWeight: 600,
+              letterSpacing: "0.04em",
+            }}
+          >
+            Bag{" "}
+            <span
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.8rem",
+                fontWeight: 400,
+                color: "#9ca3af",
+              }}
+            >
+              ({items.length})
+            </span>
           </p>
 
-          <button
-            onClick={() => setOpen(false)}
-            className="hover:text-red-500 transition"
-          >
+          <button onClick={() => setOpen(false)} className="hover:text-red-500 transition">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* EMPTY */}
+        {/* EMPTY STATE */}
         {items.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-            <p className="text-3xl font-bold uppercase mb-3">Empty</p>
+            <p
+              className="uppercase mb-3"
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "2rem",
+                fontWeight: 600,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Empty
+            </p>
 
-            <p className="text-gray-500 text-sm mb-8">
+            <p
+              className="mb-8"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.85rem",
+                fontWeight: 300,
+                color: "#9ca3af",
+              }}
+            >
               Your bag is waiting to be filled.
             </p>
 
             <Link
               to="/shop"
               onClick={() => setOpen(false)}
-              className="border px-8 py-3 text-xs uppercase tracking-[0.25em] hover:bg-black hover:text-white transition"
+              className="border px-8 py-3 hover:bg-black hover:text-white transition"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.68rem",
+                letterSpacing: "0.25em",
+                textTransform: "uppercase",
+                fontWeight: 500,
+              }}
             >
               Browse Shop
             </Link>
@@ -90,22 +137,38 @@ export function CartDrawer() {
                       <Link
                         to={`/product/${it.product.slug}`}
                         onClick={() => setOpen(false)}
-                        className="font-semibold uppercase text-sm hover:text-red-500"
+                        className="uppercase hover:text-red-500 transition-colors"
+                        style={{
+                          fontFamily: "'Cormorant Garamond', serif",
+                          fontSize: "1rem",
+                          fontWeight: 600,
+                          letterSpacing: "0.01em",
+                          lineHeight: 1.3,
+                        }}
                       >
                         {it.product.name}
                       </Link>
 
-                      {/* REMOVE */}
                       <button
                         onClick={() => remove(it.id)}
-                        className="text-gray-500 hover:text-red-500 transition"
+                        className="text-gray-400 hover:text-red-500 transition shrink-0"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
 
                     {/* SIZE */}
-                    <p className="text-[11px] uppercase tracking-widest text-gray-500 mt-1">
+                    <p
+                      className="mt-1"
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "0.62rem",
+                        letterSpacing: "0.2em",
+                        textTransform: "uppercase",
+                        color: "#9ca3af",
+                        fontWeight: 400,
+                      }}
+                    >
                       Size {it.size}
                     </p>
 
@@ -120,7 +183,14 @@ export function CartDrawer() {
                           <Minus className="w-3 h-3" />
                         </button>
 
-                        <span className="w-8 text-center text-sm">
+                        <span
+                          className="w-8 text-center"
+                          style={{
+                            fontFamily: "'Cormorant Garamond', serif",
+                            fontSize: "1rem",
+                            fontWeight: 500,
+                          }}
+                        >
                           {it.qty}
                         </span>
 
@@ -133,7 +203,14 @@ export function CartDrawer() {
                       </div>
 
                       {/* PRICE */}
-                      <p className="font-semibold">
+                      <p
+                        style={{
+                          fontFamily: "'Cormorant Garamond', serif",
+                          fontSize: "1.05rem",
+                          fontWeight: 700,
+                          color: "#0f1d4d",
+                        }}
+                      >
                         ₹{it.product.price * it.qty}
                       </p>
                     </div>
@@ -144,15 +221,39 @@ export function CartDrawer() {
 
             {/* FOOTER */}
             <div className="border-t p-6 space-y-4">
-              <div className="flex justify-between text-sm">
-                <span className="uppercase tracking-widest text-gray-500">
+              <div className="flex justify-between items-center">
+                <span
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.62rem",
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "#9ca3af",
+                    fontWeight: 400,
+                  }}
+                >
                   Subtotal
                 </span>
-
-                <span className="font-semibold">₹{subtotal}</span>
+                <span
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: "1.2rem",
+                    fontWeight: 700,
+                    color: "#0f1d4d",
+                  }}
+                >
+                  ₹{subtotal}
+                </span>
               </div>
 
-              <p className="text-[11px] text-gray-500">
+              <p
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.72rem",
+                  fontWeight: 300,
+                  color: "#9ca3af",
+                }}
+              >
                 Shipping and taxes calculated at checkout.
               </p>
 
@@ -162,15 +263,19 @@ export function CartDrawer() {
                 onClick={(e) => {
                   if (!user) {
                     e.preventDefault();
-
                     toast.error("Please login to continue");
-
                     return;
                   }
-
                   setOpen(false);
                 }}
-                className="block w-full bg-black text-white py-4 text-center text-xs uppercase tracking-[0.25em] hover:bg-gray-800 transition"
+                className="block w-full bg-black text-white py-4 text-center hover:bg-gray-800 transition"
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.68rem",
+                  letterSpacing: "0.25em",
+                  textTransform: "uppercase",
+                  fontWeight: 500,
+                }}
               >
                 Checkout — ₹{subtotal}
               </Link>
@@ -179,7 +284,14 @@ export function CartDrawer() {
               <Link
                 to="/cart"
                 onClick={() => setOpen(false)}
-                className="block w-full border py-4 text-center text-xs uppercase tracking-[0.25em] hover:bg-black hover:text-white transition"
+                className="block w-full border py-4 text-center hover:bg-black hover:text-white transition"
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.68rem",
+                  letterSpacing: "0.25em",
+                  textTransform: "uppercase",
+                  fontWeight: 500,
+                }}
               >
                 View Bag
               </Link>

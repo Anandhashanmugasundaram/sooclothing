@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-"scripts": {
-  "dev": "nodemon server.js",
-  "start": "node server.js",
-  "test": "echo \"Error: no test specified\" && exit 1"
-},
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -25,6 +25,7 @@
     "multer": "^2.1.1",
     "multer-storage-cloudinary": "^4.0.0",
     "path": "^0.12.7",
+    "razorpay": "^2.9.6",
     "vercel": "^53.4.0"
   },
   "devDependencies": {

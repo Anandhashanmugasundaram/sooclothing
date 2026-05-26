@@ -18,10 +18,15 @@ const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const userRoutes = require("./routes/userRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 
 // ADMIN CREATION
 const createAdmin = require("./config/createAdmin");
+// ADD THIS with other requires
 
+
+// ADD THIS with other app.use routes
+app.use("/api/payment", paymentRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);

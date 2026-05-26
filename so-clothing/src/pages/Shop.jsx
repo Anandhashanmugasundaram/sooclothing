@@ -5,6 +5,15 @@ import { Search } from "lucide-react";
 
 import { PageHeader } from "@/components/site/PageHeader";
 
+// Google Fonts injection
+const fontLink = document.createElement("link");
+fontLink.href =
+  "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap";
+fontLink.rel = "stylesheet";
+if (!document.head.querySelector('[href*="Cormorant"]')) {
+  document.head.appendChild(fontLink);
+}
+
 const cats = ["all", "tops", "bottoms", "outerwear", "accessories"];
 
 const API = import.meta.env.VITE_API_URL;
@@ -39,7 +48,6 @@ export default function Shop() {
   const fetchProducts = async () => {
     try {
       const res = await axios.get(`${API}/api/products`);
-
       setProducts(res.data);
     } catch (error) {
       console.log(error);
@@ -66,14 +74,11 @@ export default function Shop() {
               !p.isSpecialOffer,
           );
 
-    // SEARCH
     if (search.trim()) {
       const text = search.toLowerCase();
-
       l = l.filter((p) => p.name?.toLowerCase().includes(text));
     }
 
-    // SIZE FILTER
     if (selectedSizes.length > 0) {
       l = l.filter((product) =>
         product.sizes?.some((s) =>
@@ -82,39 +87,15 @@ export default function Shop() {
       );
     }
 
-    // PRICE FILTER
-    if (selectedPrice === "0-200") {
-      l = l.filter((p) => p.price <= 200);
-    }
+    if (selectedPrice === "0-200") l = l.filter((p) => p.price <= 200);
+    if (selectedPrice === "201-400") l = l.filter((p) => p.price >= 201 && p.price <= 400);
+    if (selectedPrice === "401-600") l = l.filter((p) => p.price >= 401 && p.price <= 600);
+    if (selectedPrice === "601-800") l = l.filter((p) => p.price >= 601 && p.price <= 800);
+    if (selectedPrice === "801-1000") l = l.filter((p) => p.price >= 801 && p.price <= 1000);
+    if (selectedPrice === "1000+") l = l.filter((p) => p.price > 1000);
 
-    if (selectedPrice === "201-400") {
-      l = l.filter((p) => p.price >= 201 && p.price <= 400);
-    }
-
-    if (selectedPrice === "401-600") {
-      l = l.filter((p) => p.price >= 401 && p.price <= 600);
-    }
-
-    if (selectedPrice === "601-800") {
-      l = l.filter((p) => p.price >= 601 && p.price <= 800);
-    }
-
-    if (selectedPrice === "801-1000") {
-      l = l.filter((p) => p.price >= 801 && p.price <= 1000);
-    }
-
-    if (selectedPrice === "1000+") {
-      l = l.filter((p) => p.price > 1000);
-    }
-
-    // SORT
-    if (sort === "low") {
-      l = [...l].sort((a, b) => a.price - b.price);
-    }
-
-    if (sort === "high") {
-      l = [...l].sort((a, b) => b.price - a.price);
-    }
+    if (sort === "low") l = [...l].sort((a, b) => a.price - b.price);
+    if (sort === "high") l = [...l].sort((a, b) => b.price - a.price);
 
     return l;
   }, [products, cat, sort, search, selectedSizes, selectedPrice]);
@@ -124,7 +105,6 @@ export default function Shop() {
 
   const paginatedList = useMemo(() => {
     const start = (page - 1) * ITEMS_PER_PAGE;
-
     return filteredList.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredList, page]);
 
@@ -134,7 +114,7 @@ export default function Shop() {
   }, [cat, sort, search, selectedSizes, selectedPrice]);
 
   return (
-    <>
+    <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* PAGE HEADER */}
       <PageHeader eyebrow="Collection 01" title="Shop">
         Every piece in the SS26 drop.
@@ -161,16 +141,14 @@ export default function Shop() {
                 focus:border-black
                 transition-all
               "
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.875rem",
+                letterSpacing: "0.02em",
+              }}
             />
-
             <Search
-              className="
-                absolute
-                left-4
-                top-1/2
-                -translate-y-1/2
-                text-gray-500
-              "
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
               size={18}
             />
           </div>
@@ -182,19 +160,16 @@ export default function Shop() {
                 key={c}
                 onClick={() => setCat(c)}
                 className={`
-                  px-6
-                  py-3
-                  border
-                  rounded-xl
-                  capitalize
-                  transition-all
-                  duration-300
-                  ${
-                    cat === c
-                      ? "bg-black text-white"
-                      : "hover:bg-black hover:text-white"
-                  }
+                  px-6 py-3 border rounded-xl capitalize transition-all duration-300
+                  ${cat === c ? "bg-black text-white" : "hover:bg-black hover:text-white"}
                 `}
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: "1rem",
+                  fontWeight: 500,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                }}
               >
                 {c}
               </button>
@@ -205,18 +180,15 @@ export default function Shop() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="
-              border
-              px-5
-              py-3
-              rounded-xl
-              outline-none
-            "
+            className="border px-5 py-3 rounded-xl outline-none"
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "0.875rem",
+              letterSpacing: "0.03em",
+            }}
           >
             <option value="featured">Featured</option>
-
             <option value="low">Price Low</option>
-
             <option value="high">Price High</option>
           </select>
         </div>
@@ -231,11 +203,25 @@ export default function Shop() {
               {/* PRICE FILTER */}
               <div>
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-xl font-semibold">Price Range</h2>
-
+                  <h2
+                    className="text-xl font-semibold"
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: "1.35rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    Price Range
+                  </h2>
                   <button
                     onClick={() => setSelectedPrice("")}
-                    className="text-sm"
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "0.75rem",
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                    }}
                   >
                     Reset
                   </button>
@@ -243,48 +229,25 @@ export default function Shop() {
 
                 <div className="flex flex-wrap gap-3">
                   {[
-                    {
-                      label: "Below ₹200",
-                      value: "0-200",
-                    },
-                    {
-                      label: "₹201 - ₹400",
-                      value: "201-400",
-                    },
-                    {
-                      label: "₹401 - ₹600",
-                      value: "401-600",
-                    },
-                    {
-                      label: "₹601 - ₹800",
-                      value: "601-800",
-                    },
-                    {
-                      label: "₹801 - ₹1000",
-                      value: "801-1000",
-                    },
-                    {
-                      label: "Above ₹1000",
-                      value: "1000+",
-                    },
+                    { label: "Below ₹200", value: "0-200" },
+                    { label: "₹201 - ₹400", value: "201-400" },
+                    { label: "₹401 - ₹600", value: "401-600" },
+                    { label: "₹601 - ₹800", value: "601-800" },
+                    { label: "₹801 - ₹1000", value: "801-1000" },
+                    { label: "Above ₹1000", value: "1000+" },
                   ].map((item) => (
                     <button
                       key={item.value}
                       onClick={() => setSelectedPrice(item.value)}
                       className={`
-                        px-4
-                        py-2
-                        border
-                        rounded-full
-                        text-sm
-                        transition-all
-                        duration-300
-                        ${
-                          selectedPrice === item.value
-                            ? "bg-black text-white"
-                            : "hover:bg-black hover:text-white"
-                        }
+                        px-4 py-2 border rounded-full text-sm transition-all duration-300
+                        ${selectedPrice === item.value ? "bg-black text-white" : "hover:bg-black hover:text-white"}
                       `}
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "0.78rem",
+                        letterSpacing: "0.02em",
+                      }}
                     >
                       {item.label}
                     </button>
@@ -295,11 +258,25 @@ export default function Shop() {
               {/* SIZE FILTER */}
               <div className="mt-10">
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-xl font-semibold">Size</h2>
-
+                  <h2
+                    className="text-xl font-semibold"
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: "1.35rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    Size
+                  </h2>
                   <button
                     onClick={() => setSelectedSizes([])}
-                    className="text-sm"
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "0.75rem",
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                    }}
                   >
                     Reset
                   </button>
@@ -309,19 +286,19 @@ export default function Shop() {
                   {["S", "M", "L", "XL"].map((size) => (
                     <label
                       key={size}
-                      className="
-                          flex
-                          items-center
-                          gap-3
-                          cursor-pointer
-                        "
+                      className="flex items-center gap-3 cursor-pointer"
+                      style={{
+                        fontFamily: "'Cormorant Garamond', serif",
+                        fontSize: "1.05rem",
+                        fontWeight: 500,
+                        letterSpacing: "0.08em",
+                      }}
                     >
                       <input
                         type="checkbox"
                         checked={selectedSizes.includes(size)}
                         onChange={() => handleSizeChange(size)}
                       />
-
                       <span>{size}</span>
                     </label>
                   ))}
@@ -331,53 +308,43 @@ export default function Shop() {
 
             {/* PRODUCTS */}
             <div>
-              <p className="mb-10 text-lg">
+              <p
+                className="mb-10 text-lg"
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.85rem",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  fontWeight: 500,
+                  color: "#888",
+                }}
+              >
                 {filteredList.length} Products Found
               </p>
 
               {/* GRID */}
-              <div
-                className="
-                grid
-                grid-cols-2
-                sm:grid-cols-2
-                lg:grid-cols-4
-                gap-4
-                sm:gap-6
-                lg:gap-8
-              "
-              >
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
                 {paginatedList.map((p) => (
                   <ProductCard key={p._id} product={p} />
                 ))}
               </div>
 
               {/* PAGINATION */}
-              <div
-                className="
-                flex
-                justify-center
-                items-center
-                gap-3
-                flex-wrap
-                mt-14
-              "
-              >
+              <div className="flex justify-center items-center gap-3 flex-wrap mt-14">
                 {/* PREV */}
                 <button
                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                   disabled={page === 1}
                   className={`
-                    px-4
-                    py-2
-                    border
-                    rounded-lg
-                    ${
-                      page === 1
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-black hover:text-white"
-                    }
+                    px-4 py-2 border rounded-lg
+                    ${page === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-black hover:text-white"}
                   `}
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.8rem",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                  }}
                 >
                   Prev
                 </button>
@@ -388,16 +355,14 @@ export default function Shop() {
                     key={i}
                     onClick={() => setPage(i + 1)}
                     className={`
-                        px-4
-                        py-2
-                        border
-                        rounded-lg
-                        ${
-                          page === i + 1
-                            ? "bg-black text-white"
-                            : "hover:bg-black hover:text-white"
-                        }
-                      `}
+                      px-4 py-2 border rounded-lg
+                      ${page === i + 1 ? "bg-black text-white" : "hover:bg-black hover:text-white"}
+                    `}
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: "1rem",
+                      fontWeight: page === i + 1 ? 600 : 400,
+                    }}
                   >
                     {i + 1}
                   </button>
@@ -405,21 +370,18 @@ export default function Shop() {
 
                 {/* NEXT */}
                 <button
-                  onClick={() =>
-                    setPage((prev) => Math.min(prev + 1, totalPages))
-                  }
+                  onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={page === totalPages}
                   className={`
-                    px-4
-                    py-2
-                    border
-                    rounded-lg
-                    ${
-                      page === totalPages
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-black hover:text-white"
-                    }
+                    px-4 py-2 border rounded-lg
+                    ${page === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-black hover:text-white"}
                   `}
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.8rem",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                  }}
                 >
                   Next
                 </button>
@@ -428,7 +390,7 @@ export default function Shop() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 
@@ -440,63 +402,29 @@ export function ProductCard({ product }) {
         {/* CARD */}
         <div
           className="
-            relative
-            overflow-hidden
-            rounded-[28px]
-            bg-[#f7f7f7]
-            border
-            border-[#ededed]
-            transition-all
-            duration-500
-            hover:-translate-y-2
-            hover:shadow-[0_18px_45px_rgba(0,0,0,0.08)]
+            relative overflow-hidden rounded-[28px]
+            bg-[#f7f7f7] border border-[#ededed]
+            transition-all duration-500
+            hover:-translate-y-2 hover:shadow-[0_18px_45px_rgba(0,0,0,0.08)]
           "
         >
           {/* ABSTRACT BACKGROUND */}
           <div className="absolute inset-0 overflow-hidden">
-            {/* TOP CURVE */}
-            <div
-              className="
-                absolute
-                -top-16
-                -left-8
-                w-[140px]
-                h-[140px]
-                rounded-full
-                border
-                border-red-300
-              "
-            ></div>
-
-            {/* SIDE SHAPE */}
-            <div
-              className="
-                absolute
-                right-[-28px]
-                top-[110px]
-                w-[90px]
-                h-[180px]
-                rounded-full
-                border-[8px]
-                border-pink-200
-                opacity-70
-              "
-            ></div>
+            <div className="absolute -top-16 -left-8 w-[140px] h-[140px] rounded-full border border-red-300"></div>
+            <div className="absolute right-[-28px] top-[110px] w-[90px] h-[180px] rounded-full border-[8px] border-pink-200 opacity-70"></div>
           </div>
 
           {/* OFFER TAG */}
           <div className="absolute top-4 right-4 z-20">
             <div
-              className="
-                px-3
-                py-2
-                rounded-xl
-                bg-white
-                shadow-md
-                text-[12px]
-                font-medium
-                text-pink-500
-              "
+              className="px-3 py-2 rounded-xl bg-white shadow-md text-pink-500"
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "0.78rem",
+                fontStyle: "italic",
+                fontWeight: 500,
+                letterSpacing: "0.04em",
+              }}
             >
               20% offer
             </div>
@@ -505,33 +433,16 @@ export function ProductCard({ product }) {
           {/* IMAGE */}
           <div
             className="
-              relative
-              overflow-hidden
-              rounded-[28px]
-              h-[220px]
-              sm:h-[280px]
-              lg:h-[340px]
-              p-5
-              z-10
-              flex
-              items-center
-              justify-center
+              relative overflow-hidden rounded-[28px]
+              h-[220px] sm:h-[280px] lg:h-[340px]
+              p-5 z-10 flex items-center justify-center
             "
           >
             <img
               src={product.image}
               alt={product.name}
-              className="
-    w-full
-    h-full
-    object-contain
-    transition-all
-    duration-700
-    group-hover:scale-[1.05]
-  "
-              onError={() => {
-                console.log("FAILED IMAGE:", product.image);
-              }}
+              className="w-full h-full object-contain transition-all duration-700 group-hover:scale-[1.05]"
+              onError={() => console.log("FAILED IMAGE:", product.image)}
             />
           </div>
         </div>
@@ -540,31 +451,30 @@ export function ProductCard({ product }) {
         <div className="pt-5 px-1">
           {/* PRODUCT NAME */}
           <h2
-            className="
-              text-[18px]
-              sm:text-[20px]
-              lg:text-[22px]
-              font-semibold
-              leading-snug
-              text-[#13204a]
-              line-clamp-2
-              transition-all
-              duration-300
-              group-hover:text-red-500
-            "
+            className="leading-snug line-clamp-2 transition-all duration-300 group-hover:text-red-500"
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "clamp(1.1rem, 2vw, 1.35rem)",
+              fontWeight: 600,
+              color: "#13204a",
+              letterSpacing: "0.01em",
+              lineHeight: 1.25,
+            }}
           >
             {product.name}
           </h2>
 
           {/* CATEGORY */}
           <p
-            className="
-              mt-1
-              text-sm
-              sm:text-base
-              text-gray-500
-              capitalize
-            "
+            className="mt-1 capitalize"
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "0.72rem",
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: "#9ca3af",
+              fontWeight: 400,
+            }}
           >
             {product.category}
           </p>
@@ -572,23 +482,24 @@ export function ProductCard({ product }) {
           {/* PRICE */}
           <div className="flex items-center gap-3 mt-3">
             <p
-              className="
-                text-lg
-                lg:text-xl
-                font-semibold
-                text-[#0f1d4d]
-              "
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "clamp(1rem, 1.8vw, 1.25rem)",
+                fontWeight: 700,
+                color: "#0f1d4d",
+                letterSpacing: "0.01em",
+              }}
             >
               ₹ {product.price}
             </p>
-
             <span
-              className="
-                text-gray-400
-                line-through
-                text-base
-                lg:text-lg
-              "
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.85rem",
+                color: "#9ca3af",
+                textDecoration: "line-through",
+                fontWeight: 300,
+              }}
             >
               ₹ {Math.floor(product.price * 1.2)}
             </span>
@@ -603,28 +514,21 @@ export function ProductCard({ product }) {
                   <span
                     key={index}
                     className="
-                    min-w-[42px]
-                    h-9
-                    px-3
-                    flex
-                    items-center
-                    justify-center
-                    rounded-full
-                    border
-                    border-gray-200
-                    bg-white
-                    text-xs
-                    sm:text-sm
-                    font-medium
-                    text-gray-700
-                    hover:border-black
-                    hover:bg-black
-                    hover:text-white
-                    transition-all
-                    duration-300
-                  "
+                      min-w-[42px] h-9 px-3
+                      flex items-center justify-center
+                      rounded-full border border-gray-200 bg-white
+                      hover:border-black hover:bg-black hover:text-white
+                      transition-all duration-300
+                    "
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: "0.85rem",
+                      fontWeight: 500,
+                      letterSpacing: "0.1em",
+                      color: "#374151",
+                    }}
                   >
-                    {size.size.toUpperCase()}{" "}
+                    {size.size.toUpperCase()}
                   </span>
                 )
               ),

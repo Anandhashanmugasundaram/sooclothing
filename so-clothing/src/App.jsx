@@ -21,6 +21,7 @@ import PremiumLoader from "./components/site/PremiumLoader";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import ReturnPolicy from "./pages/ReturnPolicy";
+import MobileNav from "./components/site/MobileNav";
 
 export default function App() {
   return (
@@ -69,6 +70,7 @@ export default function App() {
 
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <MobileNav/>
       </Layout>
     </>
   );

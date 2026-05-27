@@ -10,76 +10,48 @@ import { PIN_PREFIXES } from "@/data/pinPrefixes";
 import { CITIES } from "@/data/cities";
 import axios from "axios";
 
+// Google Fonts injection
+const fontLink = document.createElement("link");
+fontLink.href =
+  "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap";
+fontLink.rel = "stylesheet";
+if (!document.head.querySelector('[href*="Cormorant"]')) {
+  document.head.appendChild(fontLink);
+}
+
 const schema = z.object({
   email: z.string().trim().email("Valid email required").max(255),
-
   name: z.string().trim().min(2, "Name required").max(100),
-
-  phone: z
-    .string()
-    .trim()
-    .regex(/^\d{10}$/, "Enter a valid 10-digit phone number"),
-
+  phone: z.string().trim().regex(/^\d{10}$/, "Enter a valid 10-digit phone number"),
   address: z
     .string()
     .trim()
     .min(10, "Enter complete address")
     .max(200)
-    .regex(
-      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./-]+$/,
-      "Enter a valid address",
-    ),
-
-  city: z
-    .string()
-    .trim()
-    .refine(
-      (val) => CITIES.some((c) => c.toLowerCase() === val.toLowerCase()),
-      {
-        message: "Enter a valid city",
-      },
-    ),
-
-  zip: z
-    .string()
-    .trim()
-    .regex(/^\d{6}$/, "Enter a valid 6-digit PIN code"),
-
+    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./-]+$/, "Enter a valid address"),
+  city: z.string().trim().refine(
+    (val) => CITIES.some((c) => c.toLowerCase() === val.toLowerCase()),
+    { message: "Enter a valid city" }
+  ),
+  zip: z.string().trim().regex(/^\d{6}$/, "Enter a valid 6-digit PIN code"),
   country: z.string().trim().min(2).max(60),
-
-  card: z
-    .string()
-    .trim()
-    .regex(/^[\d ]{13,19}$/, "Card number invalid"),
-
-  expiry: z
-    .string()
-    .trim()
-    .regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Use MM/YY"),
-
-  cvc: z
-    .string()
-    .trim()
-    .regex(/^\d{3,4}$/, "CVC invalid"),
 });
 
 export default function Checkout() {
   const { items, subtotal, clear } = useCart();
-
   const { user } = useAuth();
-  const API =
-    import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";
+
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";
   const nav = useNavigate();
 
   const [loading, setLoading] = useState(false);
-
   const [done, setDone] = useState(false);
+  const [confirmedEmail, setConfirmedEmail] = useState("");
+  const [confirmedOrderId, setConfirmedOrderId] = useState("");
 
   const shipping = subtotal > 150 ? 0 : 12;
-
   const tax = +(subtotal * 0.08).toFixed(2);
-
-  const total = subtotal;
+  const total = subtotal + shipping + tax;
 
   const [form, setForm] = useState({
     email: user?.email ?? "",
@@ -89,77 +61,59 @@ export default function Checkout() {
     city: "",
     zip: "",
     country: "India",
-    card: "",
-    expiry: "",
-    cvc: "",
   });
 
-  const set = (k) => (e) =>
-    setForm({
-      ...form,
-      [k]: e.target.value,
-    });
+  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
   const onSubmit = async (e) => {
     e.preventDefault();
-      if (!user) {
 
-    toast.error("Please login to continue");
-
-    nav("/account");
-
-    return;
-
-  }
-
-    const parsed = schema.safeParse(form);
-
-    if (!parsed.success) {
-      const errors = parsed.error.flatten().fieldErrors;
-
-     const firstError =
-  errors.phone?.[0] ||
-  errors.email?.[0] ||
-  errors.name?.[0] ||
-  errors.address?.[0] ||
-  errors.city?.[0] ||
-  errors.zip?.[0] ||
-  errors.country?.[0] ||
-  errors.card?.[0] ||
-  errors.expiry?.[0] ||
-  errors.cvc?.[0] ||
-  "Enter the form correctly";
-
-      toast.error(firstError);
-      console.log(errors);
-      
-
+    if (!user) {
+      toast.error("Please login to continue");
+      nav("/account");
       return;
     }
-    const cityPrefix = PIN_PREFIXES[form.city];
-    const zip = form.zip;
 
+    if (items.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
+    const parsed = schema.safeParse(form);
+    if (!parsed.success) {
+      const errors = parsed.error.flatten().fieldErrors;
+      const firstError =
+        errors.phone?.[0] ||
+        errors.email?.[0] ||
+        errors.name?.[0] ||
+        errors.address?.[0] ||
+        errors.city?.[0] ||
+        errors.zip?.[0] ||
+        errors.country?.[0] ||
+        "Enter the form correctly";
+      toast.error(firstError);
+      return;
+    }
+
+    const cityPrefix = PIN_PREFIXES[form.city];
     if (!cityPrefix) {
       toast.error("Select a valid city");
       return;
     }
-
-    if (!zip.startsWith(cityPrefix)) {
+    if (!form.zip.startsWith(cityPrefix)) {
       toast.error(`PIN must start with ${cityPrefix} for ${form.city}`);
+      return;
+    }
+
+    if (!window.Razorpay) {
+      toast.error("Payment SDK not loaded. Please refresh the page.");
       return;
     }
 
     try {
       setLoading(true);
-      await axios.post(`${API}/api/orders`, {
-        userEmail: form.email,
-        name: form.name,
-        phone: form.phone || "",
-        address: form.address,
-        city: form.city,
-        zip: form.zip,
-        country: form.country,
 
+<<<<<<< HEAD
         items: items.map((it) => ({
           productId: it.product.id,
           name: it.product.name,
@@ -227,18 +181,120 @@ export default function Checkout() {
         },
 
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+=======
+      const { data: razorpayOrder } = await axios.post(
+        `${API}/api/payment/create-order`,
+        { amount: subtotal }
+>>>>>>> ca62f143a193853a151ff5179b8c884e0456c692
       );
 
-      toast.success("Order placed successfully!");
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: "INR",
+        name: "Soo Clothing",
+        description: "Order Payment",
+        order_id: razorpayOrder.id,
 
-      setDone(true);
+        handler: async (response) => {
+          try {
+            const { data: verifyData } = await axios.post(
+              `${API}/api/payment/verify`,
+              response
+            );
 
-      clear();
+            if (!verifyData.success) {
+              toast.error("Payment verification failed");
+              setLoading(false);
+              return;
+            }
+
+            await axios.post(`${API}/api/orders`, {
+              userEmail: form.email,
+              name: form.name,
+              phone: form.phone,
+              address: form.address,
+              city: form.city,
+              zip: form.zip,
+              country: form.country,
+              items: items.map((it) => ({
+                productId: it.product.id,
+                name: it.product.name,
+                image: it.product.image,
+                size: it.size,
+                qty: it.qty,
+                price: it.product.price,
+              })),
+              subtotal,
+              shipping,
+              tax,
+              total,
+              paymentId: verifyData.paymentId,
+              paymentStatus: "Paid",
+            });
+            // Decrement stock for each item
+await axios.post(`${API}/api/products/decrement-stock`, {
+  items: items.map((it) => ({
+    productId: it.product._id,   // MongoDB _id
+    size: it.size,
+    qty: it.qty,
+  })),
+});
+
+            const orderId = "SO-" + Math.floor(Math.random() * 90000 + 10000);
+
+            await emailjs.send(
+              import.meta.env.VITE_EMAILJS_SERVICE_ID,
+              import.meta.env.VITE_EMAILJS_ORDER_TEMPLATE_ID,
+              {
+                order_id: orderId,
+                email: form.email,
+                customer_email: form.email,
+                customer_phone: form.phone,
+                customer_name: form.name,
+                address: form.address,
+                city: form.city,
+                zip: form.zip,
+                country: form.country,
+                orders: items.map((it) => ({
+                  name: `${it.product.name} - Size ${it.size}`,
+                  units: it.qty,
+                  price: it.product.price * it.qty,
+                  image_url: it.product.image,
+                })),
+                cost: { shipping, tax, total },
+              },
+              import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+            );
+
+            setConfirmedEmail(form.email);
+            setConfirmedOrderId(orderId);
+            toast.success("Order placed successfully!");
+            setDone(true);
+            clear();
+          } catch (err) {
+            console.error(err);
+            toast.error("Order saving failed after payment. Contact support.");
+          } finally {
+            setLoading(false);
+          }
+        },
+
+        prefill: { name: form.name, email: form.email, contact: form.phone },
+        theme: { color: "#000000" },
+        modal: {
+          ondismiss: () => {
+            setLoading(false);
+            toast.error("Payment cancelled");
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
-      console.log(error);
-
-      toast.error("Failed to place order");
-    } finally {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Failed to initiate payment");
       setLoading(false);
     }
   };
@@ -246,12 +302,29 @@ export default function Checkout() {
   // EMPTY CART
   if (items.length === 0 && !done) {
     return (
-      <div className="pt-44 pb-32 text-center px-6">
-        <p className="font-display text-3xl uppercase mb-4">Bag is empty</p>
-
+      <div
+        className="pt-44 pb-32 text-center px-6"
+        style={{ fontFamily: "'DM Sans', sans-serif" }}
+      >
+        <p
+          className="uppercase mb-4"
+          style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: "clamp(1.8rem, 4vw, 3rem)",
+            fontWeight: 600,
+          }}
+        >
+          Bag is empty
+        </p>
         <Link
           to="/shop"
-          className="font-mono text-xs uppercase tracking-widest text-accent"
+          className="text-accent"
+          style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "0.7rem",
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+          }}
         >
           ← Back to shop
         </Link>
@@ -262,38 +335,84 @@ export default function Checkout() {
   // ORDER SUCCESS
   if (done) {
     return (
-      <section className="pt-44 pb-32">
+      <section
+        className="pt-44 pb-32"
+        style={{ fontFamily: "'DM Sans', sans-serif" }}
+      >
         <div className="max-w-2xl mx-auto px-6 text-center">
           <CheckCircle2 className="w-16 h-16 text-accent mx-auto mb-8" />
 
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-4">
+          <p
+            className="text-accent mb-4"
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "0.68rem",
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+              fontWeight: 600,
+            }}
+          >
             — Order Confirmed
           </p>
 
-          <h1 className="font-display text-5xl md:text-7xl uppercase leading-none mb-6">
+          <h1
+            className="uppercase leading-none mb-6"
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "clamp(3rem, 8vw, 5rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+            }}
+          >
             Thank You.
           </h1>
 
-          <p className="text-foreground/70 mb-2">
-            Order # SO-
-            {Math.floor(Math.random() * 90000 + 10000)}
+          <p
+            className="text-foreground/70 mb-2"
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "0.9rem",
+              fontWeight: 300,
+            }}
+          >
+            Order # {confirmedOrderId}
           </p>
 
-          <p className="text-foreground/70 mb-10">
-            A confirmation has been sent to {form.email}
+          <p
+            className="text-foreground/70 mb-10"
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "0.9rem",
+              fontWeight: 300,
+            }}
+          >
+            A confirmation has been sent to {confirmedEmail}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/shop"
-              className="bg-accent text-accent-foreground px-10 py-4 font-mono text-xs uppercase tracking-[0.25em]"
+              className="bg-accent text-accent-foreground px-10 py-4"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.7rem",
+                letterSpacing: "0.25em",
+                textTransform: "uppercase",
+                fontWeight: 500,
+              }}
             >
               Keep Shopping
             </Link>
-
             <button
               onClick={() => nav("/account")}
-              className="border border-border px-10 py-4 font-mono text-xs uppercase tracking-[0.25em] hover:border-accent"
+              className="border border-border px-10 py-4 hover:border-accent transition-colors"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.7rem",
+                letterSpacing: "0.25em",
+                textTransform: "uppercase",
+                fontWeight: 500,
+              }}
             >
               View Orders
             </button>
@@ -303,143 +422,156 @@ export default function Checkout() {
     );
   }
 
+  // CHECKOUT FORM
   return (
-    <section className="pt-28 lg:pt-32 pb-20">
+    <section
+      className="pt-28 lg:pt-32 pb-20"
+      style={{ fontFamily: "'DM Sans', sans-serif" }}
+    >
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+
         {/* HEADER */}
         <div className="mb-12">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-4">
+          <p
+            className="text-accent mb-4"
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "0.68rem",
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+              fontWeight: 600,
+            }}
+          >
             — Secure Checkout
           </p>
-
-          <h1 className="font-display text-4xl md:text-6xl uppercase leading-none">
+          <h1
+            className="uppercase leading-none"
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "clamp(2.5rem, 6vw, 4rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+            }}
+          >
             Checkout
           </h1>
         </div>
 
         <form onSubmit={onSubmit} className="grid lg:grid-cols-3 gap-12">
+
           {/* LEFT SIDE */}
           <div className="lg:col-span-2 space-y-12">
-            {/* CONTACT */}
+
             <Section title="01 / Contact">
-              <Input
-                label="Email"
-                value={form.email}
-                onChange={set("email")}
-                type="email"
-                placeholder="example@example.com"
-              />
-
-              <Input
-                label="Phone"
-                value={form.phone}
-                onChange={set("phone")}
-                type="tel"
-                placeholder="9876543210"
-              />
+              <Input label="Email" value={form.email} onChange={set("email")} type="email" placeholder="example@example.com" />
+              <Input label="Phone" value={form.phone} onChange={set("phone")} type="tel" placeholder="9876543210" />
             </Section>
 
-            {/* SHIPPING */}
             <Section title="02 / Shipping">
-              <Input
-                label="Full name"
-                value={form.name}
-                onChange={set("name")}
-                placeholder="John Doe"
-              />
-
-              <Input
-                label="Address"
-                value={form.address}
-                onChange={set("address")}
-                placeholder="Eg: No 12, Gandhi Street, Anna Nagar, Chennai"
-              />
-
+              <Input label="Full name" value={form.name} onChange={set("name")} placeholder="John Doe" />
+              <Input label="Address" value={form.address} onChange={set("address")} placeholder="Eg: No 12, Gandhi Street, Anna Nagar, Chennai" />
               <div className="grid grid-cols-2 gap-4">
-                <Input
-                  label="City"
-                  value={form.city}
-                  onChange={set("city")}
-                  placeholder="Chennai"
-                />
-
-                <Input
-                  label="ZIP"
-                  value={form.zip}
-                  onChange={set("zip")}
-                  placeholder="600032"
-                />
+                <Input label="City" value={form.city} onChange={set("city")} placeholder="Chennai" />
+                <Input label="ZIP" value={form.zip} onChange={set("zip")} placeholder="600032" />
               </div>
-
-              <Input
-                label="Country"
-                value={form.country}
-                onChange={set("country")}
-                placeholder="India"
-              />
+              <Input label="Country" value={form.country} onChange={set("country")} placeholder="India" />
             </Section>
 
-            {/* PAYMENT */}
-            <Section
-              title="03 / Payment"
-              subtitle="Demo only — no card will be charged."
-            >
-              <Input
-                label="Card number"
-                value={form.card}
-                onChange={set("card")}
-                placeholder="4242 4242 4242 4242"
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  label="Expiry (MM/YY)"
-                  value={form.expiry}
-                  onChange={set("expiry")}
-                  placeholder="12/28"
-                />
-
-                <Input
-                  label="CVC"
-                  value={form.cvc}
-                  onChange={set("cvc")}
-                  placeholder="123"
-                />
+            <Section title="03 / Payment">
+              <div className="border border-border p-5 flex items-start gap-4">
+                <Lock className="w-4 h-4 text-accent mt-0.5 shrink-0" />
+                <div>
+                  <p
+                    className="mb-1"
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "0.7rem",
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                      fontWeight: 500,
+                    }}
+                  >
+                    Secured by Razorpay
+                  </p>
+                  <p
+                    className="text-muted-foreground"
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "0.8rem",
+                      fontWeight: 300,
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    You will be redirected to Razorpay's secure payment page.
+                    We accept UPI, Cards, Net Banking & Wallets.
+                  </p>
+                </div>
               </div>
             </Section>
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* RIGHT SIDE — ORDER SUMMARY */}
           <aside className="lg:sticky lg:top-28 lg:self-start bg-secondary p-8 space-y-5">
-            <p className="font-display text-xl uppercase">Order</p>
+            <p
+              className="uppercase"
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "1.4rem",
+                fontWeight: 600,
+                letterSpacing: "0.04em",
+              }}
+            >
+              Order
+            </p>
 
-            {/* PRODUCTS */}
+            {/* ITEMS */}
             <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
               {items.map((it) => (
                 <div key={`${it.product.id}-${it.size}`} className="flex gap-3">
                   <div className="w-14 h-16 bg-background shrink-0 overflow-hidden relative">
-                    <img
-                      src={it.product.image}
-                      alt={it.product.name}
-                      className="w-full h-full object-cover"
-                    />
-
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-[10px] flex items-center justify-center font-mono">
+                    <img src={it.product.image} alt={it.product.name} className="w-full h-full object-cover" />
+                    <span
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground flex items-center justify-center"
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "0.6rem",
+                        fontWeight: 600,
+                      }}
+                    >
                       {it.qty}
                     </span>
                   </div>
-
                   <div className="flex-1 min-w-0">
-                    <p className="font-display text-sm uppercase truncate">
+                    <p
+                      className="uppercase truncate"
+                      style={{
+                        fontFamily: "'Cormorant Garamond', serif",
+                        fontSize: "0.95rem",
+                        fontWeight: 500,
+                        letterSpacing: "0.01em",
+                      }}
+                    >
                       {it.product.name}
                     </p>
-
-                    <p className="font-mono text-[10px] text-muted-foreground uppercase">
+                    <p
+                      className="text-muted-foreground uppercase"
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "0.62rem",
+                        letterSpacing: "0.15em",
+                        fontWeight: 400,
+                      }}
+                    >
                       Size {it.size}
                     </p>
                   </div>
-
-                  <p className="font-mono text-xs">
+                  <p
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: "0.95rem",
+                      fontWeight: 600,
+                    }}
+                  >
                     ₹ {it.product.price * it.qty}
                   </p>
                 </div>
@@ -449,20 +581,37 @@ export default function Checkout() {
             <div className="h-px bg-border" />
 
             <Row label="Subtotal" value={`₹ ${subtotal}`} />
+            <Row label="Shipping" value={shipping === 0 ? "FREE" : `₹ ${shipping}`} />
+            <Row label="Tax (8%)" value={`₹ ${tax}`} />
+            <div className="h-px bg-border" />
+            <Row label="Total" value={`₹ ${total.toFixed(2)}`} bold />
 
-            {/* BUTTON */}
+            {/* PAY BUTTON */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-accent text-accent-foreground py-4 font-mono text-xs uppercase tracking-[0.25em] hover:bg-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+              className="w-full bg-accent text-accent-foreground py-4 hover:bg-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.7rem",
+                letterSpacing: "0.25em",
+                textTransform: "uppercase",
+                fontWeight: 500,
+              }}
             >
               <Lock className="w-3.5 h-3.5" />
-
-              {loading ? "Processing..." : `Pay ₹ ${total}`}
+              {loading ? "Processing..." : `Pay ₹ ${total.toFixed(2)}`}
             </button>
 
-            <p className="text-[11px] text-muted-foreground text-center">
-              🔒 Demo checkout — no real payment is processed.
+            <p
+              className="text-muted-foreground text-center"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.7rem",
+                fontWeight: 300,
+              }}
+            >
+              🔒 Secured by Razorpay
             </p>
           </aside>
         </form>
@@ -471,52 +620,78 @@ export default function Checkout() {
   );
 }
 
-// SECTION
-function Section({ title, subtitle, children }) {
+function Section({ title, children }) {
   return (
     <div>
-      <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent mb-2">
+      <p
+        className="text-accent mb-4"
+        style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "0.68rem",
+          letterSpacing: "0.25em",
+          textTransform: "uppercase",
+          fontWeight: 600,
+        }}
+      >
         {title}
       </p>
-
-      {subtitle && (
-        <p className="text-xs text-muted-foreground mb-4">{subtitle}</p>
-      )}
-
       <div className="space-y-4">{children}</div>
     </div>
   );
 }
 
-// INPUT
 function Input({ label, ...props }) {
   return (
     <label className="block">
-      <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground block mb-2">
+      <span
+        className="text-muted-foreground block mb-2"
+        style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "0.62rem",
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          fontWeight: 400,
+        }}
+      >
         {label}
       </span>
-
       <input
         {...props}
-        className="w-full bg-transparent border border-border focus:border-accent outline-none px-4 py-3 font-mono text-sm transition-colors"
+        className="w-full bg-transparent border border-border focus:border-accent outline-none px-4 py-3 transition-colors"
+        style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "0.9rem",
+          fontWeight: 300,
+        }}
       />
     </label>
   );
 }
 
-// ROW
 function Row({ label, value, bold }) {
   return (
-    <div
-      className={`flex justify-between font-mono ${
-        bold ? "text-base" : "text-sm"
-      }`}
-    >
-      <span className="uppercase tracking-widest text-xs text-muted-foreground">
+    <div className="flex justify-between">
+      <span
+        className="text-muted-foreground uppercase"
+        style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "0.62rem",
+          letterSpacing: "0.2em",
+          fontWeight: 400,
+        }}
+      >
         {label}
       </span>
-
-      <span>{value}</span>
+      <span
+        style={{
+          fontFamily: bold ? "'Cormorant Garamond', serif" : "'DM Sans', sans-serif",
+          fontSize: bold ? "1.1rem" : "0.85rem",
+          fontWeight: bold ? 700 : 400,
+          color: bold ? "#0f1d4d" : "inherit",
+        }}
+      >
+        {value}
+      </span>
     </div>
   );
 }

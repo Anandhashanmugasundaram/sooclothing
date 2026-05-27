@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const CartContext = createContext(null);
 
@@ -10,9 +11,7 @@ export function CartProvider({ children }) {
   const [open, setOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
-  const cartKey = user?.email
-    ? `cart_${user.email}`
-    : null;
+  const cartKey = user?.email ? `cart_${user.email}` : null;
 
   // ===============================
   // LOAD CART
@@ -20,7 +19,6 @@ export function CartProvider({ children }) {
   useEffect(() => {
     if (loading) return;
 
-    // LOGGED OUT
     if (!user?.email) {
       setItems([]);
       setHydrated(true);
@@ -29,7 +27,6 @@ export function CartProvider({ children }) {
 
     try {
       const saved = localStorage.getItem(cartKey);
-
       setItems(saved ? JSON.parse(saved) : []);
     } catch (err) {
       console.log(err);
@@ -44,41 +41,54 @@ export function CartProvider({ children }) {
   // ===============================
   useEffect(() => {
     if (!hydrated || !user?.email) return;
-
-    localStorage.setItem(
-      cartKey,
-      JSON.stringify(items)
-    );
+    localStorage.setItem(cartKey, JSON.stringify(items));
   }, [items, cartKey, user?.email, hydrated]);
 
   // ===============================
-  // ADD ITEM
+  // ADD ITEM (with stock enforcement)
   // ===============================
   const add = (product, size, qty = 1) => {
-    setItems((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        product,
-        size,
-        qty,
-      },
-    ]);
+    setItems((prev) => {
+      const existing = prev.find(
+        (item) => item.product._id === product._id && item.size === size
+      );
+
+      const stockForSize =
+        product.sizes?.find((s) => s.size === size)?.quantity ?? 0;
+
+      if (existing) {
+        const newQty = existing.qty + qty;
+        if (newQty > stockForSize) {
+          toast.error(`Only ${stockForSize} available in size ${size}`);
+          return prev;
+        }
+        return prev.map((item) =>
+          item.product._id === product._id && item.size === size
+            ? { ...item, qty: newQty }
+            : item
+        );
+      }
+
+      if (qty > stockForSize) {
+        toast.error(`Only ${stockForSize} available in size ${size}`);
+        return prev;
+      }
+
+      return [...prev, { id: crypto.randomUUID(), product, size, qty }];
+    });
 
     setOpen(true);
   };
 
   // ===============================
-  // REMOVE ITEM
+  // REMOVE ITEM (by UUID)
   // ===============================
   const remove = (id) => {
-    setItems((prev) =>
-      prev.filter((item) => item.id !== id)
-    );
+    setItems((prev) => prev.filter((item) => item.id !== id));
   };
 
   // ===============================
-  // UPDATE QUANTITY
+  // UPDATE QUANTITY (with stock enforcement)
   // ===============================
   const setQty = (id, qty) => {
     if (qty <= 0) {
@@ -87,11 +97,19 @@ export function CartProvider({ children }) {
     }
 
     setItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, qty }
-          : item
-      )
+      prev.map((item) => {
+        if (item.id !== id) return item;
+
+        const stockForSize =
+          item.product.sizes?.find((s) => s.size === item.size)?.quantity ?? 0;
+
+        if (qty > stockForSize) {
+          toast.error(`Only ${stockForSize} available in size ${item.size}`);
+          return item; // don't update
+        }
+
+        return { ...item, qty };
+      })
     );
   };
 
@@ -100,23 +118,15 @@ export function CartProvider({ children }) {
   // ===============================
   const clear = () => {
     setItems([]);
-
-    if (cartKey) {
-      localStorage.removeItem(cartKey);
-    }
+    if (cartKey) localStorage.removeItem(cartKey);
   };
 
   // ===============================
   // TOTALS
   // ===============================
-  const count = items.reduce(
-    (sum, item) => sum + item.qty,
-    0
-  );
-
+  const count = items.reduce((sum, item) => sum + item.qty, 0);
   const subtotal = items.reduce(
-    (sum, item) =>
-      sum + item.product.price * item.qty,
+    (sum, item) => sum + item.product.price * item.qty,
     0
   );
 
@@ -141,12 +151,6 @@ export function CartProvider({ children }) {
 
 export const useCart = () => {
   const ctx = useContext(CartContext);
-
-  if (!ctx) {
-    throw new Error(
-      "useCart must be inside CartProvider"
-    );
-  }
-
+  if (!ctx) throw new Error("useCart must be inside CartProvider");
   return ctx;
 };

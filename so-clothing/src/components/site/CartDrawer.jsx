@@ -5,16 +5,22 @@ import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 
+// Google Fonts injection
+const fontLink = document.createElement("link");
+fontLink.href =
+  "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap";
+fontLink.rel = "stylesheet";
+if (!document.head.querySelector('[href*="Cormorant"]')) {
+  document.head.appendChild(fontLink);
+}
+
 export function CartDrawer() {
   const { user } = useAuth();
   const { items, open, setOpen, setQty, remove, subtotal } = useCart();
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [open]);
 
   return (
@@ -32,34 +38,75 @@ export function CartDrawer() {
         className={`fixed top-0 right-0 bottom-0 z-50 w-full sm:w-[440px] bg-white border-l flex flex-col transition-transform duration-500 ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
+        style={{ fontFamily: "'DM Sans', sans-serif" }}
       >
         {/* HEADER */}
         <div className="flex items-center justify-between p-6 border-b">
-          <p className="text-xl font-semibold uppercase">
-            Bag <span className="text-gray-500 text-sm">({items.length})</span>
+          <p
+            className="uppercase"
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "1.3rem",
+              fontWeight: 600,
+              letterSpacing: "0.04em",
+            }}
+          >
+            Bag{" "}
+            <span
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.8rem",
+                fontWeight: 400,
+                color: "#9ca3af",
+              }}
+            >
+              ({items.length})
+            </span>
           </p>
 
-          <button
-            onClick={() => setOpen(false)}
-            className="hover:text-red-500 transition"
-          >
+          <button onClick={() => setOpen(false)} className="hover:text-red-500 transition">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* EMPTY */}
+        {/* EMPTY STATE */}
         {items.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-            <p className="text-3xl font-bold uppercase mb-3">Empty</p>
+            <p
+              className="uppercase mb-3"
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "2rem",
+                fontWeight: 600,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Empty
+            </p>
 
-            <p className="text-gray-500 text-sm mb-8">
+            <p
+              className="mb-8"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.85rem",
+                fontWeight: 300,
+                color: "#9ca3af",
+              }}
+            >
               Your bag is waiting to be filled.
             </p>
 
             <Link
               to="/shop"
               onClick={() => setOpen(false)}
-              className="border px-8 py-3 text-xs uppercase tracking-[0.25em] hover:bg-black hover:text-white transition"
+              className="border px-8 py-3 hover:bg-black hover:text-white transition"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.68rem",
+                letterSpacing: "0.25em",
+                textTransform: "uppercase",
+                fontWeight: 500,
+              }}
             >
               Browse Shop
             </Link>
@@ -68,91 +115,185 @@ export function CartDrawer() {
           <>
             {/* ITEMS */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              {items.map((it) => (
-                <div key={it.id} className="flex gap-4 border-b pb-6">
-                  {/* IMAGE */}
-                  <Link
-                    to={`/product/${it.product.slug}`}
-                    onClick={() => setOpen(false)}
-                    className="block w-20 h-24 bg-gray-100 shrink-0 overflow-hidden rounded"
-                  >
-                    <img
-                      src={it.product.image || "/fallback.png"}
-                      alt={it.product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </Link>
+              {items.map((it) => {
+                // Get stock for this item's size from the product data
+                const stockForSize =
+                  it.product.sizes?.find((s) => s.size === it.size)?.quantity ?? 0;
+                const atStockLimit = it.qty >= stockForSize;
 
-                  {/* DETAILS */}
-                  <div className="flex-1 flex flex-col">
-                    {/* TOP */}
-                    <div className="flex justify-between gap-2">
-                      <Link
-                        to={`/product/${it.product.slug}`}
-                        onClick={() => setOpen(false)}
-                        className="font-semibold uppercase text-sm hover:text-red-500"
-                      >
-                        {it.product.name}
-                      </Link>
+                return (
+                  <div key={it.id} className="flex gap-4 border-b pb-6">
+                    {/* IMAGE */}
+                    <Link
+                      to={`/product/${it.product.slug}`}
+                      onClick={() => setOpen(false)}
+                      className="block w-20 h-24 bg-gray-100 shrink-0 overflow-hidden rounded"
+                    >
+                      <img
+                        src={it.product.image || "/fallback.png"}
+                        alt={it.product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </Link>
 
-                      {/* REMOVE */}
-                      <button
-                        onClick={() => remove(it.id)}
-                        className="text-gray-500 hover:text-red-500 transition"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* SIZE */}
-                    <p className="text-[11px] uppercase tracking-widest text-gray-500 mt-1">
-                      Size {it.size}
-                    </p>
-
-                    {/* BOTTOM */}
-                    <div className="mt-auto flex justify-between items-end">
-                      {/* QTY */}
-                      <div className="flex items-center border">
-                        <button
-                          onClick={() => setQty(it.id, it.qty - 1)}
-                          className="w-8 h-8 flex items-center justify-center hover:bg-gray-100"
+                    {/* DETAILS */}
+                    <div className="flex-1 flex flex-col">
+                      {/* TOP */}
+                      <div className="flex justify-between gap-2">
+                        <Link
+                          to={`/product/${it.product.slug}`}
+                          onClick={() => setOpen(false)}
+                          className="uppercase hover:text-red-500 transition-colors"
+                          style={{
+                            fontFamily: "'Cormorant Garamond', serif",
+                            fontSize: "1rem",
+                            fontWeight: 600,
+                            letterSpacing: "0.01em",
+                            lineHeight: 1.3,
+                          }}
                         >
-                          <Minus className="w-3 h-3" />
-                        </button>
-
-                        <span className="w-8 text-center text-sm">
-                          {it.qty}
-                        </span>
+                          {it.product.name}
+                        </Link>
 
                         <button
-                          onClick={() => setQty(it.id, it.qty + 1)}
-                          className="w-8 h-8 flex items-center justify-center hover:bg-gray-100"
+                          onClick={() => remove(it.id)}
+                          className="text-gray-400 hover:text-red-500 transition shrink-0"
                         >
-                          <Plus className="w-3 h-3" />
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
 
-                      {/* PRICE */}
-                      <p className="font-semibold">
-                        ₹{it.product.price * it.qty}
-                      </p>
+                      {/* SIZE + STOCK */}
+                      <div className="mt-1 flex items-center gap-2">
+                        <p
+                          style={{
+                            fontFamily: "'DM Sans', sans-serif",
+                            fontSize: "0.62rem",
+                            letterSpacing: "0.2em",
+                            textTransform: "uppercase",
+                            color: "#9ca3af",
+                            fontWeight: 400,
+                          }}
+                        >
+                          Size {it.size}
+                        </p>
+
+                        {/* Stock warning badge */}
+                        {atStockLimit && (
+                          <span
+                            style={{
+                              fontFamily: "'DM Sans', sans-serif",
+                              fontSize: "0.55rem",
+                              letterSpacing: "0.15em",
+                              textTransform: "uppercase",
+                              fontWeight: 500,
+                              color: "#ef4444",
+                              border: "1px solid #fca5a5",
+                              borderRadius: "4px",
+                              padding: "1px 6px",
+                            }}
+                          >
+                            Max stock
+                          </span>
+                        )}
+                      </div>
+
+                      {/* BOTTOM */}
+                      <div className="mt-auto flex justify-between items-end">
+                        {/* QTY */}
+                        <div className="flex items-center border">
+                          <button
+                            onClick={() => setQty(it.id, it.qty - 1)}
+                            className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 transition"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+
+                          <span
+                            className="w-8 text-center"
+                            style={{
+                              fontFamily: "'Cormorant Garamond', serif",
+                              fontSize: "1rem",
+                              fontWeight: 500,
+                            }}
+                          >
+                            {it.qty}
+                          </span>
+
+                          <button
+                            onClick={() => {
+                              if (atStockLimit) {
+                                toast.error(
+                                  `Only ${stockForSize} in stock for size ${it.size}`
+                                );
+                                return;
+                              }
+                              setQty(it.id, it.qty + 1);
+                            }}
+                            disabled={atStockLimit}
+                            className={`w-8 h-8 flex items-center justify-center transition ${
+                              atStockLimit
+                                ? "opacity-30 cursor-not-allowed"
+                                : "hover:bg-gray-100"
+                            }`}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        {/* PRICE */}
+                        <p
+                          style={{
+                            fontFamily: "'Cormorant Garamond', serif",
+                            fontSize: "1.05rem",
+                            fontWeight: 700,
+                            color: "#0f1d4d",
+                          }}
+                        >
+                          ₹{it.product.price * it.qty}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* FOOTER */}
             <div className="border-t p-6 space-y-4">
-              <div className="flex justify-between text-sm">
-                <span className="uppercase tracking-widest text-gray-500">
+              <div className="flex justify-between items-center">
+                <span
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.62rem",
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "#9ca3af",
+                    fontWeight: 400,
+                  }}
+                >
                   Subtotal
                 </span>
-
-                <span className="font-semibold">₹{subtotal}</span>
+                <span
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: "1.2rem",
+                    fontWeight: 700,
+                    color: "#0f1d4d",
+                  }}
+                >
+                  ₹{subtotal}
+                </span>
               </div>
 
-              <p className="text-[11px] text-gray-500">
+              <p
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.72rem",
+                  fontWeight: 300,
+                  color: "#9ca3af",
+                }}
+              >
                 Shipping and taxes calculated at checkout.
               </p>
 
@@ -162,15 +303,19 @@ export function CartDrawer() {
                 onClick={(e) => {
                   if (!user) {
                     e.preventDefault();
-
                     toast.error("Please login to continue");
-
                     return;
                   }
-
                   setOpen(false);
                 }}
-                className="block w-full bg-black text-white py-4 text-center text-xs uppercase tracking-[0.25em] hover:bg-gray-800 transition"
+                className="block w-full bg-black text-white py-4 text-center hover:bg-gray-800 transition"
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.68rem",
+                  letterSpacing: "0.25em",
+                  textTransform: "uppercase",
+                  fontWeight: 500,
+                }}
               >
                 Checkout — ₹{subtotal}
               </Link>
@@ -179,7 +324,14 @@ export function CartDrawer() {
               <Link
                 to="/cart"
                 onClick={() => setOpen(false)}
-                className="block w-full border py-4 text-center text-xs uppercase tracking-[0.25em] hover:bg-black hover:text-white transition"
+                className="block w-full border py-4 text-center hover:bg-black hover:text-white transition"
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.68rem",
+                  letterSpacing: "0.25em",
+                  textTransform: "uppercase",
+                  fontWeight: 500,
+                }}
               >
                 View Bag
               </Link>

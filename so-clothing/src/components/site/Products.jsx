@@ -296,7 +296,7 @@ export function Products() {
 
                     <div className="flex items-center gap-2 mt-2">
                       <p
-                        className="text-base font-semibold"
+                        className="text-2xl font-semibold"
                         style={{ fontFamily: "'Cormorant Garamond', serif" }}
                       >
                         ₹{product.price}

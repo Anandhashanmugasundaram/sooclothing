@@ -10,7 +10,6 @@ import { PIN_PREFIXES } from "@/data/pinPrefixes";
 import { CITIES } from "@/data/cities";
 import axios from "axios";
 
-// Google Fonts injection
 const fontLink = document.createElement("link");
 fontLink.href =
   "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap";
@@ -49,9 +48,9 @@ export default function Checkout() {
   const [confirmedEmail, setConfirmedEmail] = useState("");
   const [confirmedOrderId, setConfirmedOrderId] = useState("");
 
-  const shipping = subtotal > 150 ? 0 : 12;
-  const tax = +(subtotal * 0.08).toFixed(2);
-  const total = subtotal + shipping + tax;
+  // No tax, always free shipping
+  const shipping = 0;
+  const total = subtotal;
 
   const [form, setForm] = useState({
     email: user?.email ?? "",
@@ -113,79 +112,9 @@ export default function Checkout() {
     try {
       setLoading(true);
 
-<<<<<<< HEAD
-        items: items.map((it) => ({
-          productId: it.product.id,
-          name: it.product.name,
-          image: it.product.image,
-          size: it.size,
-          qty: it.qty,
-          price: it.product.price,
-        })),
-
-        subtotal,
-        shipping,
-        tax,
-        total: subtotal + shipping + tax,
-      });
-
-      // ORDER ITEMS STRING
-      const orderId = "SO-" + Math.floor(Math.random() * 90000 + 10000);
-
-      // ORDERS ARRAY
-      const orders = items.map((it) => ({
-        name: `${it.product.name} - Size ${it.size}`,
-
-        units: it.qty,
-
-        price: it.product.price * it.qty,
-
-        image_url: it.product.image,
-      }));
-
-      // SEND EMAIL
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-
-        import.meta.env.VITE_EMAILJS_ORDER_TEMPLATE_ID,
-
-        {
-          order_id: orderId,
-
-          email: form.email,
-
-          customer_email: form.email,
-
-          customer_phone: form.phone,
-
-          customer_name: form.name,
-
-          address: form.address,
-
-          city: form.city,
-
-          zip: form.zip,
-
-          country: form.country,
-
-          orders: orders,
-
-          cost: {
-            shipping: shipping,
-
-            tax: tax,
-
-            total: total,
-          },
-          logo_url: "https://sooclothing.vercel.app/logo.png"
-        },
-
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
-=======
       const { data: razorpayOrder } = await axios.post(
         `${API}/api/payment/create-order`,
         { amount: subtotal }
->>>>>>> ca62f143a193853a151ff5179b8c884e0456c692
       );
 
       const options = {
@@ -226,20 +155,20 @@ export default function Checkout() {
                 price: it.product.price,
               })),
               subtotal,
-              shipping,
-              tax,
+              shipping: 0,
+              tax: 0,
               total,
               paymentId: verifyData.paymentId,
               paymentStatus: "Paid",
             });
-            // Decrement stock for each item
-await axios.post(`${API}/api/products/decrement-stock`, {
-  items: items.map((it) => ({
-    productId: it.product._id,   // MongoDB _id
-    size: it.size,
-    qty: it.qty,
-  })),
-});
+
+            await axios.post(`${API}/api/products/decrement-stock`, {
+              items: items.map((it) => ({
+                productId: it.product._id,
+                size: it.size,
+                qty: it.qty,
+              })),
+            });
 
             const orderId = "SO-" + Math.floor(Math.random() * 90000 + 10000);
 
@@ -262,7 +191,8 @@ await axios.post(`${API}/api/products/decrement-stock`, {
                   price: it.product.price * it.qty,
                   image_url: it.product.image,
                 })),
-                cost: { shipping, tax, total },
+                cost: { shipping: 0, tax: 0, total },
+                logo_url: "https://sooclothing.vercel.app/logo.png",
               },
               import.meta.env.VITE_EMAILJS_PUBLIC_KEY
             );
@@ -581,8 +511,8 @@ await axios.post(`${API}/api/products/decrement-stock`, {
             <div className="h-px bg-border" />
 
             <Row label="Subtotal" value={`₹ ${subtotal}`} />
-            <Row label="Shipping" value={shipping === 0 ? "FREE" : `₹ ${shipping}`} />
-            <Row label="Tax (8%)" value={`₹ ${tax}`} />
+            <Row label="Shipping" value="FREE" />
+
             <div className="h-px bg-border" />
             <Row label="Total" value={`₹ ${total.toFixed(2)}`} bold />
 

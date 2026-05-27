@@ -113,9 +113,79 @@ export default function Checkout() {
     try {
       setLoading(true);
 
+<<<<<<< HEAD
+        items: items.map((it) => ({
+          productId: it.product.id,
+          name: it.product.name,
+          image: it.product.image,
+          size: it.size,
+          qty: it.qty,
+          price: it.product.price,
+        })),
+
+        subtotal,
+        shipping,
+        tax,
+        total: subtotal + shipping + tax,
+      });
+
+      // ORDER ITEMS STRING
+      const orderId = "SO-" + Math.floor(Math.random() * 90000 + 10000);
+
+      // ORDERS ARRAY
+      const orders = items.map((it) => ({
+        name: `${it.product.name} - Size ${it.size}`,
+
+        units: it.qty,
+
+        price: it.product.price * it.qty,
+
+        image_url: it.product.image,
+      }));
+
+      // SEND EMAIL
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+
+        import.meta.env.VITE_EMAILJS_ORDER_TEMPLATE_ID,
+
+        {
+          order_id: orderId,
+
+          email: form.email,
+
+          customer_email: form.email,
+
+          customer_phone: form.phone,
+
+          customer_name: form.name,
+
+          address: form.address,
+
+          city: form.city,
+
+          zip: form.zip,
+
+          country: form.country,
+
+          orders: orders,
+
+          cost: {
+            shipping: shipping,
+
+            tax: tax,
+
+            total: total,
+          },
+          logo_url: "https://sooclothing.vercel.app/logo.png"
+        },
+
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+=======
       const { data: razorpayOrder } = await axios.post(
         `${API}/api/payment/create-order`,
         { amount: subtotal }
+>>>>>>> ca62f143a193853a151ff5179b8c884e0456c692
       );
 
       const options = {

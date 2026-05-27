@@ -15,8 +15,8 @@ export function Footer() {
     "Hello SO.CLOTHING 👋 I'm interested in your products. Please share more details.";
 
   return (
-    <footer
-      className="bg-secondary border-t border-border pt-20 pb-8"
+   <footer
+  className="bg-secondary border-t border-border pt-20 pb-32"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
       <div className="max-w-[1600px] mx-auto px-6 lg:px-12">

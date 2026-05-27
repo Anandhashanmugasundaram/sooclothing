@@ -223,6 +223,7 @@ export default function Checkout() {
 
             total: total,
           },
+          logo_url: "https://sooclothing.vercel.app/logo.png"
         },
 
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,

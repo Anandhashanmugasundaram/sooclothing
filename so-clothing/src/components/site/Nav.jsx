@@ -446,8 +446,7 @@ export function Nav() {
 
         <Link
           to="/admin"
-          className="fixed bottom-6 right-6 z-[100] w-16 h-16 rounded-full bg-black text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300"
-        >
+className="fixed bottom-28 right-4 z-[100] w-14 h-14 rounded-full bg-black text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 lg:bottom-6 lg:right-6 lg:w-16 lg:h-16"        >
 
           <ShieldPlus className="w-7 h-7" />
 

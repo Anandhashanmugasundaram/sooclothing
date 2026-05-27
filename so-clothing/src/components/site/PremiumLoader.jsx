@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import logo from "../../assets/logo.png";
 
-// Google Fonts injection
 const fontLink = document.createElement("link");
 fontLink.href =
   "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap";
@@ -15,13 +14,13 @@ if (!document.head.querySelector('[href*="Cormorant"]')) {
 export default function PremiumLoader() {
   const [loading, setLoading] = useState(true);
 
-  const loaderRef = useRef(null);
-  const logoWrapRef = useRef(null);
-  const logoRef = useRef(null);
-  const titleRef = useRef([]);
-  const progressRef = useRef(null);
+  const loaderRef      = useRef(null);
+  const logoWrapRef    = useRef(null);
+  const logoRef        = useRef(null);
+  const titleRef       = useRef([]);
+  const progressRef    = useRef(null);
   const progressBarRef = useRef(null);
-  const counterRef = useRef({ value: 0 });
+  const counterRef     = useRef({ value: 0 });
 
   const brand = "SO.CLOTHING".split("");
 
@@ -32,7 +31,7 @@ export default function PremiumLoader() {
 
     gsap.set(loaderRef.current, { opacity: 1 });
     gsap.set(logoWrapRef.current, { scale: 0.7, opacity: 0, rotate: -8 });
-    gsap.set(logoRef.current, { scale: 1.2, filter: "blur(12px)" });
+    gsap.set(logoRef.current, { scale: 1.2, filter: "blur(12px) invert(1) brightness(10)" });
     gsap.set(titleRef.current, {
       y: 120,
       opacity: 0,
@@ -67,7 +66,11 @@ export default function PremiumLoader() {
     tl.to(logoWrapRef.current, {
       opacity: 1, scale: 1, rotate: 0, duration: 1.8, ease: "expo.out",
     });
-    tl.to(logoRef.current, { scale: 1, filter: "blur(0px)", duration: 1.5 }, "-=1.4");
+    tl.to(logoRef.current, {
+      scale: 1,
+      filter: "blur(0px) invert(1) brightness(10)",
+      duration: 1.5,
+    }, "-=1.4");
     tl.to(titleRef.current, {
       y: 0, opacity: 1, rotateX: 0, stagger: 0.04, duration: 1.2, ease: "expo.out",
     }, "-=1");
@@ -144,31 +147,33 @@ export default function PremiumLoader() {
             <div ref={logoWrapRef} className="relative flex items-center justify-center mb-14">
               <div className="absolute w-[260px] h-[260px] rounded-full border border-white/10 animate-spin [animation-duration:20s]" />
               <div className="absolute w-[180px] h-[180px] rounded-full border border-white/10 animate-spin [animation-duration:12s] [animation-direction:reverse]" />
-              <div className="relative w-32 h-32 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-2xl flex items-center justify-center shadow-[0_0_80px_rgba(255,255,255,0.08)]">
+              <div className="relative w-32 h-32 rounded-full border border-white/20 bg-white/[0.08] backdrop-blur-2xl flex items-center justify-center shadow-[0_0_80px_rgba(255,255,255,0.15)]">
                 <img
                   ref={logoRef}
                   src={logo}
                   alt="SO.CLOTHING"
-                  className="w-20 object-contain invert select-none pointer-events-none"
+                  className="w-20 object-contain select-none pointer-events-none"
+                  style={{ filter: "invert(1) brightness(10)", opacity: 0.95 }}
                   draggable="false"
                 />
               </div>
             </div>
 
-            {/* BRAND TITLE — Cormorant Garamond */}
-            <div className="flex flex-wrap justify-center overflow-hidden">
+            {/* BRAND TITLE */}
+            <div className="flex justify-center overflow-hidden">
               {brand.map((letter, index) => (
                 <span
                   key={index}
                   ref={(el) => (titleRef.current[index] = el)}
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: "clamp(2.5rem, 8vw, 6rem)",
+                    fontSize: "clamp(1.6rem, 7vw, 6rem)",
                     fontWeight: 300,
-                    letterSpacing: "0.35em",
+                    letterSpacing: "clamp(0.08em, 1.5vw, 0.35em)",
                     lineHeight: 1,
                     color: "white",
                     textTransform: "uppercase",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {letter === " " ? "\u00A0" : letter}
@@ -176,13 +181,13 @@ export default function PremiumLoader() {
               ))}
             </div>
 
-            {/* SUBTEXT — DM Sans */}
+            {/* SUBTEXT */}
             <p
-              className="mt-6 text-white/40 uppercase"
+              className="mt-6 text-white/40 uppercase text-center"
               style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: "0.62rem",
-                letterSpacing: "0.6em",
+                fontSize: "clamp(0.45rem, 1.8vw, 0.62rem)",
+                letterSpacing: "clamp(0.2em, 1vw, 0.6em)",
                 fontWeight: 400,
               }}
             >
@@ -190,7 +195,7 @@ export default function PremiumLoader() {
             </p>
 
             {/* PROGRESS */}
-            <div className="w-[280px] mt-16">
+            <div className="w-[min(280px,80vw)] mt-16">
               <div className="flex items-center justify-between mb-3">
                 <span
                   className="text-white/30 uppercase"
@@ -226,11 +231,11 @@ export default function PremiumLoader() {
 
             {/* BOTTOM TEXT */}
             <div
-              className="absolute bottom-10 text-white/20 uppercase"
+              className="absolute bottom-10 text-white/20 uppercase text-center px-4"
               style={{
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: "0.62rem",
-                letterSpacing: "0.7em",
+                letterSpacing: "clamp(0.2em, 1vw, 0.7em)",
                 fontWeight: 400,
               }}
             >

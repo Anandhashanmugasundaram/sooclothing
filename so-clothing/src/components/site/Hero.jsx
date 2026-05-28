@@ -649,7 +649,7 @@ if (!document.head.querySelector('[href*="Cormorant"]')) {
 // ─────────────────────────────────────────────────────────────────
 const ACCENT = "#e84c1e";
 
-const NAV_ITEMS = ["Shop", "Drops", "About"];
+// const NAV_ITEMS = ["Shop", "Drops", "About"];
 const STATS = [
   { num: "01", label: "Collection" },
   { num: "12", label: "Pieces / Drop" },

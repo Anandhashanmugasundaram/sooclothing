@@ -332,4 +332,4 @@ export function Products() {
   );
 }
 
-export default ProductDetail;
+export default Product;

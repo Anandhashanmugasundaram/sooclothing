@@ -1,335 +1,383 @@
-import { Link } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+// ProductDetail.jsx
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight } from "lucide-react";
+import { toast } from "sonner";
+import { Minus, Plus, Truck, Shield } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 
-gsap.registerPlugin(ScrollTrigger);
+// Google Fonts injection
+const fontLink = document.createElement("link");
+fontLink.href =
+  "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap";
+fontLink.rel = "stylesheet";
+if (!document.head.querySelector('[href*="Cormorant"]')) {
+  document.head.appendChild(fontLink);
+}
 
-export function Products() {
-  const sectionRef = useRef(null);
-  const headingRef = useRef(null);
-  const sidebarRef = useRef(null);
-  const gridRef = useRef(null);
-  const countRef = useRef(null);
-  const lineRef = useRef(null);
-
-  const [products, setProducts] = useState([]);
-  const [selectedSizes, setSelectedSizes] = useState([]);
-  const [selectedPrice, setSelectedPrice] = useState("");
-
+export default function ProductDetail() {
+  const { slug } = useParams();
+  const { add } = useCart();
   const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";
+  const [product, setProduct] = useState(null);
+  const [related, setRelated] = useState([]);
+  const [size, setSize] = useState("");
+  const [qty, setQty] = useState(1);
+  const selectedSizeStock = product?.sizes?.find((s) => s.size === size)?.quantity || 0;
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    fetchProduct();
+  }, [slug]);
 
-  const fetchProducts = async () => {
+  const fetchProduct = async () => {
     try {
-      const res = await axios.get(`${API}/api/products`);
-      setProducts(res.data);
+      const res = await axios.get(`${API}/api/products/${slug}`);
+      setProduct(res.data);
+      fetchRelated(res.data.category, res.data._id);
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    if (products.length === 0) return;
-
-    const ctx = gsap.context(() => {
-      gsap.from(headingRef.current, {
-        opacity: 0, x: -60, duration: 1, ease: "power3.out",
-        scrollTrigger: { trigger: headingRef.current, start: "top 88%" },
-      });
-
-      gsap.from(lineRef.current, {
-        scaleX: 0, transformOrigin: "left center", duration: 1.1,
-        ease: "power3.out", delay: 0.3,
-        scrollTrigger: { trigger: headingRef.current, start: "top 88%" },
-      });
-
-      gsap.from(sidebarRef.current, {
-        opacity: 0, y: 50, rotateX: 8, duration: 1, ease: "power3.out",
-        scrollTrigger: { trigger: sidebarRef.current, start: "top 90%" },
-      });
-
-      gsap.from(".deco-circle", {
-        scale: 0, opacity: 0, duration: 1.2, stagger: 0.15,
-        ease: "elastic.out(1, 0.5)", transformOrigin: "center center",
-        scrollTrigger: { trigger: sidebarRef.current, start: "top 90%" },
-      });
-
-      gsap.from(".sidebar-text", {
-        opacity: 0, y: 20, duration: 0.7, stagger: 0.12,
-        ease: "power2.out", delay: 0.3,
-        scrollTrigger: { trigger: sidebarRef.current, start: "top 88%" },
-      });
-
-      gsap.from(countRef.current, {
-        opacity: 0, y: 12, duration: 0.7,
-        scrollTrigger: { trigger: countRef.current, start: "top 90%" },
-      });
-
-      gsap.from(".product-card", {
-        opacity: 0, y: 70, scale: 0.93, duration: 0.8, stagger: 0.09,
-        ease: "power3.out",
-        scrollTrigger: { trigger: gridRef.current, start: "top 88%" },
-      });
-
-      gsap.from(".offer-badge", {
-        opacity: 0, scale: 0, duration: 0.5, stagger: 0.09,
-        ease: "back.out(2)", delay: 0.4,
-        scrollTrigger: { trigger: gridRef.current, start: "top 88%" },
-      });
-
-      gsap.from(".size-pill", {
-        opacity: 0, scale: 0.7, duration: 0.4, stagger: 0.04,
-        ease: "back.out(1.5)", delay: 0.6,
-        scrollTrigger: { trigger: gridRef.current, start: "top 88%" },
-      });
-
-      gsap.to(".sidebar-logo-dot", {
-        scale: 1.6, opacity: 0.3, duration: 0.9,
-        repeat: -1, yoyo: true, ease: "sine.inOut",
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [products]);
-
-  const onCardEnter = (e) => {
-    const card = e.currentTarget;
-    gsap.to(card.querySelector(".card-img"), { scale: 1.08, duration: 0.5, ease: "power2.out" });
-    gsap.to(card.querySelector(".card-border"), { opacity: 1, duration: 0.25 });
-    gsap.to(card.querySelector(".quick-view"), { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" });
-    gsap.to(card, { y: -6, duration: 0.35, ease: "power2.out" });
+  const fetchRelated = async (category, currentId) => {
+    try {
+      const res = await axios.get(`${API}/api/products`);
+      const filtered = res.data
+        .filter((p) => p.category === category && p._id !== currentId && !p.isSpecialOffer)
+        .slice(0, 4);
+      setRelated(filtered);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const onCardLeave = (e) => {
-    const card = e.currentTarget;
-    gsap.to(card.querySelector(".card-img"), { scale: 1, duration: 0.5, ease: "power2.out" });
-    gsap.to(card.querySelector(".card-border"), { opacity: 0, duration: 0.25 });
-    gsap.to(card.querySelector(".quick-view"), { opacity: 0, y: 8, duration: 0.3 });
-    gsap.to(card, { y: 0, duration: 0.6, ease: "elastic.out(1, 0.4)" });
+  const onAdd = () => {
+    if (!size) { toast.error("Select a size"); return; }
+    if (selectedSizeStock === 0) { toast.error("Out of stock"); return; }
+    if (qty > selectedSizeStock) { toast.error(`Only ${selectedSizeStock} items available`); return; }
+    add(product, size, qty);
+    toast.success(`${product.name} added to bag`);
   };
 
-  const filteredProducts = products
-    .filter((p) => !p.isSpecialOffer)
-    .filter((product) => {
-      const sizeMatch =
-        selectedSizes.length === 0 ||
-        product.sizes?.some((s) => selectedSizes.includes(s.toUpperCase()));
-
-      let priceMatch = true;
-      if (selectedPrice === "0-200") priceMatch = product.price <= 200;
-      if (selectedPrice === "201-400") priceMatch = product.price >= 201 && product.price <= 400;
-      if (selectedPrice === "401-600") priceMatch = product.price >= 401 && product.price <= 600;
-      if (selectedPrice === "601-800") priceMatch = product.price >= 601 && product.price <= 800;
-      if (selectedPrice === "801-1000") priceMatch = product.price >= 801 && product.price <= 1000;
-      if (selectedPrice === "1000+") priceMatch = product.price > 1000;
-
-      return sizeMatch && priceMatch;
-    })
-    .slice(0, 8);
+  if (!product) {
+    return (
+      <div className="pt-44 pb-32 text-center">
+        <p
+          style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: "clamp(1.8rem, 4vw, 3rem)",
+            fontWeight: 300,
+            letterSpacing: "0.05em",
+          }}
+        >
+          Loading...
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <section ref={sectionRef} className="py-20 px-6">
+    <>
+      <section className="pt-28 lg:pt-32 pb-20">
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
 
-      {/* HEADING */}
-      <div className="mb-8">
-        <h1
-          ref={headingRef}
-          className="text-3xl font-bold"
-          style={{ fontFamily: "'Cormorant Garamond', serif" }}
-        >
-          Latest Products
-        </h1>
-        <div ref={lineRef} className="mt-2 h-[3px] w-16 bg-black rounded-full" />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
-
-        {/* SIDEBAR */}
-        <div className="sticky top-24 h-fit">
-          <div
-            ref={sidebarRef}
-            className="bg-black text-white rounded-3xl p-8 relative overflow-hidden"
+          {/* BREADCRUMB */}
+          <nav
+            className="mb-8 text-foreground/50"
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "0.72rem",
+              letterSpacing: "0.15em",
+              fontWeight: 400,
+              textTransform: "uppercase",
+            }}
           >
-            <div className="deco-circle absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full" />
-            <div className="deco-circle absolute -bottom-16 -left-16 w-52 h-52 bg-white/5 rounded-full" />
+            <Link to="/" className="hover:text-accent transition-colors">Home</Link>
+            {" / "}
+            <Link to="/shop" className="hover:text-accent transition-colors">Shop</Link>
+            {" / "}
+            <span className="text-foreground">{product.name}</span>
+          </nav>
 
-            <div className="relative z-10">
+          {/* MAIN PRODUCT */}
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
 
-              {/* Label */}
-              <div className="sidebar-text flex items-center gap-2">
-                <span className="sidebar-logo-dot w-2 h-2 bg-white rounded-full block" />
-                <p
-                  className="text-sm tracking-[0.3em] text-gray-300"
-                  style={{ fontFamily: "'Space Mono', monospace" }}
-                >
-                  $O.CLOTHING
-                </p>
-              </div>
+            {/* IMAGE */}
+            <div>
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-[700px] object-cover rounded-lg"
+              />
+            </div>
 
-              {/* Title */}
-              <h2
-                className="sidebar-text text-3xl font-bold mt-4"
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
-              >
-                Explore Store
-              </h2>
+            {/* DETAILS */}
+            <div className="lg:sticky lg:top-28 lg:self-start">
 
-              {/* Description */}
+              {/* CATEGORY EYEBROW */}
               <p
-                className="sidebar-text text-gray-300 mt-4 text-sm leading-6"
-                style={{ fontFamily: "'Inter', sans-serif", fontWeight: 300 }}
+                className="text-accent uppercase mb-3"
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.68rem",
+                  letterSpacing: "0.3em",
+                  fontWeight: 500,
+                }}
               >
-                Premium streetwear, oversized fits and new drops every season.
+                {product.category}
               </p>
 
-              {/* Explore All Button */}
-             <Link
-  to="/shop"
-  className="sidebar-text group relative mt-8 flex items-center justify-between w-full px-6 py-4 rounded-2xl border border-white/25 overflow-hidden"
-  style={{ fontFamily: "'Space Mono', monospace", fontSize: "11px", letterSpacing: "0.2em" }}
-  onMouseEnter={(e) => {
-    gsap.to(e.currentTarget, { scale: 1.03, duration: 0.3, ease: "power2.out" });
-    gsap.to(e.currentTarget.querySelector(".btn-fill"), { scaleY: 1, duration: 0.45, ease: "power3.out" });
-    gsap.to(e.currentTarget.querySelector(".btn-arrow"), { x: 5, duration: 0.3, ease: "power2.out" });
-  }}
-  onMouseLeave={(e) => {
-    gsap.to(e.currentTarget, { scale: 1, duration: 0.5, ease: "elastic.out(1,0.5)" });
-    gsap.to(e.currentTarget.querySelector(".btn-fill"), { scaleY: 0, duration: 0.3, ease: "power2.in" });
-    gsap.to(e.currentTarget.querySelector(".btn-arrow"), { x: 0, duration: 0.3, ease: "power2.out" });
-  }}
->
-  {/* White fill slides up on hover */}
-  <span
-    className="btn-fill absolute inset-0 bg-white origin-bottom rounded-2xl"
-    style={{ transform: "scaleY(0)" }}
-  />
+              {/* PRODUCT NAME */}
+              <h1
+                className="uppercase leading-[0.9] mb-4"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
+                  fontWeight: 700,
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                {product.name}
+              </h1>
 
-  {/* LEFT: label */}
-  <span className="relative z-10 uppercase text-white group-hover:text-black transition-colors duration-300">
-    Explore All
-  </span>
+              {/* PRICE */}
+              <p
+                className="mb-8"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: "clamp(1.4rem, 2.5vw, 2rem)",
+                  fontWeight: 400,
+                  fontStyle: "italic",
+                  letterSpacing: "0.01em",
+                }}
+              >
+                ₹ {product.price}
+              </p>
 
-  {/* RIGHT: arrow in a circle */}
-  <span className="relative z-10 w-7 h-7 rounded-full border border-white/40 group-hover:border-black/40 flex items-center justify-center transition-colors duration-300">
-    <ArrowRight className="btn-arrow w-3.5 h-3.5 text-white group-hover:text-black transition-colors duration-300" />
-  </span>
-</Link>
+              {/* DESCRIPTION */}
+              <p
+                className="text-foreground/60 mb-10"
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.92rem",
+                  fontWeight: 300,
+                  lineHeight: 1.75,
+                }}
+              >
+                {product.description}
+              </p>
+
+              {/* SIZE LABEL */}
+              <div className="mb-8">
+                <p
+                  className="uppercase mb-3"
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.62rem",
+                    letterSpacing: "0.3em",
+                    fontWeight: 500,
+                  }}
+                >
+                  Size
+                </p>
+
+                <div className="flex flex-wrap gap-3">
+                  {product.sizes?.map((s) => (
+                    <button
+                      key={s.size}
+                      onClick={() => { setSize(s.size); setQty(1); }}
+                      disabled={s.quantity === 0}
+                      className={`px-5 py-3 border transition-all duration-300 ${
+                        size === s.size
+                          ? "bg-black text-white border-black"
+                          : "hover:bg-black hover:text-white"
+                      } ${s.quantity === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "0.68rem",
+                        letterSpacing: "0.2em",
+                        fontWeight: 500,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {s.size} ({s.quantity})
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* QUANTITY + ADD TO BAG */}
+              <div className="flex gap-3 mb-6">
+                <div className="flex items-center border">
+                  <button
+                    onClick={() => setQty(Math.max(1, qty - 1))}
+                    className="w-12 h-12 flex items-center justify-center hover:bg-black hover:text-white transition-colors"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span
+                    className="w-12 text-center"
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "0.9rem",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {qty}
+                  </span>
+                  <button
+                    onClick={() => {
+                      if (qty < selectedSizeStock) setQty(qty + 1);
+                      else toast.error("Stock limit reached");
+                    }}
+                    className="w-12 h-12 flex items-center justify-center hover:bg-black hover:text-white transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <button
+                  onClick={onAdd}
+                  className="flex-1 bg-black text-white hover:bg-accent transition-colors duration-500"
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.68rem",
+                    letterSpacing: "0.3em",
+                    textTransform: "uppercase",
+                    fontWeight: 500,
+                  }}
+                >
+                  Add To Bag
+                </button>
+              </div>
+
+              {/* PERKS */}
+              <div className="grid grid-cols-2 gap-4 py-6 border-y mb-8">
+                <Perk icon={<Truck className="w-5 h-5" />} label="Free Shipping" />
+                <Perk icon={<Shield className="w-5 h-5" />} label="Secure Payment" />
+              </div>
+
+              {/* PRODUCT DETAILS */}
+              <div>
+                <p
+                  className="uppercase mb-4"
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.62rem",
+                    letterSpacing: "0.3em",
+                    fontWeight: 500,
+                  }}
+                >
+                  Product Details
+                </p>
+                <ul
+                  className="space-y-2 text-foreground/60"
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.88rem",
+                    fontWeight: 300,
+                    lineHeight: 1.75,
+                  }}
+                >
+                  <li>Premium Quality Material</li>
+                  <li>Comfortable Fit</li>
+                  <li>Stylish Modern Design</li>
+                  <li>Long Lasting Fabric</li>
+                </ul>
+              </div>
 
             </div>
           </div>
         </div>
+      </section>
 
-        {/* PRODUCTS */}
-        <div>
-          <p
-            ref={countRef}
-            className="mb-6 text-lg"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
-          >
-            {filteredProducts.length} Products Found
-          </p>
+      {/* RELATED PRODUCTS */}
+      <section className="border-t py-20">
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
 
-          <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <div
-                key={product._id}
-                className="product-card group cursor-pointer"
-                style={{ willChange: "transform" }}
-                onMouseEnter={onCardEnter}
-                onMouseLeave={onCardLeave}
+          {/* Section heading */}
+          <div className="mb-10">
+            <p
+              className="text-accent uppercase mb-3"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.68rem",
+                letterSpacing: "0.3em",
+                fontWeight: 500,
+              }}
+            >
+              — You May Also Like
+            </p>
+            <h2
+              className="uppercase leading-[0.9]"
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "clamp(2rem, 4vw, 3.5rem)",
+                fontWeight: 700,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              Related Products
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {related.map((p) => (
+              <Link
+                key={p._id}
+                to={`/product/${p.slug}`}
+                className="border p-3 rounded-lg block hover:scale-[1.02] transition-transform duration-300"
               >
-                <Link to={`/product/${product.slug}`}>
-                  <div className="relative overflow-hidden rounded-[30px] bg-[#f7f7f7] border border-[#eee]">
-
-                    <div className="offer-badge absolute top-5 right-5 z-30">
-                      <div className="px-4 py-2 rounded-xl bg-white shadow-md text-[13px] font-medium text-pink-500">
-                        20% offer
-                      </div>
-                    </div>
-
-                    <div className="absolute inset-0 pointer-events-none">
-                      <div className="deco-circle absolute -top-10 -left-10 w-40 h-40 rounded-full border border-red-500" />
-                      <div className="deco-circle absolute right-[-35px] top-[130px] w-[110px] h-[220px] rounded-full border-[10px] border-red-300 opacity-60" />
-                    </div>
-
-                    <div className="h-[260px] flex items-center justify-center p-4 relative z-10 overflow-hidden">
-                      <img
-                        src={product.image}
-                        className="card-img h-full object-contain"
-                        style={{ willChange: "transform" }}
-                        alt={product.name}
-                      />
-                    </div>
-
-                    <div
-                      className="quick-view absolute bottom-4 left-1/2 z-30 opacity-0 pointer-events-none"
-                      style={{ transform: "translate(-50%, 8px)" }}
-                    >
-                      <span className="bg-black text-white text-[11px] tracking-widest uppercase px-4 py-2 rounded-full whitespace-nowrap shadow-lg"
-                        style={{ fontFamily: "'Space Mono', monospace" }}
-                      >
-                        Quick View
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <h2
-                      className="mt-2 font-semibold leading-snug"
-                      style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.05rem" }}
-                    >
-                      {product.name}
-                    </h2>
-
-                    <p
-                      className="text-sm text-gray-500 mt-1"
-                      style={{ fontFamily: "'Inter', sans-serif", fontWeight: 300 }}
-                    >
-                      {product.category}
-                    </p>
-
-                    <div className="flex items-center gap-2 mt-2">
-                      <p
-                        className="text-2xl font-semibold"
-                        style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                      >
-                        ₹{product.price}
-                      </p>
-                      <span
-                        className="text-sm text-gray-400 line-through"
-                        style={{ fontFamily: "'Inter', sans-serif" }}
-                      >
-                        ₹{Math.floor(product.price * 1.2)}
-                      </span>
-                    </div>
-
-                    <div className="flex gap-2 mt-3 flex-wrap">
-                      {product.sizes?.map((s, i) => (
-                        <span
-                          key={i}
-                          className="size-pill px-2 py-1 text-xs border rounded-full hover:bg-black hover:text-white transition"
-                          style={{ fontFamily: "'Space Mono', monospace" }}
-                        >
-                          {s.size.toUpperCase()}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </Link>
-              </div>
+                <img
+                  src={p.image}
+                  className="h-40 w-full object-contain"
+                  alt={p.name}
+                />
+                <h2
+                  className="mt-2 uppercase"
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: "1rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.01em",
+                  }}
+                >
+                  {p.name}
+                </h2>
+                <p
+                  className="mt-1"
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.85rem",
+                    fontWeight: 400,
+                  }}
+                >
+                  ₹{p.price}
+                </p>
+              </Link>
             ))}
           </div>
         </div>
-
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 
-export default Products;
+function Perk({ icon, label }) {
+  return (
+    <div className="flex flex-col items-center gap-2 text-center">
+      <span>{icon}</span>
+      <p
+        className="uppercase"
+        style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "0.62rem",
+          letterSpacing: "0.3em",
+          fontWeight: 400,
+        }}
+      >
+        {label}
+      </p>
+    </div>
+  );
+}

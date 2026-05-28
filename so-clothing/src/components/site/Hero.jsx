@@ -1013,7 +1013,7 @@ export function Hero() {
             $O.CLOTHING
           </motion.a>
 
-          <div className="flex items-center gap-8">
+          {/* <div className="flex items-center gap-8">
             {NAV_ITEMS.map((item, i) => (
               <motion.a
                 key={item}
@@ -1036,7 +1036,7 @@ export function Hero() {
                 {item}
               </motion.a>
             ))}
-          </div>
+          </div> */}
         </motion.nav>
 
         {/* CORNER BRACKETS */}

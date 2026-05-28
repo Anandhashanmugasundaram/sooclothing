@@ -550,22 +550,43 @@ export default function Checkout() {
             <div className="h-px bg-border" />
             <Row label="Total" value={`₹ ${total.toFixed(2)}`} bold />
 
-            {/* PAY BUTTON */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full md:w-auto bg-accent text-accent-foreground py-4 hover:bg-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "0.7rem",
-                letterSpacing: "0.25em",
-                textTransform: "uppercase",
-                fontWeight: 500,
-              }}
-            >
-              <Lock className="w-3.5 h-3.5" />
-              {loading ? "Processing..." : `Pay ₹ ${total.toFixed(2)}`}
-            </button>
+{/* PAY BUTTON */}
+<button
+  type="submit"
+  disabled={loading}
+  className="
+    w-full
+    sm:w-full
+    md:w-full
+    lg:w-[340px]
+    xl:w-[380px]
+    bg-accent
+    text-accent-foreground
+    py-4
+    sm:py-4
+    md:py-5
+    px-6
+    hover:bg-accent/90
+    transition-all
+    duration-300
+    flex
+    items-center
+    justify-center
+    gap-2
+    disabled:opacity-60
+    rounded-none
+  "
+  style={{
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: "0.75rem",
+    letterSpacing: "0.25em",
+    textTransform: "uppercase",
+    fontWeight: 600,
+  }}
+>
+  <Lock className="w-4 h-4" />
+  {loading ? "Processing..." : `Pay ₹ ${total.toFixed(2)}`}
+</button>
 
             <p
               className="text-muted-foreground text-center"

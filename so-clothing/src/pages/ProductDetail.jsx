@@ -331,3 +331,5 @@ export function Products() {
     </section>
   );
 }
+
+export default ProductDetail;

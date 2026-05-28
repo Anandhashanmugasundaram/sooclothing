@@ -10,13 +10,8 @@ import { PIN_PREFIXES } from "@/data/pinPrefixes";
 import { CITIES } from "@/data/cities";
 import axios from "axios";
 
-const fontLink = document.createElement("link");
-fontLink.href =
-  "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap";
-fontLink.rel = "stylesheet";
-if (!document.head.querySelector('[href*="Cormorant"]')) {
-  document.head.appendChild(fontLink);
-}
+import { useEffect } from "react";
+
 
 const schema = z.object({
   email: z.string().trim().email("Valid email required").max(255),
@@ -37,6 +32,21 @@ const schema = z.object({
 });
 
 export default function Checkout() {
+
+  useEffect(() => {
+  if (!document.head.querySelector('[href*="Cormorant"]')) {
+    const fontLink = document.createElement("link");
+
+    fontLink.href =
+      "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap";
+
+    fontLink.rel = "stylesheet";
+
+    document.head.appendChild(fontLink);
+  }
+}, []);
+
+
   const { items, subtotal, clear } = useCart();
   const { user } = useAuth();
 
@@ -289,7 +299,7 @@ export default function Checkout() {
             className="uppercase leading-none mb-6"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(3rem, 8vw, 5rem)",
+              fontSize: "clamp(2.4rem, 7vw, 5rem)",
               fontWeight: 700,
               letterSpacing: "-0.02em",
             }}
@@ -319,7 +329,7 @@ export default function Checkout() {
             A confirmation has been sent to {confirmedEmail}
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col md:flex-row gap-4 justify-center w-full">
             <Link
               to="/shop"
               className="bg-accent text-accent-foreground px-10 py-4"
@@ -335,7 +345,7 @@ export default function Checkout() {
             </Link>
             <button
               onClick={() => nav("/account")}
-              className="border border-border px-10 py-4 hover:border-accent transition-colors"
+              className="border w-full md:w-auto border-border px-10 py-4 hover:border-accent transition-colors"
               style={{
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: "0.7rem",
@@ -358,8 +368,7 @@ export default function Checkout() {
       className="pt-28 lg:pt-32 pb-20"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-
+<div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* HEADER */}
         <div className="mb-12">
           <p
@@ -378,7 +387,7 @@ export default function Checkout() {
             className="uppercase leading-none"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(2.5rem, 6vw, 4rem)",
+              fontSize: "clamp(2rem, 5vw, 4rem)",
               fontWeight: 700,
               letterSpacing: "-0.02em",
             }}
@@ -387,11 +396,19 @@ export default function Checkout() {
           </h1>
         </div>
 
-        <form onSubmit={onSubmit} className="grid lg:grid-cols-3 gap-12">
-
+<form
+  onSubmit={onSubmit}
+  className="
+    grid
+    grid-cols-1
+    xl:grid-cols-[1.4fr_0.8fr]
+    gap-10
+    xl:gap-16
+    items-start
+  "
+>
           {/* LEFT SIDE */}
-          <div className="lg:col-span-2 space-y-12">
-
+<div className="space-y-10 md:space-y-12 min-w-0">
             <Section title="01 / Contact">
               <Input label="Email" value={form.email} onChange={set("email")} type="email" placeholder="example@example.com" />
               <Input label="Phone" value={form.phone} onChange={set("phone")} type="tel" placeholder="9876543210" />
@@ -400,7 +417,7 @@ export default function Checkout() {
             <Section title="02 / Shipping">
               <Input label="Full name" value={form.name} onChange={set("name")} placeholder="John Doe" />
               <Input label="Address" value={form.address} onChange={set("address")} placeholder="Eg: No 12, Gandhi Street, Anna Nagar, Chennai" />
-              <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input label="City" value={form.city} onChange={set("city")} placeholder="Chennai" />
                 <Input label="ZIP" value={form.zip} onChange={set("zip")} placeholder="600032" />
               </div>
@@ -441,8 +458,24 @@ export default function Checkout() {
           </div>
 
           {/* RIGHT SIDE — ORDER SUMMARY */}
-          <aside className="lg:sticky lg:top-28 lg:self-start bg-secondary p-8 space-y-5">
-            <p
+<aside
+  className="
+    xl:sticky
+    xl:top-28
+    xl:self-start
+    bg-secondary
+    p-5
+    sm:p-6
+    lg:p-8
+    space-y-5
+    rounded-none
+    border
+    border-border/50
+    h-fit
+    w-full
+    overflow-hidden
+  "
+>            <p
               className="uppercase"
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
@@ -455,11 +488,12 @@ export default function Checkout() {
             </p>
 
             {/* ITEMS */}
-            <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
-              {items.map((it) => (
-                <div key={`${it.product.id}-${it.size}`} className="flex gap-3">
-                  <div className="w-14 h-16 bg-background shrink-0 overflow-hidden relative">
-                    <img src={it.product.image} alt={it.product.name} className="w-full h-full object-cover" />
+<div className="space-y-4 max-h-[320px] overflow-y-auto pr-1">              {items.map((it) => (
+<div
+  key={`${it.product.id}-${it.size}`}
+  className="flex gap-3 min-w-0"
+>
+<div className="w-14 h-16 sm:w-16 sm:h-20 bg-background shrink-0 overflow-hidden relative">                    <img src={it.product.image} alt={it.product.name} className="w-full h-full object-cover" />
                     <span
                       className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground flex items-center justify-center"
                       style={{
@@ -473,7 +507,7 @@ export default function Checkout() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p
-                      className="uppercase truncate"
+  className="uppercase line-clamp-2 break-words"
                       style={{
                         fontFamily: "'Cormorant Garamond', serif",
                         fontSize: "0.95rem",
@@ -520,7 +554,7 @@ export default function Checkout() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-accent text-accent-foreground py-4 hover:bg-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+              className="w-full md:w-auto bg-accent text-accent-foreground py-4 hover:bg-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
               style={{
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: "0.7rem",

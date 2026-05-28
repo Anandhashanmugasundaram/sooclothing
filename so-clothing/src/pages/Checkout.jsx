@@ -12,18 +12,6 @@ import axios from "axios";
 
 import { useEffect } from "react";
 
-useEffect(() => {
-  if (!document.head.querySelector('[href*="Cormorant"]')) {
-    const fontLink = document.createElement("link");
-
-    fontLink.href =
-      "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap";
-
-    fontLink.rel = "stylesheet";
-
-    document.head.appendChild(fontLink);
-  }
-}, []);
 
 const schema = z.object({
   email: z.string().trim().email("Valid email required").max(255),
@@ -44,6 +32,21 @@ const schema = z.object({
 });
 
 export default function Checkout() {
+
+  useEffect(() => {
+  if (!document.head.querySelector('[href*="Cormorant"]')) {
+    const fontLink = document.createElement("link");
+
+    fontLink.href =
+      "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap";
+
+    fontLink.rel = "stylesheet";
+
+    document.head.appendChild(fontLink);
+  }
+}, []);
+
+
   const { items, subtotal, clear } = useCart();
   const { user } = useAuth();
 

@@ -1010,7 +1010,7 @@ export function Hero() {
               display: "inline-block",
             }}
           >
-            SO.
+            $O.CLOTHING
           </motion.a>
 
           <div className="flex items-center gap-8">

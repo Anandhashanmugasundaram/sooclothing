@@ -489,7 +489,7 @@ export default function ProductDetail() {
         // Background accent panel slides in from left
         .from(bgPanelRef.current, {
           x: "-100%",
-          duration: 0.6,
+          duration: 0.4,
           ease: "expo.inOut",
         })
 

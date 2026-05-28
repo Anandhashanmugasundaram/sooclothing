@@ -758,3 +758,4 @@ export function ProductDetail() {
     </section>
   );
 }
+export default ProductDetail;

@@ -404,7 +404,7 @@ function Chip({ label, active, onClick }) {
 // ─────────────────────────────────────────────────────────────────
 // PRODUCTS SECTION
 // ─────────────────────────────────────────────────────────────────
-export function Products() {
+export function ProductDetail() {
   const sectionRef  = useRef(null);
   const headingRef  = useRef(null);
   const sidebarRef  = useRef(null);

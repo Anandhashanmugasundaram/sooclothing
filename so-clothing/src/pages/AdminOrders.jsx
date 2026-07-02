@@ -4,7 +4,7 @@
 
   export default function AdminOrders() {
     const [orders, setOrders] = useState([]);
-    const API = import.meta.env.VITE_API_URL || "https://sooclothing-1.onrender.com";;
+    const API = import.meta.env.VITE_API_URL || https://sooclothing-pw64.vercel.app/;;
     useEffect(() => {
       fetchOrders();
     }, []);

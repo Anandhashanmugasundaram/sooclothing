@@ -7,7 +7,16 @@ const path = require("path");
 const app = express(); // ✅ MUST BE FIRST
 
 // MIDDLEWARES
-app.use(cors({ origin: true, credentials: true }));
+app.use(
+  cors({
+    origin: [
+      "https://www.soclothing.in/",
+      "https://www.soclothing.in/",
+      "http://localhost:5173",
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // 🔥 STATIC FILES (FIX YOUR IMAGE ISSUE)

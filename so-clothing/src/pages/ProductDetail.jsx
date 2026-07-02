@@ -26,7 +26,7 @@
 //   const { add } = useCart();
 
 //   const API =
-//     import.meta.env.VITE_API_URL || https://sooclothing-pw64.vercel.app/;
+//     import.meta.env.VITE_API_URL || "https://sooclothing-pw64.vercel.app"/;
 
 //   const [product, setProduct] = useState(null);
 //   const [related, setRelated] = useState([]);
@@ -333,7 +333,7 @@ export default function ProductDetail() {
 
   const API =
     import.meta.env.VITE_API_URL ||
-    https://sooclothing-pw64.vercel.app/;
+    "https://sooclothing-pw64.vercel.app";
 
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);

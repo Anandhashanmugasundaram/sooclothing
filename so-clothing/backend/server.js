@@ -19,8 +19,8 @@ const app = express(); // ✅ MUST BE FIRST
 app.use(
   cors({
     origin: [
-      "https://soclothing.in/",
-      "https://www.soclothing.in/",
+      "https://soclothing.in",
+      "https://www.soclothing.in",
       "http://localhost:5173",
     ],
     credentials: true,

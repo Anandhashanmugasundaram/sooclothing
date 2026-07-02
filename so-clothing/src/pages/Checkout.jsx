@@ -50,7 +50,7 @@ export default function Checkout() {
   const { items, subtotal, clear } = useCart();
   const { user } = useAuth();
 
-  const API = import.meta.env.VITE_API_URL || https://sooclothing-pw64.vercel.app/;
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-pw64.vercel.app";
   const nav = useNavigate();
 
   const [loading, setLoading] = useState(false);

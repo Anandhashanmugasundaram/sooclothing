@@ -17,7 +17,7 @@ if (!document.head.querySelector('[href*="Cormorant"]')) {
 
 export default function Account() {
   const { user, logout } = useAuth();
-  const API = import.meta.env.VITE_API_URL || https://sooclothing-pw64.vercel.app/;
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-pw64.vercel.app"
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 

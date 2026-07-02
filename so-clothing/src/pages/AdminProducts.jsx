@@ -13,7 +13,7 @@ export default function AdminProducts() {
 
   const [loading, setLoading] =
     useState(true);
-  const API = import.meta.env.VITE_API_URL || https://sooclothing-pw64.vercel.app/;;
+  const API = import.meta.env.VITE_API_URL || "https://sooclothing-pw64.vercel.app"
 
   const [editOpen, setEditOpen] =
     useState(false);

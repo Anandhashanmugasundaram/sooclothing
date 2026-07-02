@@ -19,7 +19,7 @@ export function Products() {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState("");
 
-  const API = import.meta.env.VITE_API_URL || https://sooclothing-pw64.vercel.app/;
+  const API = import.meta.env.VITE_API_URL || ""https://sooclothing-pw64.vercel.app"";
 
   useEffect(() => {
     fetchProducts();

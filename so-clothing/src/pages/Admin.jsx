@@ -5,7 +5,7 @@ import { Link, Navigate } from "react-router-dom";
 export default function Admin() {
   const user = JSON.parse(localStorage.getItem("user"));
   const API =
-    import.meta.env.VITE_API_URL || https://sooclothing-pw64.vercel.app/;
+    import.meta.env.VITE_API_URL || "https://sooclothing-pw64.vercel.app/";
   // PROTECT ADMIN PAGE
   if (!user?.isAdmin) {
     return <Navigate to="/" />;
